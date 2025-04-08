@@ -7,7 +7,7 @@ var configuration = Argument("configuration", "Release");
 Task("Build")
     .Does(context => 
 {
-    DotNetBuild("./src/Jinn.sln", new DotNetBuildSettings {
+    DotNetBuild("./src/Jinn.slnx", new DotNetBuildSettings {
         Configuration = configuration,
         NoIncremental = context.HasArgument("rebuild"),
         MSBuildSettings = new DotNetMSBuildSettings()
@@ -19,7 +19,7 @@ Task("Test")
     .IsDependentOn("Build")
     .Does(context => 
 {
-    DotNetTest("./src/Jinn.sln", new DotNetTestSettings {
+    DotNetTest("./src/Jinn.slnx", new DotNetTestSettings {
         Configuration = configuration,
         NoRestore = true,
         NoBuild = true,
@@ -32,7 +32,7 @@ Task("Package")
 {
     context.CleanDirectory("./.artifacts");
 
-    context.DotNetPack($"./src/Jinn.sln", new DotNetPackSettings {
+    context.DotNetPack($"./src/Jinn.slnx", new DotNetPackSettings {
         Configuration = configuration,
         NoRestore = true,
         NoBuild = true,
