@@ -1,6 +1,12 @@
 # Jinn
 
-A spiritual successor to `Spectre.Console.Cli`.
+An experiment to build a flexible, POSIX compliant, AOT friendly, command line parser to later be used as 
+the base for `Spectre.Console.Cli`.
+
+Very much inspired by `System.CommandLine`.
+
+> [!NOTE]  
+> Not usable at all in the current state :)
 
 ## Building
 
