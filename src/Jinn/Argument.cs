@@ -1,12 +1,16 @@
 namespace Jinn;
 
-public sealed class Argument : Symbol
+public abstract class Argument : Symbol
 {
     public string Name { get; }
+    public Arity Arity { get; init; }
+    public Type ValueType { get; }
 
-    public Argument(string name)
+    protected Argument(Type valueType, string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
+        ValueType = valueType;
+        Arity = Arity.Resolve(valueType);
     }
 
     public override IEnumerable<Symbol> GetOwnedSymbols()
@@ -17,5 +21,13 @@ public sealed class Argument : Symbol
     public override IEnumerable<string> GetNames()
     {
         yield return Name;
+    }
+}
+
+public sealed class Argument<T> : Argument
+{
+    public Argument(string name)
+        : base(typeof(T), name)
+    {
     }
 }

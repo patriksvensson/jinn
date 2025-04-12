@@ -1,16 +1,20 @@
 namespace Jinn;
 
-public sealed class Command : Symbol
+public class Command : Symbol
 {
+    internal const string RootCommandName = "<root>";
+
     public string Name { get; }
 
     public List<Command> Commands { get; init; } = [];
     public List<Argument> Arguments { get; init; } = [];
     public List<Option> Options { get; init; } = [];
 
-    public Command(string name)
+    public bool IsRoot => Name.Equals(RootCommandName, StringComparison.Ordinal);
+
+    public Command(string? name = null)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name ?? RootCommandName;
     }
 
     public override IEnumerable<Symbol> GetOwnedSymbols()

@@ -8,70 +8,66 @@ public class UnitTest1
     public void Test1()
     {
         // Given
-        var command = new Command("foo");
-        command.Arguments.Add(new Argument("<FOO>"));
+        var command = new Command();
+        command.Arguments.Add(new Argument<int>("<FOO>"));
         command.Options.Add(new Option<int>("--lol"));
         command.Options.Add(new Option<bool>("--bar"));
-        var root = new CommandContainer([command]);
 
         // When
-        var result = Tokenizer.Tokenize("foo root --bar --lol qux", root);
+        var result = Tokenizer.Tokenize("root --bar --lol qux", command);
 
         // Then
         result.ShouldHaveTokens(
-            "(Command)foo (Argument)root (Option)--bar (Option)--lol (OptionArgument)qux");
+            "(Argument)root (Option)--bar (Option)--lol (OptionArgument)qux");
     }
 
     [Fact]
     public void Test1_1()
     {
         // Given
-        var command = new Command("foo");
+        var command = new Command();
         command.Options.Add(new Option<int>("--lol"));
-        var root = new CommandContainer([command]);
 
         // When
-        var result = Tokenizer.Tokenize("foo --lol=32", root);
+        var result = Tokenizer.Tokenize("--lol=32", command);
 
         // Then
         result.ShouldHaveTokens(
-            "(Command)foo (Option)--lol (OptionArgument)32");
+            "(Option)--lol (OptionArgument)32");
     }
 
     [Fact]
     public void Test1_2()
     {
         // Given
-        var command = new Command("foo");
+        var command = new Command();
         command.Options.Add(new Option<int>("-a"));
         command.Options.Add(new Option<int>("-b"));
         command.Options.Add(new Option<int>("-c"));
-        var root = new CommandContainer([command]);
 
         // When
-        var result = Tokenizer.Tokenize("foo -ac", root);
+        var result = Tokenizer.Tokenize("-ac", command);
 
         // Then
         result.ShouldHaveTokens(
-            "(Command)foo (Option)-a (Option)-c");
+            "(Option)-a (Option)-c");
     }
 
     [Fact]
     public void Test1_3()
     {
         // Given
-        var command = new Command("foo");
+        var command = new Command();
         command.Options.Add(new Option<int>("-a"));
         command.Options.Add(new Option<int>("-b"));
         command.Options.Add(new Option<int>("-c"));
-        var root = new CommandContainer([command]);
 
         // When
-        var result = Tokenizer.Tokenize("foo -af", root);
+        var result = Tokenizer.Tokenize("-af", command);
 
         // Then
         result.ShouldHaveTokens(
-            "(Command)foo (Option)-a (Argument)f");
+            "(Option)-a (Argument)f");
     }
 
     [Fact]
@@ -79,7 +75,7 @@ public class UnitTest1
     {
         // Givenn
         var command = new Command("foo");
-        command.Arguments.Add(new Argument("<FOO>"));
+        command.Arguments.Add(new Argument<int>("<FOO>"));
         command.Options.Add(new Option<int>("--lol"));
         command.Options.Add(new Option<bool>("--bar"));
 
@@ -87,7 +83,9 @@ public class UnitTest1
         command2.Options.Add(new Option<bool>("--corgi"));
         command.Commands.Add(command2);
 
-        var root = new CommandContainer([command]);
+        var root = new Command();
+        root.Commands.Add(command);
+        root.Commands.Add(command2);
 
         // When
         var result = Tokenizer.Tokenize("foo root --bar --lol qux bar --corgi", root);

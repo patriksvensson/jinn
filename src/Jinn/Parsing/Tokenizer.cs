@@ -5,7 +5,7 @@ namespace Jinn;
 public static class Tokenizer
 {
     public static List<Token> Tokenize(
-        string args, CommandContainer root)
+        string args, Command root)
     {
         return Tokenize(
             StringSplitter.Split(args).ToArray(),
@@ -14,7 +14,7 @@ public static class Tokenizer
 
     public static List<Token> Tokenize(
         string[] args,
-        CommandContainer root)
+        Command root)
     {
         var currentSymbol = (Symbol)root;
         var knownSymbols = root.GetOwnedSymbols().GetSymbolDictionary();

@@ -36,7 +36,7 @@ public readonly struct Arity : IEquatable<Arity>
             return ZeroOrOne;
         }
 
-        if (type.IsAssignableFrom(typeof(ICollection)))
+        if (type.IsAssignableTo(typeof(ICollection)))
         {
             return ZeroOrMore;
         }

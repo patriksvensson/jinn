@@ -1,15 +1,14 @@
 namespace Jinn;
 
-public class Option : Symbol
+public abstract class Option : Symbol
 {
     public HashSet<string> Aliases { get; init; } = [];
-    public Arity Arity { get; init; }
-    public Type ValueType { get; }
+    public Arity Arity => Argument.Arity;
+    public Type ValueType => Argument.ValueType;
+    public abstract Argument Argument { get; }
 
-    protected Option(Type valueType, string name)
+    protected Option(string name)
     {
-        ValueType = valueType;
-        Arity = Arity.Resolve(valueType);
         Aliases.Add(name);
     }
 
@@ -26,8 +25,13 @@ public class Option : Symbol
 
 public sealed class Option<T> : Option
 {
+    private readonly Argument<T> _argument;
+
+    public override Argument Argument => _argument;
+
     public Option(string name)
-        : base(typeof(T), name)
+        : base(name)
     {
+        _argument = new Argument<T>(name);
     }
 }
