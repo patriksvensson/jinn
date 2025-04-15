@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public sealed class Command
 {
     public string Name { get; }
@@ -29,20 +30,16 @@ public sealed class Command
     }
 }
 
+[PublicAPI]
 public sealed class RootCommand
 {
-    public string Name { get; }
+    public string Name { get; } = "<root>";
     public string? Description { get; set; }
     public bool Hidden { get; set; }
 
     public List<Command> Commands { get; init; } = [];
     public List<Argument> Arguments { get; init; } = [];
     public List<Option> Options { get; init; } = [];
-
-    public RootCommand()
-    {
-        Name = "<root>";
-    }
 
     internal CommandSymbol CreateSymbol()
     {

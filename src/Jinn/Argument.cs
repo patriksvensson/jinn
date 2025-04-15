@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public class Argument
 {
     public string Name { get; }
@@ -26,6 +27,7 @@ public class Argument
     }
 }
 
+[PublicAPI]
 public sealed class Argument<T> : Argument
 {
     public Argument(string name)

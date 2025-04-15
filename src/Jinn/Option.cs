@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public class Option
 {
     public HashSet<string> Aliases { get; init; } = [];
@@ -34,6 +35,7 @@ public class Option
     }
 }
 
+[PublicAPI]
 public sealed class Option<T> : Option
 {
     public Option(string name)

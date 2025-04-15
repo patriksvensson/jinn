@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public readonly struct Arity : IEquatable<Arity>
 {
     public int Minimum { get; }
