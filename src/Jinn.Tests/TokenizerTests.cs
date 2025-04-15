@@ -117,4 +117,29 @@ public class TokenizerTests
         // Then
         result.ShouldHaveTokens(expected);
     }
+
+
+    [Fact]
+    public void Should_Tokenize_Sub_Commands_Correctly()
+    {
+        // Givenn
+        var command = new Command("foo");
+        command.Arguments.Add(new Argument<string>("<FOO>"));
+        command.Options.Add(new Option<int>("--lol"));
+        command.Options.Add(new Option<bool>("--bar"));
+
+        var command2 = new Command("bar");
+        command2.Options.Add(new Option<bool>("--corgi"));
+        command.Commands.Add(command2);
+
+        var root = new RootCommand(command);
+
+        // When
+        var result = Tokenizer.Tokenize("foo root --bar --lol qux bar --corgi", root);
+
+        // Then
+        result.ShouldHaveTokens(
+            "(Command)foo (Argument)root (Option)--bar (Option)--lol (OptionArgument)qux " +
+            "(Command)bar (Option)--corgi");
+    }
 }
