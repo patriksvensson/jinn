@@ -7,5 +7,4 @@ public enum TokenType
     Option,
     OptionArgument,
     Separator,
-    Directive,
 }

@@ -41,6 +41,15 @@ public sealed class RootCommand
     public List<Argument> Arguments { get; init; } = [];
     public List<Option> Options { get; init; } = [];
 
+    public RootCommand()
+    {
+    }
+
+    public RootCommand(params Command[] commands)
+    {
+        Commands.AddRange(commands);
+    }
+
     internal CommandSymbol CreateSymbol()
     {
         return new CommandSymbol

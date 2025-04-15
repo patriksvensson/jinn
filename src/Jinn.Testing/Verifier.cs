@@ -21,7 +21,7 @@ public static class Verifier
         result.Trim('[', ']').Trim().ShouldBe(expected.Trim());
     }
 
-    public static void ShouldHaveTokens(this List<Token> tokens, string expected)
+    public static void ShouldHaveTokens(this IReadOnlyList<Token> tokens, string expected)
     {
         var builder = new StringBuilder();
         foreach (var token in tokens)

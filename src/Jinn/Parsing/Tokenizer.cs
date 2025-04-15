@@ -2,194 +2,131 @@ namespace Jinn;
 
 public static class Tokenizer
 {
-    public static List<Token> Tokenize(string[] args, RootCommand root)
+    public static IReadOnlyList<Token> Tokenize(string args, RootCommand root)
+    {
+        return Tokenize(StringSplitter.Split(args), root.CreateSymbol());
+    }
+
+    public static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, RootCommand root)
     {
         return Tokenize(args, root.CreateSymbol());
     }
 
-    public static List<Token> Tokenize(string args, RootCommand root)
+    private static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, CommandSymbol root)
     {
-        return Tokenize(
-            StringSplitter.Split(args).ToArray(),
-            root.CreateSymbol());
-    }
+        var context = new TokenizerContext(root, args);
 
-    private static List<Token> Tokenize(
-        string[] args,
-        CommandSymbol root)
-    {
-        var currentSymbol = (Symbol)root;
-        var knownSymbols = GetCommandChildren(root);
-        var tokens = new List<Token>();
-
-        foreach (var (arg, index) in args.Select((a, b) => (a, b)))
+        while (context.Read(out var arg))
         {
-            // Something known?
-            if (knownSymbols.TryGetValue(arg, out var symbol))
+            // Is the current argument a known symbol?
+            if (context.TryGetSymbol(arg, out var symbol))
             {
-                if (symbol is CommandSymbol)
+                if (symbol is CommandSymbol command)
                 {
-                    tokens.Add(new Token(TokenType.Command, symbol, index, arg));
-                    knownSymbols = GetCommandChildren(root);
-                    currentSymbol = symbol;
+                    context.AddToken(TokenType.Command, command, arg);
+                    context.SetCurrentCommand(command);
+                    continue;
                 }
-                else if (symbol is OptionSymbol)
+
+                if (symbol is OptionSymbol)
                 {
-                    tokens.Add(new Token(TokenType.Option, symbol, index, arg));
+                    context.AddToken(TokenType.Option, symbol, arg);
+                    continue;
                 }
-                else
-                {
-                    throw new InvalidOperationException("Unhandled symbol");
-                }
+
+                throw new InvalidOperationException("Unhandled symbol");
             }
-            else
+
+            // A valid option in the foo=bar or foo:bar form?
+            if (TrySplitArgumentIntoTokens(context, arg))
             {
-                if (TrySplitArgumentIntoOption(knownSymbols, arg, out var splitResult))
-                {
-                    // A valid option in the foo=bar or foo:bar form
-                    tokens.AddRange(splitResult);
-                }
-                else if (TryUnbundleOptions(knownSymbols, arg, index, out var unbundleResult))
-                {
-                    // A valid option in the foo=bar or foo:bar form
-                    tokens.AddRange(unbundleResult);
-                }
-                else if (tokens.Count > 0 && tokens[^1].Type == TokenType.Option &&
-                         tokens[^1].Symbol is OptionSymbol { Argument.Arity.Minimum: > 0 } option)
-                {
-                    // Previous argument was an option requiring one or more values?
-                    tokens.Add(new Token(TokenType.OptionArgument, option, index, arg));
-                }
-                else
-                {
-                    // Not known at all, so treat it as an argument
-                    tokens.Add(new Token(TokenType.Argument, null, index, arg));
-                }
+                continue;
             }
+
+            // A valid option in -abc form that needs to be unbundled?
+            if (TryUnbundleOptionsNew(context, arg))
+            {
+                continue;
+            }
+
+            // Previous argument was an option requiring one or more values?
+            if (TryAddOptionValue(context, arg))
+            {
+                continue;
+            }
+
+            // Not known at all, so treat it as an argument
+            context.AddToken(TokenType.Argument, null, arg);
         }
 
-        return tokens;
+        return context.Tokens;
     }
 
-    private static bool TrySplitArgumentIntoOption(
-        IDictionary<string, Symbol> knownSymbols, string arg,
-        [NotNullWhen(true)] out List<Token>? result)
+    private static bool TrySplitArgumentIntoTokens(
+        TokenizerContext context, string arg)
     {
         var index = arg.AsSpan().IndexOfAny(':', '=');
         if (index == -1)
         {
-            result = null;
             return false;
         }
 
         var option = arg.Substring(0, index);
-        if (!knownSymbols.TryGetValue(option, out var optionSymbol))
+        if (!context.TryGetSymbol<OptionSymbol>(option, out var optionSymbol))
         {
-            result = null;
             return false;
         }
 
-        result = new List<Token>();
-        result.Add(new Token(TokenType.Option, optionSymbol, index, option));
+        context.AddToken(TokenType.Option, optionSymbol, option);
 
         var value = arg.Substring(index + 1);
         if (value.Length != 0)
         {
-            result.Add(new Token(TokenType.OptionArgument, optionSymbol, index, value));
+            context.AddToken(TokenType.OptionArgument, optionSymbol, value);
         }
 
         return true;
     }
 
-    private static bool TryUnbundleOptions(
-        IDictionary<string, Symbol> knownSymbols,
-        string arg, int position,
-        [NotNullWhen(true)] out List<Token>? result)
+    private static bool TryUnbundleOptionsNew(
+        TokenizerContext context, string arg)
     {
         if (arg.Length <= 1 || arg[0] != '-')
         {
-            result = null;
             return false;
         }
 
         if (arg[1] == '-')
         {
-            result = null;
             return false;
         }
 
-        result = new List<Token>();
         foreach (var (character, index) in arg.Skip(1).Select((a, b) => (a, b + 1)))
         {
-            if (knownSymbols.TryGetValue($"-{character}", out var optionSymbol))
+            var optionName = $"-{character}";
+            if (context.TryGetSymbol<OptionSymbol>(optionName, out var optionSymbol))
             {
-                result.Add(new Token(TokenType.Option, optionSymbol, position, $"-{character}"));
-            }
-            else
-            {
-                result.Add(new Token(TokenType.Argument, null, position, arg.Substring(index)));
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    private static IDictionary<string, Symbol> GetCommandChildren(CommandSymbol command)
-    {
-        var result = new Dictionary<string, Symbol>(StringComparer.Ordinal);
-
-        foreach (var symbol in command.GetChildren())
-        {
-            if (symbol is ArgumentSymbol)
-            {
+                context.AddToken(TokenType.Option, optionSymbol, optionName);
                 continue;
             }
 
-            foreach (var name in symbol.GetNames())
-            {
-                result[name] = symbol;
-            }
+            context.AddToken(TokenType.Argument, null, arg.Substring(index));
+            return true;
         }
 
-        return result;
-    }
-}
-
-internal sealed class TokenizerContext
-{
-    private readonly string[] _args;
-    private readonly List<Token> _result;
-    private int _index;
-
-    public bool ReachedEnd => Index >= _args.Length;
-    public string Argument => _args[Index];
-    public int Index => 0;
-
-    public TokenizerContext(string[] args)
-    {
-        _args = args ?? [];
-        _result = [];
-    }
-
-    public bool MoveNext()
-    {
-        if (ReachedEnd)
-        {
-            return false;
-        }
-
-        _index++;
         return true;
     }
 
-    public IEnumerable<(string Argument, int Index)> GetArguments()
+    private static bool TryAddOptionValue(TokenizerContext context, string arg)
     {
-        return _args.Select((a, b) => (Argument: a, Index: b));
-    }
+        if (context.Tokens.Count > 0 &&
+            context.Tokens[^1].Type == TokenType.Option &&
+            context.Tokens[^1].Symbol is OptionSymbol { Argument.Arity.Minimum: > 0 } option)
+        {
+            context.AddToken(TokenType.OptionArgument, option, arg);
+            return true;
+        }
 
-    public void AddToken(CommandSymbol command, string arg)
-    {
-        _result.Add(new Token(TokenType.Command, command, Index, arg));
+        return false;
     }
 }
