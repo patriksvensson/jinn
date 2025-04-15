@@ -1,12 +1,12 @@
 # Jinn
 
-An experiment to build a flexible, POSIX compliant, AOT friendly, command line parser to later be used as 
-the base for `Spectre.Console.Cli`.
+An experiment to build a minimal, performant, AOT compliant, 
+command line parser to later be used as the base for Spectre.Console.Cli 
 
-Very much inspired by `System.CommandLine`.
+Based on and inspired by the fantastic `System.CommandLine`.
 
 > [!NOTE]  
-> Not usable at all in the current state :)
+> Not at all usable in the current state
 
 ## Building
 
