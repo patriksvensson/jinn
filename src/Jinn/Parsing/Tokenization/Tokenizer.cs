@@ -13,6 +13,21 @@ public static class Tokenizer
 
         while (context.Read(out var arg))
         {
+            // Have we encountered a double dash (--)?
+            // In that case, treat everything else as an argument
+            if (context.HasEncounteredDoubleDash)
+            {
+                context.AddToken(TokenType.Argument, null, arg);
+                continue;
+            }
+
+            // Is this a double dash?
+            if (arg == "--")
+            {
+                context.AddToken(TokenType.DoubleDash, null, arg);
+                continue;
+            }
+
             // Is the current argument a known symbol?
             if (context.TryGetSymbol(arg, out var symbol))
             {

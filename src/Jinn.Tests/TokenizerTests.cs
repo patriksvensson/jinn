@@ -108,6 +108,35 @@ public class TokenizerTests
             "(Option)-a (Option)-c");
     }
 
+    [Fact]
+    public void Should_Acknowledge_Double_Dash()
+    {
+        // Given
+        var command = new RootCommand();
+
+        // When
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, "--");
+
+        // Then
+        result.ShouldHaveTokens("(DoubleDash)--");
+    }
+
+    [Fact]
+    public void Should_Treat_Everything_After_Double_Dash_As_Arguments()
+    {
+        // Given
+        var command = new RootCommand();
+        command.Options.Add(new Option<int>("--lol"));
+
+        // When
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, "-- --lol");
+
+        // Then
+        result.ShouldHaveTokens("(DoubleDash)-- (Argument)--lol");
+    }
+
     [Theory]
     [InlineData("-abf", "(Option)-a (Option)-b (Argument)f")]
     [InlineData("-afg", "(Option)-a (Argument)fg")]

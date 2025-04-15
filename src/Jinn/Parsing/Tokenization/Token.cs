@@ -22,3 +22,12 @@ public sealed class Token
             ? $"{Type}: \"{Value}\"" : $"{Type}";
     }
 }
+
+public enum TokenType
+{
+    Command,
+    Argument,
+    Option,
+    OptionArgument,
+    DoubleDash,
+}

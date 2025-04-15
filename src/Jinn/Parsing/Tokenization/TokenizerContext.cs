@@ -7,9 +7,11 @@ internal sealed class TokenizerContext
     private readonly List<Token> _tokens;
     private int _index;
     private int _position;
+    private bool _hasEncounteredDoubleDash;
 
     public IReadOnlyList<Token> Tokens => _tokens;
     public int Position => _position;
+    public bool HasEncounteredDoubleDash => _hasEncounteredDoubleDash;
 
     public TokenizerContext(CommandSymbol root, IEnumerable<string> args)
     {
@@ -42,6 +44,11 @@ internal sealed class TokenizerContext
 
     public void AddToken(TokenType type, Symbol? symbol, string text, TextSpan? span = null)
     {
+        if (type == TokenType.DoubleDash)
+        {
+            _hasEncounteredDoubleDash = true;
+        }
+
         _tokens.Add(new Token(type, symbol, span ?? new TextSpan(Position, text.Length), text));
     }
 
