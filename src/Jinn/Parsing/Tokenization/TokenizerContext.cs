@@ -2,7 +2,7 @@
 
 internal sealed class TokenizerContext
 {
-    private readonly Dictionary<string, Symbol> _known;
+    private readonly Dictionary<string, Symbol> _symbols;
     private readonly string[] _args;
     private readonly List<Token> _tokens;
     private int _index;
@@ -13,7 +13,7 @@ internal sealed class TokenizerContext
 
     public TokenizerContext(CommandSymbol root, IEnumerable<string> args)
     {
-        _known = new Dictionary<string, Symbol>(StringComparer.Ordinal);
+        _symbols = new Dictionary<string, Symbol>(StringComparer.Ordinal);
         _args = args.ToArray();
         _tokens = [];
         _index = -1;
@@ -47,7 +47,7 @@ internal sealed class TokenizerContext
 
     public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
     {
-        if (_known.TryGetValue(name, out result))
+        if (_symbols.TryGetValue(name, out result))
         {
             return true;
         }
@@ -70,19 +70,29 @@ internal sealed class TokenizerContext
 
     public void SetCurrentCommand(CommandSymbol current)
     {
-        _known.Clear();
+        _symbols.Clear();
 
         foreach (var command in current.Commands)
         {
-            _known[command.Name] = command;
+            _symbols[command.Name] = command;
         }
 
         foreach (var option in current.Options)
         {
             foreach (var alias in option.Aliases)
             {
-                _known[alias] = option;
+                _symbols[alias] = option;
             }
         }
+    }
+
+    public TokenizeResult CreateResult()
+    {
+        return new TokenizeResult
+        {
+            Raw = string.Join(" ", _args),
+            Arguments = _args,
+            Tokens = _tokens,
+        };
     }
 }

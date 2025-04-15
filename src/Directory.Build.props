@@ -1,6 +1,5 @@
 <Project>
   <PropertyGroup Label="Settings">
-    <TargetFramework>net9.0</TargetFramework>
     <LangVersion>13</LangVersion>
     <ImplicitUsings>true</ImplicitUsings>
     <Deterministic>true</Deterministic>

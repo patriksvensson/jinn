@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <IsAotCompatible>true</IsAotCompatible>
-    <StripSymbols>false</StripSymbols>
+    <TargetFramework>net9.0</TargetFramework>
     <IsPackable>true</IsPackable>
+    <IsTrimmable>true</IsTrimmable>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
   </PropertyGroup>
 
   <ItemGroup>

@@ -12,7 +12,8 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<string>("<FOO>"));
 
         // When
-        var result = TokenizerFixture.Tokenize(command, "foo");
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, "foo");
 
         // Then
         result.ShouldHaveTokens("(Argument)foo");
@@ -26,7 +27,8 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<List<string>>("<FOO>"));
 
         // When
-        var result = TokenizerFixture.Tokenize(command, "foo");
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, "foo");
 
         // Then
         result.ShouldHaveTokens("(Argument)foo");
@@ -45,7 +47,8 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<string>("<FOO>") { Arity = new Arity(min, max) });
 
         // When
-        var result = TokenizerFixture.Tokenize(command, "foo bar");
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, "foo bar");
 
         // Then
         result.ShouldHaveTokens("(Argument)foo (Argument)bar");
@@ -62,7 +65,8 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = TokenizerFixture.Tokenize(command, args);
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, args);
 
         // Then
         result.ShouldHaveTokens(expected);
@@ -78,7 +82,8 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = TokenizerFixture.Tokenize(command, args);
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, args);
 
         // Then
         result.ShouldHaveTokens(
@@ -95,7 +100,8 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = TokenizerFixture.Tokenize(command, "-ac");
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, "-ac");
 
         // Then
         result.ShouldHaveTokens(
@@ -114,7 +120,8 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = TokenizerFixture.Tokenize(command, args);
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            command, args);
 
         // Then
         result.ShouldHaveTokens(expected);
@@ -136,7 +143,8 @@ public class TokenizerTests
         var root = new RootCommand(command);
 
         // When
-        var result = TokenizerFixture.Tokenize(root, "foo root --bar --lol qux bar --corgi");
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            root, "foo root --bar --lol qux bar --corgi");
 
         // Then
         result.ShouldHaveTokens(
@@ -163,7 +171,8 @@ public class TokenizerTests
         var root = new RootCommand(command);
 
         // When
-        var result = TokenizerFixture.Tokenize(root, "foo root --bar -abf --lol qux bar --corgi");
+        var result = TokenizerFixture.TokenizeAndReturnTokens(
+            root, "foo root --bar -abf --lol qux bar --corgi");
 
         // Then
         result.Count.ShouldBe(10);

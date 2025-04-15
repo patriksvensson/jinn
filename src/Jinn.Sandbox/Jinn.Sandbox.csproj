@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <PublishAot>true</PublishAot>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Jinn\Jinn.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jinn\Jinn.csproj"/>
+  </ItemGroup>
 
 </Project>

@@ -2,12 +2,12 @@ namespace Jinn;
 
 public static class Tokenizer
 {
-    public static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, RootCommand root)
+    public static TokenizeResult Tokenize(IEnumerable<string> args, RootCommand root)
     {
         return Tokenize(args, root.CreateSymbol());
     }
 
-    private static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, CommandSymbol root)
+    private static TokenizeResult Tokenize(IEnumerable<string> args, CommandSymbol root)
     {
         var context = new TokenizerContext(root, args);
 
@@ -54,7 +54,7 @@ public static class Tokenizer
             context.AddToken(TokenType.Argument, null, arg);
         }
 
-        return context.Tokens;
+        return context.CreateResult();
     }
 
     private static bool TrySplitArgumentIntoTokens(
