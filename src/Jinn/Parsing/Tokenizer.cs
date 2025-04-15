@@ -2,11 +2,6 @@ namespace Jinn;
 
 public static class Tokenizer
 {
-    public static IReadOnlyList<Token> Tokenize(string args, RootCommand root)
-    {
-        return Tokenize(StringSplitter.Split(args), root.CreateSymbol());
-    }
-
     public static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, RootCommand root)
     {
         return Tokenize(args, root.CreateSymbol());
@@ -21,20 +16,20 @@ public static class Tokenizer
             // Is the current argument a known symbol?
             if (context.TryGetSymbol(arg, out var symbol))
             {
-                if (symbol is CommandSymbol command)
+                switch (symbol)
                 {
-                    context.AddToken(TokenType.Command, command, arg);
-                    context.SetCurrentCommand(command);
-                    continue;
-                }
+                    case CommandSymbol command:
+                        context.AddToken(TokenType.Command, command, arg);
+                        context.SetCurrentCommand(command);
+                        continue;
 
-                if (symbol is OptionSymbol)
-                {
-                    context.AddToken(TokenType.Option, symbol, arg);
-                    continue;
-                }
+                    case OptionSymbol:
+                        context.AddToken(TokenType.Option, symbol, arg);
+                        continue;
 
-                throw new InvalidOperationException("Unhandled symbol");
+                    default:
+                        throw new InvalidOperationException("Unhandled symbol");
+                }
             }
 
             // A valid option in the foo=bar or foo:bar form?
@@ -79,7 +74,7 @@ public static class Tokenizer
 
         context.AddToken(TokenType.Option, optionSymbol, option);
 
-        var value = arg.Substring(index + 1);
+        var value = arg[(index + 1)..];
         if (value.Length != 0)
         {
             context.AddToken(TokenType.OptionArgument, optionSymbol, value);
@@ -104,14 +99,16 @@ public static class Tokenizer
         foreach (var (character, index) in arg.Skip(1).Select((a, b) => (a, b + 1)))
         {
             var optionName = $"-{character}";
-            if (context.TryGetSymbol<OptionSymbol>(optionName, out var optionSymbol))
+            if (!context.TryGetSymbol<OptionSymbol>(optionName, out var optionSymbol))
             {
-                context.AddToken(TokenType.Option, optionSymbol, optionName);
-                continue;
+                var argument = arg[index..];
+                var argumentSpan = new TextSpan(context.Position + index, argument.Length);
+                context.AddToken(TokenType.Argument, null, argument, argumentSpan);
+                return true;
             }
 
-            context.AddToken(TokenType.Argument, null, arg.Substring(index));
-            return true;
+            var optionSpan = new TextSpan(context.Position + index, 1);
+            context.AddToken(TokenType.Option, optionSymbol, optionName, optionSpan);
         }
 
         return true;
@@ -119,14 +116,14 @@ public static class Tokenizer
 
     private static bool TryAddOptionValue(TokenizerContext context, string arg)
     {
-        if (context.Tokens.Count > 0 &&
-            context.Tokens[^1].Type == TokenType.Option &&
-            context.Tokens[^1].Symbol is OptionSymbol { Argument.Arity.Minimum: > 0 } option)
+        if (context.Tokens.Count == 0 ||
+            context.Tokens[^1].Type != TokenType.Option ||
+            context.Tokens[^1].Symbol is not OptionSymbol { Argument.Arity.Minimum: > 0 } option)
         {
-            context.AddToken(TokenType.OptionArgument, option, arg);
-            return true;
+            return false;
         }
 
-        return false;
+        context.AddToken(TokenType.OptionArgument, option, arg);
+        return true;
     }
 }

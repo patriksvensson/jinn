@@ -1,3 +1,5 @@
+using Shouldly;
+
 namespace Jinn.Tests;
 
 public class TokenizerTests
@@ -10,7 +12,7 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<string>("<FOO>"));
 
         // When
-        var result = Tokenizer.Tokenize("foo", command);
+        var result = TokenizerFixture.Tokenize(command, "foo");
 
         // Then
         result.ShouldHaveTokens("(Argument)foo");
@@ -24,7 +26,7 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<List<string>>("<FOO>"));
 
         // When
-        var result = Tokenizer.Tokenize("foo", command);
+        var result = TokenizerFixture.Tokenize(command, "foo");
 
         // Then
         result.ShouldHaveTokens("(Argument)foo");
@@ -43,7 +45,7 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<string>("<FOO>") { Arity = new Arity(min, max) });
 
         // When
-        var result = Tokenizer.Tokenize("foo bar", command);
+        var result = TokenizerFixture.Tokenize(command, "foo bar");
 
         // Then
         result.ShouldHaveTokens("(Argument)foo (Argument)bar");
@@ -60,7 +62,7 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = Tokenizer.Tokenize(args, command);
+        var result = TokenizerFixture.Tokenize(command, args);
 
         // Then
         result.ShouldHaveTokens(expected);
@@ -72,11 +74,11 @@ public class TokenizerTests
     public void Should_Split_Argument_Values(string args)
     {
         // Given
-        var root = new RootCommand();
-        root.Options.Add(new Option<int>("--lol"));
+        var command = new RootCommand();
+        command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = Tokenizer.Tokenize(args, root);
+        var result = TokenizerFixture.Tokenize(command, args);
 
         // Then
         result.ShouldHaveTokens(
@@ -87,13 +89,13 @@ public class TokenizerTests
     public void Should_Unbundle_Options()
     {
         // Given
-        var root = new RootCommand();
-        root.Options.Add(new Option<int>("-a"));
-        root.Options.Add(new Option<int>("-b"));
-        root.Options.Add(new Option<int>("-c"));
+        var command = new RootCommand();
+        command.Options.Add(new Option<int>("-a"));
+        command.Options.Add(new Option<int>("-b"));
+        command.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = Tokenizer.Tokenize("-ac", root);
+        var result = TokenizerFixture.Tokenize(command, "-ac");
 
         // Then
         result.ShouldHaveTokens(
@@ -106,23 +108,22 @@ public class TokenizerTests
     public void Should_Unbundle_Options_And_Treat_Unknown_Part_As_Argument(string args, string expected)
     {
         // Given
-        var root = new RootCommand();
-        root.Options.Add(new Option<int>("-a"));
-        root.Options.Add(new Option<int>("-b"));
-        root.Options.Add(new Option<int>("-c"));
+        var command = new RootCommand();
+        command.Options.Add(new Option<int>("-a"));
+        command.Options.Add(new Option<int>("-b"));
+        command.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = Tokenizer.Tokenize(args, root);
+        var result = TokenizerFixture.Tokenize(command, args);
 
         // Then
         result.ShouldHaveTokens(expected);
     }
 
-
     [Fact]
     public void Should_Tokenize_Sub_Commands_Correctly()
     {
-        // Givenn
+        // Given
         var command = new Command("foo");
         command.Arguments.Add(new Argument<string>("<FOO>"));
         command.Options.Add(new Option<int>("--lol"));
@@ -135,11 +136,56 @@ public class TokenizerTests
         var root = new RootCommand(command);
 
         // When
-        var result = Tokenizer.Tokenize("foo root --bar --lol qux bar --corgi", root);
+        var result = TokenizerFixture.Tokenize(root, "foo root --bar --lol qux bar --corgi");
 
         // Then
         result.ShouldHaveTokens(
             "(Command)foo (Argument)root (Option)--bar (Option)--lol (OptionArgument)qux " +
             "(Command)bar (Option)--corgi");
+    }
+
+    [Fact]
+    public void Should_Preserve_Positions_In_Token()
+    {
+        // Given
+        var command = new Command("foo");
+        command.Arguments.Add(new Argument<string>("<FOO>"));
+        command.Options.Add(new Option<bool>("--bar"));
+        command.Options.Add(new Option<bool>("-a"));
+        command.Options.Add(new Option<bool>("-b"));
+        command.Options.Add(new Option<bool>("-c"));
+        command.Options.Add(new Option<int>("--lol"));
+
+        var command2 = new Command("bar");
+        command2.Options.Add(new Option<bool>("--corgi"));
+        command.Commands.Add(command2);
+
+        var root = new RootCommand(command);
+
+        // When
+        var result = TokenizerFixture.Tokenize(root, "foo root --bar -abf --lol qux bar --corgi");
+
+        // Then
+        result.Count.ShouldBe(10);
+        result[0].Span.Position.ShouldBe(0);
+        result[0].Span.Length.ShouldBe(3);
+        result[1].Span.Position.ShouldBe(4);
+        result[1].Span.Length.ShouldBe(4);
+        result[2].Span.Position.ShouldBe(9);
+        result[2].Span.Length.ShouldBe(5);
+        result[3].Span.Position.ShouldBe(16);
+        result[3].Span.Length.ShouldBe(1);
+        result[4].Span.Position.ShouldBe(17);
+        result[4].Span.Length.ShouldBe(1);
+        result[5].Span.Position.ShouldBe(18);
+        result[5].Span.Length.ShouldBe(1);
+        result[6].Span.Position.ShouldBe(20);
+        result[6].Span.Length.ShouldBe(5);
+        result[7].Span.Position.ShouldBe(26);
+        result[7].Span.Length.ShouldBe(3);
+        result[8].Span.Position.ShouldBe(30);
+        result[8].Span.Length.ShouldBe(3);
+        result[9].Span.Position.ShouldBe(34);
+        result[9].Span.Length.ShouldBe(7);
     }
 }

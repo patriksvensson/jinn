@@ -5,14 +5,14 @@ public sealed class Token
 {
     public TokenType Type { get; }
     public Symbol? Symbol { get; }
-    public int Position { get; }
+    public TextSpan Span { get; }
     public string Value { get; }
 
-    public Token(TokenType type, Symbol? symbol, int position, string? value)
+    public Token(TokenType type, Symbol? symbol, TextSpan span, string? value)
     {
         Type = type;
         Symbol = symbol;
-        Position = position;
+        Span = span;
         Value = value ?? string.Empty;
     }
 
