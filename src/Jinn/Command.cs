@@ -1,8 +1,10 @@
 namespace Jinn;
 
-public sealed class Command : Symbol
+public sealed class Command
 {
     public string Name { get; }
+    public string? Description { get; set; }
+    public bool Hidden { get; set; }
 
     public List<Command> Commands { get; init; } = [];
     public List<Argument> Arguments { get; init; } = [];
@@ -13,26 +15,45 @@ public sealed class Command : Symbol
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public override IEnumerable<Symbol> GetOwnedSymbols()
+    internal CommandSymbol CreateSymbol()
     {
-        foreach (var command in Commands)
+        return new CommandSymbol
         {
-            yield return command;
-        }
+            Name = Name,
+            Description = Description,
+            Hidden = Hidden,
+            Commands = Commands.ConvertAll(x => x.CreateSymbol()),
+            Arguments = Arguments.ConvertAll(x => x.CreateSymbol()),
+            Options = Options.ConvertAll(x => x.CreateSymbol()),
+        };
+    }
+}
 
-        foreach (var argument in Arguments)
-        {
-            yield return argument;
-        }
+public sealed class RootCommand
+{
+    public string Name { get; }
+    public string? Description { get; set; }
+    public bool Hidden { get; set; }
 
-        foreach (var option in Options)
-        {
-            yield return option;
-        }
+    public List<Command> Commands { get; init; } = [];
+    public List<Argument> Arguments { get; init; } = [];
+    public List<Option> Options { get; init; } = [];
+
+    public RootCommand()
+    {
+        Name = "<root>";
     }
 
-    public override IEnumerable<string> GetNames()
+    internal CommandSymbol CreateSymbol()
     {
-        yield return Name;
+        return new CommandSymbol
+        {
+            Name = Name,
+            Description = Description,
+            Hidden = Hidden,
+            Commands = Commands.ConvertAll(x => x.CreateSymbol()),
+            Arguments = Arguments.ConvertAll(x => x.CreateSymbol()),
+            Options = Options.ConvertAll(x => x.CreateSymbol()),
+        };
     }
 }

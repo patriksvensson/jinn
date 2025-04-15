@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace Jinn;
 
 public readonly struct Arity : IEquatable<Arity>
@@ -10,8 +8,8 @@ public readonly struct Arity : IEquatable<Arity>
     public static Arity Zero => new(0, 0);
     public static Arity ZeroOrOne => new(0, 1);
     public static Arity ExactlyOne => new(1, 1);
-    public static Arity ZeroOrMore => new(0, 255);
-    public static Arity OneOrMore => new(1, 255);
+    public static Arity ZeroOrMore => new(0, int.MaxValue);
+    public static Arity OneOrMore => new(1, int.MaxValue);
 
     public Arity(int minimum, int maximum)
     {
@@ -29,6 +27,11 @@ public readonly struct Arity : IEquatable<Arity>
         Maximum = maximum;
     }
 
+    public static Arity Exactly(int count)
+    {
+        return new Arity(count, count);
+    }
+
     public static Arity Resolve(Type type)
     {
         if (type == typeof(bool))
@@ -36,7 +39,12 @@ public readonly struct Arity : IEquatable<Arity>
             return ZeroOrOne;
         }
 
-        if (type.IsAssignableFrom(typeof(ICollection)))
+        if (Nullable.GetUnderlyingType(type) != null)
+        {
+            return ZeroOrOne;
+        }
+
+        if (type.IsAssignableTo(typeof(ICollection)))
         {
             return ZeroOrMore;
         }

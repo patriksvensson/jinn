@@ -1,23 +1,25 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Jinn;
 
 public static class Tokenizer
 {
-    public static List<Token> Tokenize(
-        string args, CommandContainer root)
+    public static List<Token> Tokenize(string[] args, RootCommand root)
+    {
+        return Tokenize(args, root.CreateSymbol());
+    }
+
+    public static List<Token> Tokenize(string args, RootCommand root)
     {
         return Tokenize(
             StringSplitter.Split(args).ToArray(),
-            root);
+            root.CreateSymbol());
     }
 
-    public static List<Token> Tokenize(
+    private static List<Token> Tokenize(
         string[] args,
-        CommandContainer root)
+        CommandSymbol root)
     {
         var currentSymbol = (Symbol)root;
-        var knownSymbols = root.GetOwnedSymbols().GetSymbolDictionary();
+        var knownSymbols = GetCommandChildren(root);
         var tokens = new List<Token>();
 
         foreach (var (arg, index) in args.Select((a, b) => (a, b)))
@@ -25,13 +27,13 @@ public static class Tokenizer
             // Something known?
             if (knownSymbols.TryGetValue(arg, out var symbol))
             {
-                if (symbol is Command)
+                if (symbol is CommandSymbol)
                 {
                     tokens.Add(new Token(TokenType.Command, symbol, index, arg));
-                    knownSymbols = symbol.GetOwnedSymbols().GetSymbolDictionary();
+                    knownSymbols = GetCommandChildren(root);
                     currentSymbol = symbol;
                 }
-                else if (symbol is Option)
+                else if (symbol is OptionSymbol)
                 {
                     tokens.Add(new Token(TokenType.Option, symbol, index, arg));
                 }
@@ -53,7 +55,7 @@ public static class Tokenizer
                     tokens.AddRange(unbundleResult);
                 }
                 else if (tokens.Count > 0 && tokens[^1].Type == TokenType.Option &&
-                         tokens[^1].Symbol is Option { Arity.Minimum: > 0 } option)
+                         tokens[^1].Symbol is OptionSymbol { Argument.Arity.Minimum: > 0 } option)
                 {
                     // Previous argument was an option requiring one or more values?
                     tokens.Add(new Token(TokenType.OptionArgument, option, index, arg));
@@ -132,12 +134,37 @@ public static class Tokenizer
 
         return true;
     }
+
+    private static IDictionary<string, Symbol> GetCommandChildren(CommandSymbol command)
+    {
+        var result = new Dictionary<string, Symbol>(StringComparer.Ordinal);
+
+        foreach (var symbol in command.GetChildren())
+        {
+            if (symbol is ArgumentSymbol)
+            {
+                continue;
+            }
+
+            foreach (var name in symbol.GetNames())
+            {
+                result[name] = symbol;
+            }
+        }
+
+        return result;
+    }
 }
 
 internal sealed class TokenizerContext
 {
     private readonly string[] _args;
     private readonly List<Token> _result;
+    private int _index;
+
+    public bool ReachedEnd => Index >= _args.Length;
+    public string Argument => _args[Index];
+    public int Index => 0;
 
     public TokenizerContext(string[] args)
     {
@@ -145,8 +172,24 @@ internal sealed class TokenizerContext
         _result = [];
     }
 
+    public bool MoveNext()
+    {
+        if (ReachedEnd)
+        {
+            return false;
+        }
+
+        _index++;
+        return true;
+    }
+
     public IEnumerable<(string Argument, int Index)> GetArguments()
     {
         return _args.Select((a, b) => (Argument: a, Index: b));
+    }
+
+    public void AddToken(CommandSymbol command, string arg)
+    {
+        _result.Add(new Token(TokenType.Command, command, Index, arg));
     }
 }

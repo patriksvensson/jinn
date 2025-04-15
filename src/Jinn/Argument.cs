@@ -1,21 +1,35 @@
 namespace Jinn;
 
-public sealed class Argument : Symbol
+public class Argument
 {
     public string Name { get; }
+    public Arity Arity { get; init; }
+    public Type ValueType { get; }
+    public string? Description { get; set; }
 
-    public Argument(string name)
+    public Argument(Type type, string name)
     {
+        ValueType = type;
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public override IEnumerable<Symbol> GetOwnedSymbols()
+    internal ArgumentSymbol CreateSymbol()
     {
-        yield break;
+        return new ArgumentSymbol
+        {
+            Name = Name,
+            Arity = Arity,
+            ValueType = ValueType,
+            Hidden = false,
+            Description = Description,
+        };
     }
+}
 
-    public override IEnumerable<string> GetNames()
+public sealed class Argument<T> : Argument
+{
+    public Argument(string name)
+        : base(typeof(T), name)
     {
-        yield return Name;
     }
 }
