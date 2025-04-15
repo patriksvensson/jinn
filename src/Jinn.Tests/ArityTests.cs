@@ -1,5 +1,3 @@
-using Shouldly;
-
 namespace Jinn.Tests;
 
 public sealed class ArityTests

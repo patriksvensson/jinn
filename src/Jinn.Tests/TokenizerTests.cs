@@ -1,5 +1,3 @@
-using Shouldly;
-
 namespace Jinn.Tests;
 
 public class TokenizerTests
@@ -204,26 +202,8 @@ public class TokenizerTests
             root, "foo root --bar -abf --lol qux bar --corgi");
 
         // Then
-        result.Count.ShouldBe(10);
-        result[0].Span.Position.ShouldBe(0);
-        result[0].Span.Length.ShouldBe(3);
-        result[1].Span.Position.ShouldBe(4);
-        result[1].Span.Length.ShouldBe(4);
-        result[2].Span.Position.ShouldBe(9);
-        result[2].Span.Length.ShouldBe(5);
-        result[3].Span.Position.ShouldBe(16);
-        result[3].Span.Length.ShouldBe(1);
-        result[4].Span.Position.ShouldBe(17);
-        result[4].Span.Length.ShouldBe(1);
-        result[5].Span.Position.ShouldBe(18);
-        result[5].Span.Length.ShouldBe(1);
-        result[6].Span.Position.ShouldBe(20);
-        result[6].Span.Length.ShouldBe(5);
-        result[7].Span.Position.ShouldBe(26);
-        result[7].Span.Length.ShouldBe(3);
-        result[8].Span.Position.ShouldBe(30);
-        result[8].Span.Length.ShouldBe(3);
-        result[9].Span.Position.ShouldBe(34);
-        result[9].Span.Length.ShouldBe(7);
+        result.ShouldHaveTokenSpans(
+            "(0:3)foo (4:4)root (9:5)--bar (16:1)-a (17:1)-b (18:1)f " +
+            "(20:5)--lol (26:3)qux (30:3)bar (34:7)--corgi");
     }
 }

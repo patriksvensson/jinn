@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Jinn.Testing;
 
 public static class TokenizerFixture
