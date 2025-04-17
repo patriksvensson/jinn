@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 [DebuggerDisplay("Pos={Position,nq}, Len={Length,nq}")]
 public readonly struct TextSpan
 {

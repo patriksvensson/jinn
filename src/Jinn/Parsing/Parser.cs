@@ -1,6 +1,6 @@
 namespace Jinn;
 
-public static class Parser
+internal static class Parser
 {
     public static ParseResult Parse(IEnumerable<string> args, Command root)
     {

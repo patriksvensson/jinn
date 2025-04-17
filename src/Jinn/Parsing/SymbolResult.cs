@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public abstract class SymbolResult
 {
     private readonly SymbolResultTree _tree;
@@ -22,6 +23,7 @@ public abstract class SymbolResult
     }
 }
 
+[PublicAPI]
 public sealed class CommandResult : SymbolResult
 {
     public CommandSymbol Command { get; }
@@ -39,6 +41,7 @@ public sealed class CommandResult : SymbolResult
     }
 }
 
+[PublicAPI]
 public sealed class ArgumentResult : SymbolResult
 {
     public ArgumentSymbol Argument { get; }
@@ -53,6 +56,7 @@ public sealed class ArgumentResult : SymbolResult
     }
 }
 
+[PublicAPI]
 public sealed class OptionResult : SymbolResult
 {
     public OptionSymbol Option { get; }

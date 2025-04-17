@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public sealed class ParseResult
 {
     public required CommandResult Root { get; init; }

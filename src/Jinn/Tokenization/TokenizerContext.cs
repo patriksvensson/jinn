@@ -56,12 +56,7 @@ internal sealed class TokenizerContext
 
     public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
     {
-        if (_symbols.TryGetValue(name, out result))
-        {
-            return true;
-        }
-
-        return false;
+        return _symbols.TryGetValue(name, out result);
     }
 
     public bool TryGetSymbol<T>(string name, [NotNullWhen(true)] out T? result)

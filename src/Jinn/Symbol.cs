@@ -3,6 +3,7 @@ namespace Jinn;
 /// <summary>
 /// Represents a snapshot at the time of parsing.
 /// </summary>
+[PublicAPI]
 public abstract class Symbol
 {
     public string? Description { get; set; }
@@ -12,6 +13,7 @@ public abstract class Symbol
 /// <summary>
 /// Represents a snapshot of an argument at the time of parsing.
 /// </summary>
+[PublicAPI]
 public sealed class ArgumentSymbol : Symbol
 {
     public required string Name { get; init; }
@@ -24,6 +26,7 @@ public sealed class ArgumentSymbol : Symbol
 /// <summary>
 /// Represents a snapshot of a command at the time of parsing.
 /// </summary>
+[PublicAPI]
 public sealed class CommandSymbol : Symbol
 {
     public required string Name { get; init; }
@@ -39,6 +42,7 @@ public sealed class CommandSymbol : Symbol
 /// <summary>
 /// Represents a snapshot of an option at the time of parsing.
 /// </summary>
+[PublicAPI]
 public sealed class OptionSymbol : Symbol
 {
     public required HashSet<string> Aliases { get; init; }

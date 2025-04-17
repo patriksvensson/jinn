@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 [DebuggerDisplay("{GetDebugString(),nq}")]
 public sealed class Token
 {
