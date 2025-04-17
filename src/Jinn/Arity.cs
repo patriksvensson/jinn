@@ -1,6 +1,7 @@
 namespace Jinn;
 
 [PublicAPI]
+[DebuggerDisplay("{GetDebugString(),nq}")]
 public readonly struct Arity : IEquatable<Arity>
 {
     public int Minimum { get; }
@@ -62,5 +63,15 @@ public readonly struct Arity : IEquatable<Arity>
     public override int GetHashCode()
     {
         return HashCode.Combine(Minimum, Maximum);
+    }
+
+    public override string ToString()
+    {
+        return $"{Minimum}:{Maximum}";
+    }
+
+    internal string GetDebugString()
+    {
+        return $"Min:{Minimum}, Max:{Maximum}";
     }
 }

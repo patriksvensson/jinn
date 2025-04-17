@@ -23,15 +23,7 @@ public class Command
 
     internal CommandSymbol CreateSymbol()
     {
-        return new CommandSymbol
-        {
-            Name = Name,
-            Description = Description,
-            Hidden = Hidden,
-            Commands = Commands.ConvertAll(x => x.CreateSymbol()),
-            Arguments = Arguments.ConvertAll(x => x.CreateSymbol()),
-            Options = Options.ConvertAll(x => x.CreateSymbol()),
-        };
+        return new CommandSymbol(this);
     }
 }
 

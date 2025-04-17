@@ -100,14 +100,13 @@ internal static class Parser
         ParseOptionValues(context, optionSymbol);
     }
 
-    private static void ParseOptionValues(ParserContext context, OptionSymbol optionSymbol)
+    private static void ParseOptionValues(ParserContext context, OptionSymbol option)
     {
-        var argument = optionSymbol.Argument;
         var argumentCount = 0;
 
         while (context.IsMatch(TokenType.Argument))
         {
-            if (argumentCount >= argument.Arity.Maximum)
+            if (argumentCount >= option.Arity.Maximum)
             {
                 if (argumentCount > 0)
                 {
@@ -115,22 +114,19 @@ internal static class Parser
                 }
 
                 // This option want no values
-                if (argument.Arity.Maximum == 0)
+                if (option.Arity.Maximum == 0)
                 {
                     break;
                 }
             }
-            else if (argument.IsBoolean() && !bool.TryParse(context.CurrentToken.Value, out _))
+            else if (option.IsBoolean() && !bool.TryParse(context.CurrentToken.Value, out _))
             {
                 // The option value was not a valid boolean identifier.
                 // Since we allow booleans to act as a flag, simply skip it.
                 break;
             }
 
-            argument.Parent ??= optionSymbol;
-            argument.AddToken(context.CurrentToken);
-            optionSymbol.AddToken(context.CurrentToken);
-
+            option.AddToken(context.CurrentToken);
             argumentCount++;
 
             context.ConsumeToken();

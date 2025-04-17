@@ -24,6 +24,7 @@ public sealed class Token
     }
 }
 
+[PublicAPI]
 public enum TokenType
 {
     Command,

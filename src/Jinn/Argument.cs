@@ -17,14 +17,7 @@ public class Argument
 
     internal ArgumentSymbol CreateSymbol()
     {
-        return new ArgumentSymbol
-        {
-            Name = Name,
-            Arity = Arity,
-            ValueType = ValueType,
-            Hidden = false,
-            Description = Description,
-        };
+        return new ArgumentSymbol(this);
     }
 }
 

@@ -19,19 +19,7 @@ public class Option
 
     internal OptionSymbol CreateSymbol()
     {
-        return new OptionSymbol
-        {
-            Aliases = new HashSet<string>(Aliases, StringComparer.Ordinal),
-            Description = Description,
-            Hidden = Hidden,
-            Argument = new ArgumentSymbol
-            {
-                Arity = Arity,
-                Name = "VALUE",
-                Hidden = false,
-                ValueType = ValueType,
-            },
-        };
+        return new OptionSymbol(this);
     }
 }
 

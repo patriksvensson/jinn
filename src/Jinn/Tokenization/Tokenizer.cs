@@ -133,7 +133,7 @@ internal static class Tokenizer
     {
         if (context.Tokens.Count == 0 ||
             context.Tokens[^1].TokenType != TokenType.Option ||
-            context.Tokens[^1].Symbol is not OptionSymbol { Argument.Arity.Minimum: > 0 } option)
+            context.Tokens[^1].Symbol is not OptionSymbol { Arity.Minimum: > 0 } option)
         {
             return false;
         }
