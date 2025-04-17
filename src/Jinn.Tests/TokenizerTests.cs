@@ -10,7 +10,7 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<string>("<FOO>"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, "foo");
 
         // Then
@@ -25,7 +25,7 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<List<string>>("<FOO>"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, "foo");
 
         // Then
@@ -45,7 +45,7 @@ public class TokenizerTests
         command.Arguments.Add(new Argument<string>("<FOO>") { Arity = new Arity(min, max) });
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, "foo bar");
 
         // Then
@@ -54,8 +54,8 @@ public class TokenizerTests
 
     [Theory]
     [InlineData("--lol", "(Option)--lol")]
-    [InlineData("--lol 42", "(Option)--lol (OptionArgument)42")]
-    [InlineData("--lol 42 32", "(Option)--lol (OptionArgument)42 (Argument)32")]
+    [InlineData("--lol 42", "(Option)--lol (Argument)42")]
+    [InlineData("--lol 42 32", "(Option)--lol (Argument)42 (Argument)32")]
     public void Should_Tokenize_Option(string args, string expected)
     {
         // Given
@@ -63,7 +63,7 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, args);
 
         // Then
@@ -80,12 +80,12 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, args);
 
         // Then
         result.ShouldHaveTokens(
-            "(Option)--lol (OptionArgument)32");
+            "(Option)--lol (Argument)32");
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, "-ac");
 
         // Then
@@ -113,7 +113,7 @@ public class TokenizerTests
         var command = new RootCommand();
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, "--");
 
         // Then
@@ -128,7 +128,7 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, "-- --lol");
 
         // Then
@@ -147,7 +147,7 @@ public class TokenizerTests
         command.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             command, args);
 
         // Then
@@ -170,12 +170,12 @@ public class TokenizerTests
         var root = new RootCommand(command);
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             root, "foo root --bar --lol qux bar --corgi");
 
         // Then
         result.ShouldHaveTokens(
-            "(Command)foo (Argument)root (Option)--bar (Option)--lol (OptionArgument)qux " +
+            "(Command)foo (Argument)root (Option)--bar (Option)--lol (Argument)qux " +
             "(Command)bar (Option)--corgi");
     }
 
@@ -198,7 +198,7 @@ public class TokenizerTests
         var root = new RootCommand(command);
 
         // When
-        var result = TokenizerFixture.TokenizeAndReturnTokens(
+        var result = ParserFixture.ParseAndReturnTokens(
             root, "foo root --bar -abf --lol qux bar --corgi");
 
         // Then

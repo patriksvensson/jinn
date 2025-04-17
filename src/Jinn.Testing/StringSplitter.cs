@@ -1,14 +1,5 @@
 namespace Jinn.Testing;
 
-public static class TokenizerFixture
-{
-    public static IReadOnlyList<Token> TokenizeAndReturnTokens(RootCommand command, string args)
-    {
-        var parts = StringSplitter.Split(args);
-        return Tokenizer.Tokenize(parts, command).Tokens;
-    }
-}
-
 internal static class StringSplitter
 {
     public static IEnumerable<string> Split(string text)

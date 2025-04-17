@@ -3,14 +3,14 @@ namespace Jinn;
 [DebuggerDisplay("{GetDebugString(),nq}")]
 public sealed class Token
 {
-    public TokenType Type { get; }
-    public Symbol? Symbol { get; }
+    public TokenType TokenType { get; }
+    public Symbol? Symbol { get; set; }
     public TextSpan Span { get; }
     public string Value { get; }
 
-    public Token(TokenType type, Symbol? symbol, TextSpan span, string? value)
+    public Token(TokenType tokenType, Symbol? symbol, TextSpan span, string? value)
     {
-        Type = type;
+        TokenType = tokenType;
         Symbol = symbol;
         Span = span;
         Value = value ?? string.Empty;
@@ -19,7 +19,7 @@ public sealed class Token
     private string GetDebugString()
     {
         return !string.IsNullOrWhiteSpace(Value)
-            ? $"{Type}: \"{Value}\"" : $"{Type}";
+            ? $"{TokenType}: \"{Value}\"" : $"{TokenType}";
     }
 }
 
@@ -28,6 +28,5 @@ public enum TokenType
     Command,
     Argument,
     Option,
-    OptionArgument,
     DoubleDash,
 }

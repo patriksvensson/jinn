@@ -7,7 +7,7 @@ public static class Verifier
         var builder = new StringBuilder();
         foreach (var token in tokens)
         {
-            builder.Append($"({token.Type}){token.Value}");
+            builder.Append($"({token.TokenType}){token.Value}");
             builder.Append(' ');
         }
 

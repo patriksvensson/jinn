@@ -1,8 +1,8 @@
 namespace Jinn;
 
-public static class Tokenizer
+internal static class Tokenizer
 {
-    public static TokenizeResult Tokenize(IEnumerable<string> args, RootCommand root)
+    public static TokenizeResult Tokenize(IEnumerable<string> args, Command root)
     {
         return Tokenize(args, root.CreateSymbol());
     }
@@ -92,7 +92,7 @@ public static class Tokenizer
         var value = arg[(index + 1)..];
         if (value.Length != 0)
         {
-            context.AddToken(TokenType.OptionArgument, optionSymbol, value);
+            context.AddToken(TokenType.Argument, optionSymbol, value);
         }
 
         return true;
@@ -132,13 +132,13 @@ public static class Tokenizer
     private static bool TryAddOptionValue(TokenizerContext context, string arg)
     {
         if (context.Tokens.Count == 0 ||
-            context.Tokens[^1].Type != TokenType.Option ||
+            context.Tokens[^1].TokenType != TokenType.Option ||
             context.Tokens[^1].Symbol is not OptionSymbol { Argument.Arity.Minimum: > 0 } option)
         {
             return false;
         }
 
-        context.AddToken(TokenType.OptionArgument, option, arg);
+        context.AddToken(TokenType.Argument, option, arg);
         return true;
     }
 }

@@ -2,6 +2,7 @@
 
 internal sealed class TokenizerContext
 {
+    private readonly CommandSymbol _root;
     private readonly Dictionary<string, Symbol> _symbols;
     private readonly string[] _args;
     private readonly List<Token> _tokens;
@@ -15,6 +16,7 @@ internal sealed class TokenizerContext
 
     public TokenizerContext(CommandSymbol root, IEnumerable<string> args)
     {
+        _root = root ?? throw new ArgumentNullException(nameof(root));
         _symbols = new Dictionary<string, Symbol>(StringComparer.Ordinal);
         _args = args.ToArray();
         _tokens = [];
@@ -97,6 +99,7 @@ internal sealed class TokenizerContext
     {
         return new TokenizeResult
         {
+            Root = _root,
             Raw = string.Join(" ", _args),
             Arguments = _args,
             Tokens = _tokens,

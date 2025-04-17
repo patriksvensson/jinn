@@ -11,6 +11,7 @@ public class Argument
     public Argument(Type type, string name)
     {
         ValueType = type;
+        Arity = Arity.Resolve(type);
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
