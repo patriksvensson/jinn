@@ -52,22 +52,17 @@ internal static class Parser
     {
         while (!context.IsAtEnd && context.CurrentToken.TokenType == TokenType.Argument)
         {
-            while (context.CurrentCommand.Command.HasArguments &&
-                   context.CurrentArgumentIndex < context.CurrentCommand.Command.Arguments.Count)
+            while (context.CurrentCommand.HasArguments &&
+                   context.CurrentArgumentIndex < context.CurrentCommand.Arguments.Count)
             {
                 // Current argument still accept values?
-                var argument = context.CurrentCommand.Command.Arguments[context.CurrentArgumentIndex];
+                var argument = context.CurrentCommand.Arguments[context.CurrentArgumentIndex];
                 if (context.CurrentArgumentCount < argument.Arity.Maximum)
                 {
                     context.CurrentToken.Symbol ??= argument;
 
-                    if (!context.Tree.TryGetResult<ArgumentResult>(argument, out var argumentResult))
-                    {
-                        argumentResult = new ArgumentResult(argument, context.Tree, context.CurrentCommand);
-                        context.Tree.Add(argument, argumentResult);
-                    }
-
-                    argumentResult.AddToken(context.CurrentToken);
+                    argument.Parent ??= context.CurrentCommand;
+                    argument.AddToken(context.CurrentToken);
                     context.CurrentCommand.AddToken(context.CurrentToken);
 
                     context.CurrentArgumentCount++;
@@ -96,21 +91,18 @@ internal static class Parser
         var optionSymbol = context.Expect<OptionSymbol>();
 
         // Try get the result for the symbol
-        if (!context.Tree.TryGetResult<OptionResult>(optionSymbol, out var optionResult))
-        {
-            optionResult = new OptionResult(optionSymbol, context.CurrentToken, context.Tree, context.CurrentCommand);
-            context.Tree.Add(optionSymbol, optionResult);
-        }
+        // TODO: Set current token as identifier
+        optionSymbol.Parent ??= context.CurrentCommand;
 
         context.ConsumeToken();
 
         // Parse option values
-        ParseOptionValues(context, optionResult);
+        ParseOptionValues(context, optionSymbol);
     }
 
-    private static void ParseOptionValues(ParserContext context, OptionResult optionResult)
+    private static void ParseOptionValues(ParserContext context, OptionSymbol optionSymbol)
     {
-        var argument = optionResult.Option.Argument;
+        var argument = optionSymbol.Argument;
         var argumentCount = 0;
 
         while (context.IsMatch(TokenType.Argument))
@@ -135,25 +127,13 @@ internal static class Parser
                 break;
             }
 
-            if (!context.Tree.TryGetResult<ArgumentResult>(argument, out var argumentResult))
-            {
-                argumentResult = new ArgumentResult(argument, context.Tree, optionResult);
-                context.Tree.Add(argument, argumentResult);
-            }
-
-            argumentResult.AddToken(context.CurrentToken);
-            optionResult.AddToken(context.CurrentToken);
+            argument.Parent ??= optionSymbol;
+            argument.AddToken(context.CurrentToken);
+            optionSymbol.AddToken(context.CurrentToken);
 
             argumentCount++;
 
             context.ConsumeToken();
-        }
-
-        // No arguments found? Still create a result for it
-        if (argumentCount == 0 && !context.Tree.ContainsKey(argument))
-        {
-            var argumentResult = new ArgumentResult(argument, context.Tree, optionResult);
-            context.Tree.Add(argument, argumentResult);
         }
     }
 }

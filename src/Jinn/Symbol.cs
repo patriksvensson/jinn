@@ -6,8 +6,23 @@ namespace Jinn;
 [PublicAPI]
 public abstract class Symbol
 {
+    private readonly List<Token> _tokens;
+
     public string? Description { get; set; }
     public bool Hidden { get; set; }
+
+    public Symbol? Parent { get; internal set; }
+    public IReadOnlyList<Token> Tokens => _tokens;
+
+    protected Symbol()
+    {
+        _tokens = [];
+    }
+
+    internal void AddToken(Token token)
+    {
+        _tokens.Add(token);
+    }
 }
 
 /// <summary>

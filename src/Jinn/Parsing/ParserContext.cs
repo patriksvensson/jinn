@@ -5,11 +5,11 @@ internal sealed class ParserContext
     private readonly TokenizeResult _tokenizationResult;
     private readonly TokenReader _reader;
 
-    public SymbolResultTree Tree { get; }
-    public CommandResult RootCommand { get; }
-    public CommandResult CurrentCommand { get; private set; }
+    public CommandSymbol RootCommand { get; }
+    public CommandSymbol CurrentCommand { get; private set; }
     public int CurrentArgumentCount { get; set; }
     public int CurrentArgumentIndex { get; set; }
+    public List<Token> Unmatched { get; } = [];
 
     public Token? PreviousToken => _reader.Previous();
     public Token CurrentToken => _reader.Current ?? throw new InvalidOperationException("Reached end of token stream");
@@ -22,8 +22,7 @@ internal sealed class ParserContext
         _tokenizationResult = result;
         _reader = new TokenReader(result.Tokens);
 
-        Tree = new SymbolResultTree(result.Root);
-        RootCommand = CurrentCommand = new CommandResult(result.Root, null, Tree, null);
+        RootCommand = CurrentCommand = result.Root;
     }
 
     public void ConsumeToken()
@@ -50,8 +49,8 @@ internal sealed class ParserContext
 
     public void AddCommand(CommandSymbol command)
     {
-        CurrentCommand = new CommandResult(command, CurrentToken, Tree, CurrentCommand);
-        Tree.Add(command, CurrentCommand);
+        command.Parent = CurrentCommand;
+        CurrentCommand = command;
 
         CurrentArgumentCount = 0;
         CurrentArgumentIndex = 0;
@@ -61,7 +60,7 @@ internal sealed class ParserContext
     {
         if (CurrentToken.TokenType != TokenType.DoubleDash)
         {
-            Tree.Unmatched.Add(CurrentToken);
+            Unmatched.Add(CurrentToken);
         }
     }
 
@@ -72,7 +71,7 @@ internal sealed class ParserContext
             Root = RootCommand,
             Command = CurrentCommand,
             Tokens = _tokenizationResult.Tokens,
-            UnmatchedTokens = Tree.Unmatched,
+            UnmatchedTokens = Unmatched,
             Arguments = _tokenizationResult.Arguments,
         };
     }
