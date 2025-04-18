@@ -30,7 +30,7 @@ internal sealed class ParserContext
         _reader.Consume();
     }
 
-    public T Expect<T>()
+    public T ExpectCurrentSymbol<T>()
         where T : Symbol
     {
         if (CurrentToken.Symbol is not T command)

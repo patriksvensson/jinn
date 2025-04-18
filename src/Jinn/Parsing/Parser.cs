@@ -39,7 +39,7 @@ internal static class Parser
     {
         // Get the symbol from the current token,
         // which we expect to be a command (due to the token type)
-        var command = context.Expect<CommandSymbol>();
+        var command = context.ExpectCurrentSymbol<CommandSymbol>();
 
         context.AddCommand(command);
         context.ConsumeToken();
@@ -88,16 +88,16 @@ internal static class Parser
     {
         // Get the symbol from the current token,
         // which we expect to be an option (due to the token type)
-        var optionSymbol = context.Expect<OptionSymbol>();
+        var option = context.ExpectCurrentSymbol<OptionSymbol>();
 
         // Try get the result for the symbol
         // TODO: Set current token as identifier
-        optionSymbol.Parent ??= context.CurrentCommand;
+        option.Parent ??= context.CurrentCommand;
 
         context.ConsumeToken();
 
         // Parse option values
-        ParseOptionValues(context, optionSymbol);
+        ParseOptionValues(context, option);
     }
 
     private static void ParseOptionValues(ParserContext context, OptionSymbol option)

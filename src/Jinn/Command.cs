@@ -11,9 +11,16 @@ public class Command
     public List<Argument> Arguments { get; init; } = [];
     public List<Option> Options { get; init; } = [];
 
+    internal Func<InvocationContext, Task<int>>? Handler { get; private set; }
+
     public Command(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
+    }
+
+    public void SetHandler(Func<InvocationContext, Task<int>> handler)
+    {
+        Handler = handler;
     }
 
     public ParseResult Parse(IEnumerable<string> args)
@@ -30,6 +37,8 @@ public class Command
 [PublicAPI]
 public sealed class RootCommand : Command
 {
+    private readonly List<InvocationMiddleware> _middlewares = [];
+
     public RootCommand()
         : base("<root>")
     {
@@ -39,5 +48,18 @@ public sealed class RootCommand : Command
         : base("<root>")
     {
         Commands.AddRange(commands);
+    }
+
+    public RootCommand AddMiddleware(InvocationMiddleware middleware)
+    {
+        _middlewares.Add(middleware);
+        return this;
+    }
+
+    public async Task<int> Invoke(IEnumerable<string> args)
+    {
+        var result = Parse(args);
+        var pipeline = new InvocationPipeline(result, _middlewares);
+        return await pipeline.Invoke();
     }
 }
