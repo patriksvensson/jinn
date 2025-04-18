@@ -25,7 +25,7 @@ public sealed class InvocationTests
     }
 
     [Fact]
-    public async Task Should_Invoke_Middleware_Command()
+    public async Task Should_Invoke_Middleware()
     {
         // Given
         var invoked = false;
