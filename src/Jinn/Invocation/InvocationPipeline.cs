@@ -40,7 +40,7 @@ internal sealed class InvocationPipeline
                 var handler = invocationContext.ParseResult.Command.Owner.Handler;
                 if (handler is not null)
                 {
-                    context.ExitCode = await handler(context);
+                    await handler(context);
                 }
             }
         ];

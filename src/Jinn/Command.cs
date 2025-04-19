@@ -11,14 +11,23 @@ public class Command
     public List<Argument> Arguments { get; init; } = [];
     public List<Option> Options { get; init; } = [];
 
-    internal Func<InvocationContext, Task<int>>? Handler { get; private set; }
+    internal Func<InvocationContext, Task>? Handler { get; private set; }
 
     public Command(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public void SetHandler(Func<InvocationContext, Task<int>> handler)
+    public void SetHandler(Action<InvocationContext> handler)
+    {
+        Handler = (ctx) =>
+        {
+            handler(ctx);
+            return Task.CompletedTask;
+        };
+    }
+
+    public void SetHandler(Func<InvocationContext, Task> handler)
     {
         Handler = handler;
     }

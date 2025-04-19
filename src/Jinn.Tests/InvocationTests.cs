@@ -9,15 +9,14 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.Options.Add(new Option<bool>("--lol"));
-        rootCommand.SetHandler(_ =>
+        rootCommand.SetHandler(ctx =>
         {
             invoked = true;
-            return Task.FromResult(1);
+            ctx.ExitCode = 1;
         });
 
         // When
-        var result = await rootCommand.Invoke(["--lol"]);
+        var result = await rootCommand.Invoke([]);
 
         // Then
         invoked.ShouldBeTrue();
@@ -31,7 +30,6 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.Options.Add(new Option<bool>("--lol"));
         rootCommand.AddMiddleware(async (ctx, next) =>
         {
             invoked = true;
@@ -39,10 +37,40 @@ public sealed class InvocationTests
         });
 
         // When
-        var result = await rootCommand.Invoke(["--lol"]);
+        await rootCommand.Invoke([]);
 
         // Then
         invoked.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Should_Invoke_Command_After_Middleware()
+    {
+        // Given
+        var invokedCommand = false;
+        var invokedMiddleware = false;
+        var rootCommand = new RootCommand();
+
+        rootCommand.AddMiddleware(async (ctx, next) =>
+        {
+            invokedMiddleware = true;
+            ctx.ExitCode = 1;
+            await next(ctx);
+        });
+
+        rootCommand.SetHandler(ctx =>
+        {
+            invokedCommand = true;
+            ctx.ExitCode = 2;
+        });
+
+        // When
+        var result = await rootCommand.Invoke([]);
+
+        // Then
+        invokedMiddleware.ShouldBeTrue();
+        invokedCommand.ShouldBeTrue();
+        result.ShouldBe(2);
     }
 
     [Fact]
@@ -50,27 +78,25 @@ public sealed class InvocationTests
     {
         // Given
         var invoked = false;
-
         var rootCommand = new RootCommand();
-        rootCommand.Options.Add(new Option<bool>("--lol"));
 
         rootCommand.AddMiddleware((ctx, _) =>
         {
-            ctx.ExitCode = 2;
+            ctx.ExitCode = 1;
             return Task.CompletedTask;
         });
 
-        rootCommand.SetHandler(_ =>
+        rootCommand.SetHandler(ctx =>
         {
             invoked = true;
-            return Task.FromResult(1);
+            ctx.ExitCode = 2;
         });
 
         // When
-        var result = await rootCommand.Invoke(["--lol"]);
+        var result = await rootCommand.Invoke([]);
 
         // Then
         invoked.ShouldBeFalse();
-        result.ShouldBe(2);
+        result.ShouldBe(1);
     }
 }
