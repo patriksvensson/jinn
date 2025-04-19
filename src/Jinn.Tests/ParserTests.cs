@@ -29,16 +29,20 @@ public sealed class ParserTests
     }
 
     [Fact]
-    public void Test()
+    public void Should_Return_Error_If_Option_Values_Exceed_Arity()
     {
         // Given
         var root = new RootCommand();
         root.Options.Add(new Option<int>("--corgi") { IsRequired = true });
-        root.SetHandler(_ => Task.FromResult(1));
 
         // When
         var result = ParserFixture.Parse(root, "--corgi foo --corgi bar");
 
         // Then
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].Message.ShouldBe("Option expects a single argument");
+        result.Errors[0].Span.ShouldNotBeNull();
+        result.Errors[0].Span.Value.Position.ShouldBe(0);
+        result.Errors[0].Span.Value.Length.ShouldBe(7);
     }
 }
