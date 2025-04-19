@@ -5,7 +5,9 @@ internal static class Parser
     public static ParseResult Parse(IEnumerable<string> args, Command root)
     {
         var tokenizationResult = Tokenizer.Tokenize(args, root);
-        return Parse(new ParserContext(tokenizationResult));
+        var result = Parse(new ParserContext(tokenizationResult));
+
+        return result;
     }
 
     private static ParseResult Parse(ParserContext context)
@@ -40,6 +42,7 @@ internal static class Parser
         // Get the symbol from the current token,
         // which we expect to be a command (due to the token type)
         var command = context.ExpectCurrentSymbol<CommandSymbol>();
+        command.Result ??= new CommandResult(command);
 
         context.AddCommand(command);
         context.ConsumeToken();
@@ -62,8 +65,11 @@ internal static class Parser
                     context.CurrentToken.Symbol ??= argument;
 
                     argument.Parent ??= context.CurrentCommand;
-                    argument.AddToken(context.CurrentToken);
-                    context.CurrentCommand.AddToken(context.CurrentToken);
+                    argument.Result ??= new ArgumentResult(argument);
+                    argument.Result.AddToken(context.CurrentToken);
+
+                    context.CurrentCommand.Result ??= new CommandResult(context.CurrentCommand);
+                    context.CurrentCommand.Result.AddToken(context.CurrentToken);
 
                     context.CurrentArgumentCount++;
                     context.ConsumeToken();
@@ -93,6 +99,7 @@ internal static class Parser
         // Try get the result for the symbol
         // TODO: Set current token as identifier
         option.Parent ??= context.CurrentCommand;
+        option.Result ??= new OptionResult(option, context.CurrentToken);
 
         context.ConsumeToken();
 
@@ -126,7 +133,8 @@ internal static class Parser
                 break;
             }
 
-            option.AddToken(context.CurrentToken);
+            Debug.Assert(option.Result != null, "Option result should not be null when parsing value");
+            option.Result.AddToken(context.CurrentToken);
             argumentCount++;
 
             context.ConsumeToken();

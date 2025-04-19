@@ -54,6 +54,22 @@ public readonly struct Arity : IEquatable<Arity>
         return ExactlyOne;
     }
 
+    public static ArityViolation? Validate(ValueSymbol option)
+    {
+        var tokenCount = option.GetResult()?.Tokens.Count;
+        if (tokenCount < option.Arity.Minimum)
+        {
+            return ArityViolation.Missing;
+        }
+
+        if (tokenCount > option.Arity.Maximum)
+        {
+            return ArityViolation.TooMany;
+        }
+
+        return null;
+    }
+
     public bool Equals(Arity other)
     {
         return Minimum == other.Minimum
@@ -74,4 +90,10 @@ public readonly struct Arity : IEquatable<Arity>
     {
         return $"Min:{Minimum}, Max:{Maximum}";
     }
+}
+
+public enum ArityViolation
+{
+    Missing,
+    TooMany,
 }

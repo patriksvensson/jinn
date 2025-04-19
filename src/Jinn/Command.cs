@@ -23,11 +23,6 @@ public class Command
         Handler = handler;
     }
 
-    public ParseResult Parse(IEnumerable<string> args)
-    {
-        return Parser.Parse(args, this);
-    }
-
     internal CommandSymbol CreateSymbol()
     {
         return new CommandSymbol(this);
@@ -38,6 +33,8 @@ public class Command
 public sealed class RootCommand : Command
 {
     private readonly List<InvocationMiddleware> _middlewares = [];
+
+    public Configuration Configuration { get; set; } = new();
 
     public RootCommand()
         : base("<root>")
@@ -50,16 +47,20 @@ public sealed class RootCommand : Command
         Commands.AddRange(commands);
     }
 
-    public RootCommand AddMiddleware(InvocationMiddleware middleware)
+    public void AddMiddleware(InvocationMiddleware middleware)
     {
         _middlewares.Add(middleware);
-        return this;
+    }
+
+    public ParseResult Parse(IEnumerable<string> args)
+    {
+        return Parser.Parse(args, this);
     }
 
     public async Task<int> Invoke(IEnumerable<string> args)
     {
         var result = Parse(args);
-        var pipeline = new InvocationPipeline(result, _middlewares);
+        var pipeline = new InvocationPipeline(result, _middlewares, Configuration);
         return await pipeline.Invoke();
     }
 }

@@ -2,7 +2,7 @@ namespace Jinn.Testing;
 
 public static class ParserFixture
 {
-    public static ParseResult Parse(Command command, string args)
+    public static ParseResult Parse(RootCommand command, string args)
     {
         return command.Parse(StringSplitter.Split(args));
     }

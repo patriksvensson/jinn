@@ -9,6 +9,7 @@ public class Option
 
     public string? Description { get; set; }
     public bool Hidden { get; set; }
+    public bool IsRequired { get; set; }
 
     public Option(Type type, string name)
     {

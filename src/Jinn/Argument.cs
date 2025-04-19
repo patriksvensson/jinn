@@ -7,6 +7,7 @@ public class Argument
     public Arity Arity { get; init; }
     public Type ValueType { get; }
     public string? Description { get; set; }
+    public bool IsRequired { get; set; }
 
     public Argument(Type type, string name)
     {

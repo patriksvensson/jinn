@@ -4,18 +4,21 @@ internal sealed class InvocationPipeline
 {
     private readonly ParseResult _parseResult;
     private readonly List<InvocationMiddleware> _middlewares;
+    private readonly Configuration _configuration;
 
     public InvocationPipeline(
         ParseResult parseResult,
-        List<InvocationMiddleware> middlewares)
+        List<InvocationMiddleware> middlewares,
+        Configuration configuration)
     {
         _parseResult = parseResult ?? throw new ArgumentNullException(nameof(parseResult));
         _middlewares = middlewares ?? throw new ArgumentNullException(nameof(middlewares));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public async Task<int> Invoke()
     {
-        var context = new InvocationContext(_parseResult);
+        var context = new InvocationContext(_parseResult, _configuration);
         var chain = BuildInvocationChain(context);
 
         await chain.Invoke(context, static _ => Task.CompletedTask);
@@ -27,6 +30,8 @@ internal sealed class InvocationPipeline
         var middleware = new List<InvocationMiddleware>();
         middleware.AddRange(_middlewares);
 
+        // Call the command handler as the last step
+        // in the invocation chain.
         middleware.Add(async (invocationContext, _) =>
         {
             var handler = invocationContext.ParseResult.Command.Owner.Handler;
