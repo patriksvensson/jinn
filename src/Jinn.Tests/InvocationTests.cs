@@ -9,7 +9,7 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.Options.Add(new Option<int>("--lol"));
+        rootCommand.Options.Add(new Option<bool>("--lol"));
         rootCommand.SetHandler(_ =>
         {
             invoked = true;
@@ -31,7 +31,7 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.Options.Add(new Option<int>("--lol"));
+        rootCommand.Options.Add(new Option<bool>("--lol"));
         rootCommand.AddMiddleware(async (ctx, next) =>
         {
             invoked = true;
@@ -52,7 +52,7 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.Options.Add(new Option<int>("--lol"));
+        rootCommand.Options.Add(new Option<bool>("--lol"));
 
         rootCommand.AddMiddleware((ctx, _) =>
         {

@@ -2,5 +2,6 @@ namespace Jinn;
 
 public sealed class Configuration
 {
-    public Action<ParseResult>? ErrorHandler { get; set; }
+    public Func<ParseResult, Task<IInvocationResult>>? ParseErrorHandler { get; set; }
+    public Func<Exception, ParseResult, Task<IInvocationResult>>? ExceptionHandler { get; set; }
 }
