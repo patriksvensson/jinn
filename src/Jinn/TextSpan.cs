@@ -28,6 +28,11 @@ public readonly struct TextSpan
         Length = length;
     }
 
+    public bool Contains(int offset)
+    {
+        return offset >= Position && offset <= Position + Length;
+    }
+
     public override string ToString()
     {
         return $"{Position}:{Length}";
