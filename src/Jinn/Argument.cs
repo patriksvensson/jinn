@@ -1,10 +1,10 @@
 namespace Jinn;
 
 [PublicAPI]
-public class Argument
+public abstract class Argument
 {
     public string Name { get; }
-    public Arity Arity { get; init; }
+    public Arity Arity { get; set; }
     public Type ValueType { get; }
     public string? Description { get; set; }
     public bool IsRequired { get; set; }

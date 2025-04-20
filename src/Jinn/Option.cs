@@ -1,10 +1,10 @@
 namespace Jinn;
 
 [PublicAPI]
-public class Option
+public abstract class Option
 {
     public HashSet<string> Aliases { get; init; } = [];
-    public Arity Arity { get; init; }
+    public Arity Arity { get; set; }
     public Type ValueType { get; }
 
     public string? Description { get; set; }
