@@ -1,3 +1,3 @@
 global using System.Text;
-global using Jinn.Annotations;
+global using Jetbrains.Annotations;
 global using Shouldly;
