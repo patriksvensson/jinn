@@ -1,8 +1,5 @@
 namespace Jinn;
 
-/// <summary>
-/// Represents a symbol at the time of parsing.
-/// </summary>
 [PublicAPI]
 public abstract class Symbol
 {

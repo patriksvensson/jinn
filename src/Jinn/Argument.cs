@@ -6,7 +6,7 @@ public abstract class Argument : Symbol
     public string Name { get; }
     public Arity Arity { get; set; }
     public Type ValueType { get; }
-    public bool IsRequired { get; }
+    public bool IsRequired { get; set; }
 
     protected Argument(Type type, string name)
     {

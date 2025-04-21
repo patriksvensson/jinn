@@ -6,6 +6,12 @@ public abstract class Option : Symbol
     public HashSet<string> Aliases { get; init; } = [];
     public Argument Argument { get; }
 
+    public bool IsRequired
+    {
+        get => Argument.IsRequired;
+        set => Argument.IsRequired = value;
+    }
+
     protected Option(string name, Argument argument)
     {
         Aliases.Add(name);
