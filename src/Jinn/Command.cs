@@ -1,16 +1,15 @@
 namespace Jinn;
 
 [PublicAPI]
-public class Command
+public class Command : Symbol
 {
     public string Name { get; }
-    public string? Description { get; set; }
-    public bool Hidden { get; set; }
 
     public List<Command> Commands { get; init; } = [];
     public List<Argument> Arguments { get; init; } = [];
     public List<Option> Options { get; init; } = [];
 
+    public bool HasArguments => Arguments.Count > 0;
     internal Func<InvocationContext, Task>? Handler { get; private set; }
 
     public Command(string name)
@@ -31,45 +30,35 @@ public class Command
     {
         Handler = handler;
     }
-
-    internal CommandSymbol CreateSymbol()
-    {
-        return new CommandSymbol(this);
-    }
 }
 
 [PublicAPI]
 public sealed class RootCommand : Command
 {
-    private readonly List<InvocationMiddleware> _middlewares = [];
-
-    public Configuration Configuration { get; set; } = new();
-
-    public RootCommand()
-        : base("<root>")
-    {
-    }
+    public Configuration Configuration { get; }
 
     public RootCommand(params Command[] commands)
-        : base("<root>")
+        : this(new Configuration())
     {
         Commands.AddRange(commands);
     }
 
-    public void AddMiddleware(InvocationMiddleware middleware)
+    public RootCommand(Configuration configuration, params Command[] commands)
+        : base(configuration.ExecutableName)
     {
-        _middlewares.Add(middleware);
+        Configuration = configuration;
+        Commands.AddRange(commands);
     }
 
     public ParseResult Parse(IEnumerable<string> args)
     {
-        return Parser.Parse(args, this);
+        return Parser.Parse(Configuration, args, this);
     }
 
     public async Task<int> Invoke(IEnumerable<string> args)
     {
         var result = Parse(args);
-        var pipeline = new InvocationPipeline(result, _middlewares, Configuration);
+        var pipeline = new InvocationPipeline(result);
         return await pipeline.Invoke();
     }
 }

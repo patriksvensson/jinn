@@ -8,9 +8,9 @@ public sealed class InvocationContext
     public IInvocationResult? InvocationResult { get; set; }
     public int ExitCode { get; set; }
 
-    public InvocationContext(ParseResult parseResult, Configuration configuration)
+    public InvocationContext(ParseResult parseResult)
     {
         ParseResult = parseResult ?? throw new ArgumentNullException(nameof(parseResult));
-        Configuration = configuration;
+        Configuration = parseResult.Configuration;
     }
 }

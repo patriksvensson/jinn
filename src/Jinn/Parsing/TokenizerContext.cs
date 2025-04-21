@@ -2,7 +2,7 @@
 
 internal sealed class TokenizerContext
 {
-    private readonly CommandSymbol _root;
+    private readonly Command _root;
     private readonly Dictionary<string, Symbol> _symbols;
     private readonly string[] _args;
     private readonly List<Token> _tokens;
@@ -14,7 +14,7 @@ internal sealed class TokenizerContext
     public int Position => _position;
     public bool HasEncounteredDoubleDash => _hasEncounteredDoubleDash;
 
-    public TokenizerContext(CommandSymbol root, IEnumerable<string> args)
+    public TokenizerContext(Command root, IEnumerable<string> args)
     {
         _root = root ?? throw new ArgumentNullException(nameof(root));
         _symbols = new Dictionary<string, Symbol>(StringComparer.Ordinal);
@@ -44,14 +44,14 @@ internal sealed class TokenizerContext
         return true;
     }
 
-    public void AddToken(TokenType type, Symbol? symbol, string text, TextSpan? span = null)
+    public void AddToken(TokenKind kind, Symbol? symbol, string text, TextSpan? span = null)
     {
-        if (type == TokenType.DoubleDash)
+        if (kind == TokenKind.DoubleDash)
         {
             _hasEncounteredDoubleDash = true;
         }
 
-        _tokens.Add(new Token(type, symbol, span ?? new TextSpan(Position, text.Length), text));
+        _tokens.Add(new Token(kind, symbol, span ?? new TextSpan(Position, text.Length), text));
     }
 
     public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
@@ -72,7 +72,7 @@ internal sealed class TokenizerContext
         return false;
     }
 
-    public void SetCurrentCommand(CommandSymbol current)
+    public void SetCurrentCommand(Command current)
     {
         _symbols.Clear();
 
@@ -88,16 +88,5 @@ internal sealed class TokenizerContext
                 _symbols[alias] = option;
             }
         }
-    }
-
-    public TokenizeResult CreateResult()
-    {
-        return new TokenizeResult
-        {
-            Root = _root,
-            Raw = string.Join(" ", _args),
-            Arguments = _args,
-            Tokens = _tokens,
-        };
     }
 }

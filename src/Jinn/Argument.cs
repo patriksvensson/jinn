@@ -1,24 +1,23 @@
 namespace Jinn;
 
 [PublicAPI]
-public abstract class Argument
+public abstract class Argument : Symbol
 {
     public string Name { get; }
     public Arity Arity { get; set; }
     public Type ValueType { get; }
-    public string? Description { get; set; }
-    public bool IsRequired { get; set; }
+    public bool IsRequired { get; }
 
-    public Argument(Type type, string name)
+    protected Argument(Type type, string name)
     {
         ValueType = type;
         Arity = Arity.Resolve(type);
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    internal ArgumentSymbol CreateSymbol()
+    public bool IsBoolean()
     {
-        return new ArgumentSymbol(this);
+        return ValueType == typeof(bool);
     }
 }
 

@@ -1,5 +1,6 @@
 namespace Jinn.Testing;
 
+[PublicAPI]
 public static class ShouldlyExtensions
 {
     public static T And<T>(this T obj)

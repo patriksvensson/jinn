@@ -1,15 +1,32 @@
 namespace Jinn.Testing;
 
-public static class ParserFixture
+[PublicAPI]
+public sealed class RootCommandFixture
 {
-    public static ParseResult Parse(RootCommand command, string args)
+    public List<Command> Commands { get; } = [];
+    public List<Argument> Arguments { get; } = [];
+    public List<Option> Options { get; } = [];
+    public Configuration Configuration { get; }
+
+    public RootCommandFixture(params Command[] commands)
     {
-        return command.Parse(StringSplitter.Split(args));
+        Commands.AddRange(commands);
+        Configuration = new Configuration
+        {
+            ExecutableName = "TestRunner",
+        };
     }
 
-    public static IReadOnlyList<Token> ParseAndReturnTokens(RootCommand command, string args)
+    public ParseResult Parse(string args)
     {
-        var parts = StringSplitter.Split(args);
-        return command.Parse(parts).Tokens;
+        var root = new RootCommand(Configuration, Commands.ToArray());
+        root.Arguments.AddRange(Arguments);
+        root.Options.AddRange(Options);
+        return root.Parse(StringSplitter.Split(args));
+    }
+
+    public IReadOnlyList<Token> ParseAndReturnTokens(string args)
+    {
+        return Parse(args).Tokens;
     }
 }

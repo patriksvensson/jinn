@@ -1,47 +1,91 @@
 namespace Jinn;
 
+/// <summary>
+/// Represents a parsed result for a symbol.
+/// </summary>
+[PublicAPI]
 public abstract class SymbolResult
 {
-    private readonly List<Token> _tokens;
+    private readonly List<SymbolResult> _children = [];
+    private readonly List<Token> _tokens = [];
 
     public Symbol Symbol { get; }
+    public SymbolResult? Parent { get; }
+    public IReadOnlyList<SymbolResult> Children => _children;
     public IReadOnlyList<Token> Tokens => _tokens;
 
-    protected SymbolResult(Symbol symbol)
+    protected SymbolResult(Symbol symbol, SymbolResult? parent)
     {
-        _tokens = [];
-        Symbol = symbol;
+        Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
+        Parent = parent;
     }
 
-    internal void AddToken(Token token)
+    public void AddChild(SymbolResult result)
+    {
+        _children.Add(result);
+    }
+
+    public void AddToken(Token token)
     {
         _tokens.Add(token);
     }
 }
 
-public sealed class CommandResult : SymbolResult
+[PublicAPI]
+public abstract class CommandResult : SymbolResult
 {
-    public CommandResult(CommandSymbol symbol)
-        : base(symbol)
+    public Command Command { get; }
+
+    protected CommandResult(Command command, SymbolResult? parent)
+        : base(command, parent)
+    {
+        Command = command ?? throw new ArgumentNullException(nameof(command));
+    }
+}
+
+[PublicAPI]
+public sealed class RootCommandResult : CommandResult
+{
+    public RootCommandResult(Command command)
+        : base(command, null)
     {
     }
 }
 
-public sealed class OptionResult : SymbolResult
+[PublicAPI]
+public sealed class SubCommandResult : CommandResult
 {
-    public Token Identifier { get; }
+    public Token Token { get; }
 
-    public OptionResult(OptionSymbol symbol, Token identifier)
-        : base(symbol)
+    public SubCommandResult(Command command, Token token, SymbolResult? parent)
+        : base(command, parent)
     {
-        Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
+        Token = token ?? throw new ArgumentNullException(nameof(token));
     }
 }
 
+[PublicAPI]
 public sealed class ArgumentResult : SymbolResult
 {
-    public ArgumentResult(ArgumentSymbol symbol)
-        : base(symbol)
+    public Argument Argument { get; }
+
+    public ArgumentResult(Argument argument, SymbolResult? parent)
+        : base(argument, parent)
     {
+        Argument = argument ?? throw new ArgumentNullException(nameof(argument));
+    }
+}
+
+[PublicAPI]
+public sealed class OptionResult : SymbolResult
+{
+    public Option Option { get; }
+    public Token Token { get; }
+
+    public OptionResult(Option option, Token token, CommandResult? parent)
+        : base(option, parent)
+    {
+        Option = option ?? throw new ArgumentNullException(nameof(option));
+        Token = token ?? throw new ArgumentNullException(nameof(token));
     }
 }

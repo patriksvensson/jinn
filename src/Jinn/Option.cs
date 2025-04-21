@@ -1,26 +1,15 @@
 namespace Jinn;
 
 [PublicAPI]
-public abstract class Option
+public abstract class Option : Symbol
 {
     public HashSet<string> Aliases { get; init; } = [];
-    public Arity Arity { get; set; }
-    public Type ValueType { get; }
+    public Argument Argument { get; }
 
-    public string? Description { get; set; }
-    public bool Hidden { get; set; }
-    public bool IsRequired { get; set; }
-
-    public Option(Type type, string name)
+    protected Option(string name, Argument argument)
     {
-        ValueType = type;
-        Arity = Arity.Resolve(type);
         Aliases.Add(name);
-    }
-
-    internal OptionSymbol CreateSymbol()
-    {
-        return new OptionSymbol(this);
+        Argument = argument ?? throw new ArgumentNullException(nameof(argument));
     }
 }
 
@@ -28,7 +17,7 @@ public abstract class Option
 public sealed class Option<T> : Option
 {
     public Option(string name)
-        : base(typeof(T), name)
+        : base(name, new Argument<T>("value"))
     {
     }
 }
