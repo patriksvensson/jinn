@@ -30,7 +30,7 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.AddMiddleware(async (ctx, next) =>
+        rootCommand.Configuration.AddMiddleware(async (ctx, next) =>
         {
             invoked = true;
             await next(ctx);
@@ -51,7 +51,7 @@ public sealed class InvocationTests
         var invokedMiddleware = false;
         var rootCommand = new RootCommand();
 
-        rootCommand.AddMiddleware(async (ctx, next) =>
+        rootCommand.Configuration.AddMiddleware(async (ctx, next) =>
         {
             invokedMiddleware = true;
             ctx.ExitCode = 1;
@@ -80,7 +80,7 @@ public sealed class InvocationTests
         var invoked = false;
         var rootCommand = new RootCommand();
 
-        rootCommand.AddMiddleware((ctx, _) =>
+        rootCommand.Configuration.AddMiddleware((ctx, _) =>
         {
             ctx.ExitCode = 1;
             return Task.CompletedTask;

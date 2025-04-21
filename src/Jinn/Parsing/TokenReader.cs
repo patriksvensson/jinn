@@ -5,12 +5,8 @@ internal sealed class TokenReader
     private readonly List<Token> _tokens;
     private int _index;
 
-    public Token? Current => _tokens[_index];
-
-    [MemberNotNullWhen(false, nameof(Current))]
+    public Token Current => _tokens[_index];
     public bool IsAtEnd { get; private set; }
-
-    public int Position => _index;
 
     public TokenReader(IEnumerable<Token> tokens)
     {

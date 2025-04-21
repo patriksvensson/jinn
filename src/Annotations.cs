@@ -37,7 +37,7 @@ using System;
 // ReSharper disable ArrangeNamespaceBody
 // ReSharper disable InconsistentNaming
 
-namespace JetBrains.Annotations
+namespace Jinn.Annotations
 {
   /// <summary>
   /// Indicates that the value of the marked element could be <c>null</c> sometimes,

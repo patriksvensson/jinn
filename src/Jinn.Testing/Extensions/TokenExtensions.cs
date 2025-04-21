@@ -1,13 +1,20 @@
 ﻿namespace Jinn.Testing;
 
-public static class Verifier
+public static class TokenExtensions
 {
     public static void ShouldHaveTokens(this IReadOnlyList<Token> tokens, string expected)
     {
         var builder = new StringBuilder();
         foreach (var token in tokens)
         {
-            builder.Append($"({token.TokenType}){token.Value}");
+            if (token.Symbol is RootCommand)
+            {
+                builder.Append($"({token.Kind})<ExecutableName>");
+                builder.Append(' ');
+                continue;
+            }
+
+            builder.Append($"({token.Kind}){token.Lexeme}");
             builder.Append(' ');
         }
 
@@ -20,7 +27,14 @@ public static class Verifier
         var builder = new StringBuilder();
         foreach (var token in tokens)
         {
-            builder.Append($"({token.Span.Position}:{token.Span.Length}){token.Value}");
+            if (token.Symbol is RootCommand)
+            {
+                builder.Append($"({token.Span.Position}:{token.Span.Length})<ExecutableName>");
+                builder.Append(' ');
+                continue;
+            }
+
+            builder.Append($"({token.Span.Position}:{token.Span.Length}){token.Lexeme}");
             builder.Append(' ');
         }
 

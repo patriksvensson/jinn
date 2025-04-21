@@ -8,13 +8,8 @@ internal static class ExceptionMiddleware
         {
             await next(ctx);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ctx.Configuration.ExceptionHandler != null)
         {
-            if (ctx.Configuration.ExceptionHandler == null)
-            {
-                throw new InvalidOperationException("No exception handler has been specified");
-            }
-
             // Invoke the handler and set the invocation result
             ctx.InvocationResult = await ctx.Configuration.ExceptionHandler(ex, ctx.ParseResult);
         }

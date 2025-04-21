@@ -2,30 +2,53 @@ namespace Jinn;
 
 internal static class Parser
 {
-    public static ParseResult Parse(IEnumerable<string> args, Command root)
+    public static ParseResult Parse(
+        Configuration configuration,
+        IEnumerable<string> args,
+        Command command)
     {
-        var tokenizationResult = Tokenizer.Tokenize(args, root);
-        var result = Parse(new ParserContext(tokenizationResult));
+        var tokens = Tokenizer.Tokenize(args, command);
+        var context = new ParserContext(command, tokens);
+        var syntax = Parse(context, command);
 
-        return result;
+        return ParseResultBuilder.Build(
+            new SyntaxTree
+        {
+            Root = syntax,
+            Configuration = configuration,
+            Tokens = tokens,
+            Unmatched = context.Unmatched,
+        });
     }
 
-    private static ParseResult Parse(ParserContext context)
+    private static CommandSyntax Parse(ParserContext context, Command command)
+    {
+        if (command is RootCommand)
+        {
+            context.CurrentToken.Symbol = command;
+        }
+
+        var syntax = new CommandSyntax(command, context.CurrentToken, null);
+        ParseCommandChildren(context, syntax);
+        return syntax;
+    }
+
+    private static void ParseCommandChildren(ParserContext context, CommandSyntax parent)
     {
         while (!context.IsAtEnd)
         {
             var current = context.CurrentToken;
 
-            switch (current.TokenType)
+            switch (current.Kind)
             {
-                case TokenType.Command:
-                    ParseCommand(context);
+                case TokenKind.Command:
+                    ParseCommand(context, parent);
                     break;
-                case TokenType.Argument:
-                    ParseArgument(context);
+                case TokenKind.Argument:
+                    ParseArgument(context, parent);
                     break;
-                case TokenType.Option:
-                    ParseOption(context);
+                case TokenKind.Option:
+                    ParseOption(context, parent);
                     break;
                 default:
                     context.AddCurrentTokenToUnmatched();
@@ -33,27 +56,27 @@ internal static class Parser
                     break;
             }
         }
-
-        return context.CreateResult();
     }
 
-    private static void ParseCommand(ParserContext context)
+    private static void ParseCommand(ParserContext context, CommandSyntax parent)
     {
         // Get the symbol from the current token,
         // which we expect to be a command (due to the token type)
-        var command = context.ExpectCurrentSymbol<CommandSymbol>();
-        command.Result ??= new CommandResult(command);
+        var command = context.ExpectCurrentSymbol<Command>();
 
-        context.AddCommand(command);
+        var syntax = new CommandSyntax(command, context.CurrentToken, parent);
+        parent.AddChild(syntax);
+
+        context.SetCurrentCommand(command);
         context.ConsumeToken();
 
         // Continue and parse children of the command
-        Parse(context);
+        ParseCommandChildren(context, syntax);
     }
 
-    private static void ParseArgument(ParserContext context)
+    private static void ParseArgument(ParserContext context, CommandSyntax parent)
     {
-        while (!context.IsAtEnd && context.CurrentToken.TokenType == TokenType.Argument)
+        while (!context.IsAtEnd && context.CurrentToken.Kind == TokenKind.Argument)
         {
             while (context.CurrentCommand.HasArguments &&
                    context.CurrentArgumentIndex < context.CurrentCommand.Arguments.Count)
@@ -62,14 +85,12 @@ internal static class Parser
                 var argument = context.CurrentCommand.Arguments[context.CurrentArgumentIndex];
                 if (context.CurrentArgumentCount < argument.Arity.Maximum)
                 {
+                    // Assign a symbol to the current token
                     context.CurrentToken.Symbol ??= argument;
 
-                    argument.Parent ??= context.CurrentCommand;
-                    argument.Result ??= new ArgumentResult(argument);
-                    argument.Result.AddToken(context.CurrentToken);
-
-                    context.CurrentCommand.Result ??= new CommandResult(context.CurrentCommand);
-                    context.CurrentCommand.Result.AddToken(context.CurrentToken);
+                    // Create a syntax node and add it to the command
+                    var syntax = new ArgumentSyntax(argument, context.CurrentToken, parent);
+                    parent.AddChild(syntax);
 
                     context.CurrentArgumentCount++;
                     context.ConsumeToken();
@@ -90,30 +111,30 @@ internal static class Parser
         }
     }
 
-    private static void ParseOption(ParserContext context)
+    private static void ParseOption(ParserContext context, CommandSyntax parent)
     {
         // Get the symbol from the current token,
         // which we expect to be an option (due to the token type)
-        var option = context.ExpectCurrentSymbol<OptionSymbol>();
+        var option = context.ExpectCurrentSymbol<Option>();
 
-        // Try get the result for the symbol
-        // TODO: Set current token as identifier
-        option.Parent ??= context.CurrentCommand;
-        option.Result ??= new OptionResult(option, context.CurrentToken);
+        // Create a syntax node and add it to the command
+        var syntax = new OptionSyntax(option, context.CurrentToken, parent);
+        parent.AddChild(syntax);
 
+        // Consume the token
         context.ConsumeToken();
 
         // Parse option values
-        ParseOptionValues(context, option);
+        ParseOptionValues(context, syntax);
     }
 
-    private static void ParseOptionValues(ParserContext context, OptionSymbol option)
+    private static void ParseOptionValues(ParserContext context, OptionSyntax parent)
     {
         var argumentCount = 0;
 
-        while (context.IsMatch(TokenType.Argument))
+        while (context.IsMatch(TokenKind.Argument))
         {
-            if (argumentCount >= option.Arity.Maximum)
+            if (argumentCount >= parent.Option.Argument.Arity.Maximum)
             {
                 if (argumentCount > 0)
                 {
@@ -121,22 +142,23 @@ internal static class Parser
                 }
 
                 // This option want no values
-                if (option.Arity.Maximum == 0)
+                if (parent.Option.Argument.Arity.Maximum == 0)
                 {
                     break;
                 }
             }
-            else if (option.IsBoolean() && !bool.TryParse(context.CurrentToken.Value, out _))
+            else if (parent.Option.Argument.IsBoolean() && !bool.TryParse(context.CurrentToken.Lexeme, out _))
             {
                 // The option value was not a valid boolean identifier.
                 // Since we allow booleans to act as a flag, simply skip it.
                 break;
             }
 
-            Debug.Assert(option.Result != null, "Option result should not be null when parsing value");
-            option.Result.AddToken(context.CurrentToken);
-            argumentCount++;
+            // Create a syntax node and add it to the option
+            var syntax = new OptionArgumentSyntax(parent.Option.Argument, context.CurrentToken, parent);
+            parent.AddChild(syntax);
 
+            argumentCount++;
             context.ConsumeToken();
         }
     }

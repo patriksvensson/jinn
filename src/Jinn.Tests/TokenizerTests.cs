@@ -6,30 +6,28 @@ public class TokenizerTests
     public void Should_Tokenize_Single_Argument()
     {
         // Given
-        var command = new RootCommand();
-        command.Arguments.Add(new Argument<string>("<FOO>"));
+        var fixture = new RootCommandFixture();
+        fixture.Arguments.Add(new Argument<string>("<FOO>"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, "foo");
+        var result = fixture.ParseAndReturnTokens("foo");
 
         // Then
-        result.ShouldHaveTokens("(Argument)foo");
+        result.ShouldHaveTokens("(Argument)<ExecutableName> (Argument)foo");
     }
 
     [Fact]
     public void Should_Tokenize_Multiple_Argument()
     {
         // Given
-        var command = new RootCommand();
-        command.Arguments.Add(new Argument<List<string>>("<FOO>"));
+        var fixture = new RootCommandFixture();
+        fixture.Arguments.Add(new Argument<List<string>>("<FOO>"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, "foo");
+        var result = fixture.ParseAndReturnTokens("foo");
 
         // Then
-        result.ShouldHaveTokens("(Argument)foo");
+        result.ShouldHaveTokens("(Argument)<ExecutableName> (Argument)foo");
     }
 
     [Theory]
@@ -41,30 +39,28 @@ public class TokenizerTests
     public void Should_Tokenize_Multiple_Arguments_Regardless_Of_Arity(int min, int max)
     {
         // Given
-        var command = new RootCommand();
-        command.Arguments.Add(new Argument<string>("<FOO>") { Arity = new Arity(min, max) });
+        var fixture = new RootCommandFixture();
+        fixture.Arguments.Add(new Argument<string>("<FOO>") { Arity = new Arity(min, max) });
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, "foo bar");
+        var result = fixture.ParseAndReturnTokens("foo bar");
 
         // Then
-        result.ShouldHaveTokens("(Argument)foo (Argument)bar");
+        result.ShouldHaveTokens("(Argument)<ExecutableName> (Argument)foo (Argument)bar");
     }
 
     [Theory]
-    [InlineData("--lol", "(Option)--lol")]
-    [InlineData("--lol 42", "(Option)--lol (Argument)42")]
-    [InlineData("--lol 42 32", "(Option)--lol (Argument)42 (Argument)32")]
+    [InlineData("--lol", "(Argument)<ExecutableName> (Option)--lol")]
+    [InlineData("--lol 42", "(Argument)<ExecutableName> (Option)--lol (Argument)42")]
+    [InlineData("--lol 42 32", "(Argument)<ExecutableName> (Option)--lol (Argument)42 (Argument)32")]
     public void Should_Tokenize_Option(string args, string expected)
     {
         // Given
-        var command = new RootCommand();
-        command.Options.Add(new Option<int>("--lol"));
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, args);
+        var result = fixture.ParseAndReturnTokens(args);
 
         // Then
         result.ShouldHaveTokens(expected);
@@ -76,79 +72,74 @@ public class TokenizerTests
     public void Should_Split_Argument_Values(string args)
     {
         // Given
-        var command = new RootCommand();
-        command.Options.Add(new Option<int>("--lol"));
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, args);
+        var result = fixture.ParseAndReturnTokens(args);
 
         // Then
         result.ShouldHaveTokens(
-            "(Option)--lol (Argument)32");
+            "(Argument)<ExecutableName> (Option)--lol (Argument)32");
     }
 
     [Fact]
     public void Should_Unbundle_Options()
     {
         // Given
-        var command = new RootCommand();
-        command.Options.Add(new Option<int>("-a"));
-        command.Options.Add(new Option<int>("-b"));
-        command.Options.Add(new Option<int>("-c"));
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("-a"));
+        fixture.Options.Add(new Option<int>("-b"));
+        fixture.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, "-ac");
+        var result = fixture.ParseAndReturnTokens("-ac");
 
         // Then
         result.ShouldHaveTokens(
-            "(Option)-a (Option)-c");
+            "(Argument)<ExecutableName> (Option)-a (Option)-c");
     }
 
     [Fact]
     public void Should_Acknowledge_Double_Dash()
     {
         // Given
-        var command = new RootCommand();
+        var fixture = new RootCommandFixture();
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, "--");
+        var result = fixture.ParseAndReturnTokens("--");
 
         // Then
-        result.ShouldHaveTokens("(DoubleDash)--");
+        result.ShouldHaveTokens("(Argument)<ExecutableName> (DoubleDash)--");
     }
 
     [Fact]
     public void Should_Treat_Everything_After_Double_Dash_As_Arguments()
     {
         // Given
-        var command = new RootCommand();
-        command.Options.Add(new Option<int>("--lol"));
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, "-- --lol");
+        var result = fixture.ParseAndReturnTokens("-- --lol");
 
         // Then
-        result.ShouldHaveTokens("(DoubleDash)-- (Argument)--lol");
+        result.ShouldHaveTokens("(Argument)<ExecutableName> (DoubleDash)-- (Argument)--lol");
     }
 
     [Theory]
-    [InlineData("-abf", "(Option)-a (Option)-b (Argument)f")]
-    [InlineData("-afg", "(Option)-a (Argument)fg")]
+    [InlineData("-abf", "(Argument)<ExecutableName> (Option)-a (Option)-b (Argument)f")]
+    [InlineData("-afg", "(Argument)<ExecutableName> (Option)-a (Argument)fg")]
     public void Should_Unbundle_Options_And_Treat_Unknown_Part_As_Argument(string args, string expected)
     {
         // Given
-        var command = new RootCommand();
-        command.Options.Add(new Option<int>("-a"));
-        command.Options.Add(new Option<int>("-b"));
-        command.Options.Add(new Option<int>("-c"));
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("-a"));
+        fixture.Options.Add(new Option<int>("-b"));
+        fixture.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            command, args);
+        var result = fixture.ParseAndReturnTokens(args);
 
         // Then
         result.ShouldHaveTokens(expected);
@@ -167,16 +158,16 @@ public class TokenizerTests
         command2.Options.Add(new Option<bool>("--corgi"));
         command.Commands.Add(command2);
 
-        var root = new RootCommand(command);
+        var fixture = new RootCommandFixture(command);
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            root, "foo root --bar --lol qux bar --corgi");
+        var result = fixture.ParseAndReturnTokens(
+            "foo root --bar --lol qux bar --corgi");
 
         // Then
         result.ShouldHaveTokens(
-            "(Command)foo (Argument)root (Option)--bar (Option)--lol (Argument)qux " +
-            "(Command)bar (Option)--corgi");
+            "(Argument)<ExecutableName> (Command)foo (Argument)root (Option)--bar " +
+            "(Option)--lol (Argument)qux (Command)bar (Option)--corgi");
     }
 
     [Fact]
@@ -195,15 +186,15 @@ public class TokenizerTests
         command2.Options.Add(new Option<bool>("--corgi"));
         command.Commands.Add(command2);
 
-        var root = new RootCommand(command);
+        var fixture = new RootCommandFixture(command);
 
         // When
-        var result = ParserFixture.ParseAndReturnTokens(
-            root, "foo root --bar -abf --lol qux bar --corgi");
+        var result = fixture.ParseAndReturnTokens(
+            "foo root --bar -abf --lol qux bar --corgi");
 
         // Then
         result.ShouldHaveTokenSpans(
-            "(0:3)foo (4:4)root (9:5)--bar (16:1)-a (17:1)-b (18:1)f " +
-            "(20:5)--lol (26:3)qux (30:3)bar (34:7)--corgi");
+            "(0:10)<ExecutableName> (11:3)foo (15:4)root (20:5)--bar (27:1)-a " +
+            "(28:1)-b (29:1)f (31:5)--lol (37:3)qux (41:3)bar (45:7)--corgi");
     }
 }

@@ -2,14 +2,9 @@ namespace Jinn;
 
 internal static class Tokenizer
 {
-    public static TokenizeResult Tokenize(IEnumerable<string> args, Command root)
+    public static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, Command root)
     {
-        return Tokenize(args, root.CreateSymbol());
-    }
-
-    private static TokenizeResult Tokenize(IEnumerable<string> args, CommandSymbol root)
-    {
-        var context = new TokenizerContext(root, args);
+        var context = new TokenizerContext(root, NormalizeArguments(args, root));
 
         while (context.Read(out var arg))
         {
@@ -17,14 +12,14 @@ internal static class Tokenizer
             // In that case, treat everything else as an argument
             if (context.HasEncounteredDoubleDash)
             {
-                context.AddToken(TokenType.Argument, null, arg);
+                context.AddToken(TokenKind.Argument, null, arg);
                 continue;
             }
 
-            // Is this a double dash?
+            // Encountered a double dash?
             if (arg == "--")
             {
-                context.AddToken(TokenType.DoubleDash, null, arg);
+                context.AddToken(TokenKind.DoubleDash, null, arg);
                 continue;
             }
 
@@ -33,13 +28,13 @@ internal static class Tokenizer
             {
                 switch (symbol)
                 {
-                    case CommandSymbol command:
-                        context.AddToken(TokenType.Command, command, arg);
+                    case Command command:
+                        context.AddToken(TokenKind.Command, command, arg);
                         context.SetCurrentCommand(command);
                         continue;
 
-                    case OptionSymbol:
-                        context.AddToken(TokenType.Option, symbol, arg);
+                    case Option:
+                        context.AddToken(TokenKind.Option, symbol, arg);
                         continue;
 
                     default:
@@ -66,10 +61,26 @@ internal static class Tokenizer
             }
 
             // Not known at all, so treat it as an argument
-            context.AddToken(TokenType.Argument, null, arg);
+            context.AddToken(TokenKind.Argument, null, arg);
         }
 
-        return context.CreateResult();
+        return context.Tokens;
+    }
+
+    private static List<string> NormalizeArguments(IEnumerable<string> args, Command command)
+    {
+        var result = new List<string>(args);
+
+        if (result.Count > 0)
+        {
+            if (result[0] == command.Name)
+            {
+                return result;
+            }
+        }
+
+        result.Insert(0, command.Name);
+        return result;
     }
 
     private static bool TrySplitArgumentIntoTokens(
@@ -82,17 +93,17 @@ internal static class Tokenizer
         }
 
         var option = arg.Substring(0, index);
-        if (!context.TryGetSymbol<OptionSymbol>(option, out var optionSymbol))
+        if (!context.TryGetSymbol<Option>(option, out var optionSymbol))
         {
             return false;
         }
 
-        context.AddToken(TokenType.Option, optionSymbol, option);
+        context.AddToken(TokenKind.Option, optionSymbol, option);
 
         var value = arg[(index + 1)..];
         if (value.Length != 0)
         {
-            context.AddToken(TokenType.Argument, optionSymbol, value);
+            context.AddToken(TokenKind.Argument, optionSymbol, value);
         }
 
         return true;
@@ -114,16 +125,16 @@ internal static class Tokenizer
         foreach (var (character, index) in arg.Skip(1).Select((a, b) => (a, b + 1)))
         {
             var optionName = $"-{character}";
-            if (!context.TryGetSymbol<OptionSymbol>(optionName, out var optionSymbol))
+            if (!context.TryGetSymbol<Option>(optionName, out var optionSymbol))
             {
                 var argument = arg[index..];
                 var argumentSpan = new TextSpan(context.Position + index, argument.Length);
-                context.AddToken(TokenType.Argument, null, argument, argumentSpan);
+                context.AddToken(TokenKind.Argument, null, argument, argumentSpan);
                 return true;
             }
 
             var optionSpan = new TextSpan(context.Position + index, 1);
-            context.AddToken(TokenType.Option, optionSymbol, optionName, optionSpan);
+            context.AddToken(TokenKind.Option, optionSymbol, optionName, optionSpan);
         }
 
         return true;
@@ -132,13 +143,13 @@ internal static class Tokenizer
     private static bool TryAddOptionValue(TokenizerContext context, string arg)
     {
         if (context.Tokens.Count == 0 ||
-            context.Tokens[^1].TokenType != TokenType.Option ||
-            context.Tokens[^1].Symbol is not OptionSymbol { Arity.Minimum: > 0 } option)
+            context.Tokens[^1].Kind != TokenKind.Option ||
+            context.Tokens[^1].Symbol is not Option { Argument.Arity.Minimum: > 0 } option)
         {
             return false;
         }
 
-        context.AddToken(TokenType.Argument, option, arg);
+        context.AddToken(TokenKind.Argument, option, arg);
         return true;
     }
 }
