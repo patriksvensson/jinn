@@ -83,7 +83,11 @@ internal static class Tokenizer
             }
         }
 
-        result.Insert(0, command.Name);
+        if (command is RootCommand)
+        {
+            result.Insert(0, command.Name);
+        }
+
         return result;
     }
 
