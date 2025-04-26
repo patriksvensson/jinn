@@ -28,6 +28,10 @@ internal static class Tokenizer
             {
                 switch (symbol)
                 {
+                    case RootCommand rootCommand:
+                        context.AddToken(TokenKind.Executable, rootCommand, arg);
+                        continue;
+
                     case Command command:
                         context.AddToken(TokenKind.Command, command, arg);
                         context.SetCurrentCommand(command);

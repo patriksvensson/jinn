@@ -3,6 +3,40 @@ namespace Jinn.Tests;
 public sealed class ParserTests
 {
     [Fact]
+    public void Parses_Consecutive_Tokens_Into_List()
+    {
+        // Given
+        var command = new Command("foo");
+        command.Options.Add(new Option<List<int>>("--lol"));
+        var fixture = new RootCommandFixture(command);
+
+        // When
+        var result = fixture.ParseAndSerialize(
+            "foo --lol 1 2 3",
+            new ParseResultSerializerOptions
+            {
+                Parts = ParseResultParts.Parsed,
+                ExcludeExecutable = true,
+            });
+
+        // Then
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <ParsedCommand>
+                <Command Name="foo">
+                  <Option Name="--lol">
+                    <Token Lexeme="1" Kind="Argument" Span="10:1" />
+                    <Token Lexeme="2" Kind="Argument" Span="12:1" />
+                    <Token Lexeme="3" Kind="Argument" Span="14:1" />
+                  </Option>
+                </Command>
+              </ParsedCommand>
+            </ParseResult>
+            """);
+    }
+
+    [Fact]
     public void Should_Preserve_Unmatched_Tokens()
     {
         // Given
@@ -25,6 +59,6 @@ public sealed class ParserTests
 
         // Then
         result.Unmatched.ShouldHaveTokens(
-            "(Argument)<ExecutableName> (Argument)f");
+            "(Argument)f");
     }
 }

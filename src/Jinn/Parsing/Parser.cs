@@ -41,6 +41,9 @@ internal static class Parser
 
             switch (current.Kind)
             {
+                case TokenKind.Executable:
+                    context.ConsumeToken();
+                    break;
                 case TokenKind.Command:
                     ParseCommand(context, parent);
                     break;

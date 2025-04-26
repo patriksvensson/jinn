@@ -13,7 +13,7 @@ public class TokenizerTests
         var result = fixture.ParseAndReturnTokens("foo");
 
         // Then
-        result.ShouldHaveTokens("(Argument)<ExecutableName> (Argument)foo");
+        result.ShouldHaveTokens("(Executable)TestRunner (Argument)foo");
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class TokenizerTests
         var result = fixture.ParseAndReturnTokens("foo");
 
         // Then
-        result.ShouldHaveTokens("(Argument)<ExecutableName> (Argument)foo");
+        result.ShouldHaveTokens("(Executable)TestRunner (Argument)foo");
     }
 
     [Theory]
@@ -46,13 +46,13 @@ public class TokenizerTests
         var result = fixture.ParseAndReturnTokens("foo bar");
 
         // Then
-        result.ShouldHaveTokens("(Argument)<ExecutableName> (Argument)foo (Argument)bar");
+        result.ShouldHaveTokens("(Executable)TestRunner (Argument)foo (Argument)bar");
     }
 
     [Theory]
-    [InlineData("--lol", "(Argument)<ExecutableName> (Option)--lol")]
-    [InlineData("--lol 42", "(Argument)<ExecutableName> (Option)--lol (Argument)42")]
-    [InlineData("--lol 42 32", "(Argument)<ExecutableName> (Option)--lol (Argument)42 (Argument)32")]
+    [InlineData("--lol", "(Executable)TestRunner (Option)--lol")]
+    [InlineData("--lol 42", "(Executable)TestRunner (Option)--lol (Argument)42")]
+    [InlineData("--lol 42 32", "(Executable)TestRunner (Option)--lol (Argument)42 (Argument)32")]
     public void Should_Tokenize_Option(string args, string expected)
     {
         // Given
@@ -80,7 +80,7 @@ public class TokenizerTests
 
         // Then
         result.ShouldHaveTokens(
-            "(Argument)<ExecutableName> (Option)--lol (Argument)32");
+            "(Executable)TestRunner (Option)--lol (Argument)32");
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class TokenizerTests
 
         // Then
         result.ShouldHaveTokens(
-            "(Argument)<ExecutableName> (Option)-a (Option)-c");
+            "(Executable)TestRunner (Option)-a (Option)-c");
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class TokenizerTests
         var result = fixture.ParseAndReturnTokens("--");
 
         // Then
-        result.ShouldHaveTokens("(Argument)<ExecutableName> (DoubleDash)--");
+        result.ShouldHaveTokens("(Executable)TestRunner (DoubleDash)--");
     }
 
     [Fact]
@@ -124,12 +124,12 @@ public class TokenizerTests
         var result = fixture.ParseAndReturnTokens("-- --lol");
 
         // Then
-        result.ShouldHaveTokens("(Argument)<ExecutableName> (DoubleDash)-- (Argument)--lol");
+        result.ShouldHaveTokens("(Executable)TestRunner (DoubleDash)-- (Argument)--lol");
     }
 
     [Theory]
-    [InlineData("-abf", "(Argument)<ExecutableName> (Option)-a (Option)-b (Argument)f")]
-    [InlineData("-afg", "(Argument)<ExecutableName> (Option)-a (Argument)fg")]
+    [InlineData("-abf", "(Executable)TestRunner (Option)-a (Option)-b (Argument)f")]
+    [InlineData("-afg", "(Executable)TestRunner (Option)-a (Argument)fg")]
     public void Should_Unbundle_Options_And_Treat_Unknown_Part_As_Argument(string args, string expected)
     {
         // Given
@@ -166,7 +166,7 @@ public class TokenizerTests
 
         // Then
         result.ShouldHaveTokens(
-            "(Argument)<ExecutableName> (Command)foo (Argument)root (Option)--bar " +
+            "(Executable)TestRunner (Command)foo (Argument)root (Option)--bar " +
             "(Option)--lol (Argument)qux (Command)bar (Option)--corgi");
     }
 
@@ -194,7 +194,7 @@ public class TokenizerTests
 
         // Then
         result.ShouldHaveTokenSpans(
-            "(0:10)<ExecutableName> (11:3)foo (15:4)root (20:5)--bar (27:1)-a " +
+            "(0:10)TestRunner (11:3)foo (15:4)root (20:5)--bar (27:1)-a " +
             "(28:1)-b (29:1)f (31:5)--lol (37:3)qux (41:3)bar (45:7)--corgi");
     }
 }

@@ -17,6 +17,13 @@ public sealed class RootCommandFixture
         };
     }
 
+    public string ParseAndSerialize(string args, ParseResultSerializerOptions? options = null)
+    {
+        options ??= new ParseResultSerializerOptions();
+        var result = Parse(args);
+        return ParseResultSerializer.Serialize(result, options);
+    }
+
     public ParseResult Parse(string args)
     {
         var root = new RootCommand(Configuration, Commands.ToArray());

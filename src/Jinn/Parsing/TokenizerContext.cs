@@ -76,6 +76,8 @@ internal sealed class TokenizerContext
     {
         _symbols.Clear();
 
+        _symbols[current.Name] = current;
+
         foreach (var command in current.Commands)
         {
             _symbols[command.Name] = command;

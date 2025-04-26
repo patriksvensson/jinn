@@ -7,13 +7,6 @@ public static class TokenExtensions
         var builder = new StringBuilder();
         foreach (var token in tokens)
         {
-            if (token.Symbol is RootCommand)
-            {
-                builder.Append($"({token.Kind})<ExecutableName>");
-                builder.Append(' ');
-                continue;
-            }
-
             builder.Append($"({token.Kind}){token.Lexeme}");
             builder.Append(' ');
         }
@@ -27,13 +20,6 @@ public static class TokenExtensions
         var builder = new StringBuilder();
         foreach (var token in tokens)
         {
-            if (token.Symbol is RootCommand)
-            {
-                builder.Append($"({token.Span.Position}:{token.Span.Length})<ExecutableName>");
-                builder.Append(' ');
-                continue;
-            }
-
             builder.Append($"({token.Span.Position}:{token.Span.Length}){token.Lexeme}");
             builder.Append(' ');
         }

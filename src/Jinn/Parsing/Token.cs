@@ -27,6 +27,7 @@ public sealed class Token
 [PublicAPI]
 public enum TokenKind
 {
+    Executable,
     Command,
     Argument,
     Option,
