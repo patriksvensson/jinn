@@ -6,10 +6,11 @@ public sealed class Token
 {
     public TokenKind Kind { get; }
     public Symbol? Symbol { get; set; }
-    public TextSpan Span { get; }
+    public TextSpan? Span { get; }
     public string Lexeme { get; }
+    public bool Synthetic => Span == null;
 
-    public Token(TokenKind kind, Symbol? symbol, TextSpan span, string? lexeme)
+    public Token(TokenKind kind, Symbol? symbol, TextSpan? span, string? lexeme)
     {
         Kind = kind;
         Symbol = symbol;

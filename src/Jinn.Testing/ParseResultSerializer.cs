@@ -30,14 +30,7 @@ public static class ParseResultSerializer
         var output = new Utf8StringWriter();
         using (var writer = XmlWriterEx.Create(output))
         {
-            // Calculate the token offset
-            var offset = 0;
-            if (options.ExcludeExecutable)
-            {
-                offset = result.Tokens[0].Lexeme.Length + 1;
-            }
-
-            var context = new Context { Options = options, Result = result, Writer = writer, Offset = offset };
+            var context = new Context { Options = options, Result = result, Writer = writer };
 
             // Write
             writer.WriteElement("ParseResult", () =>
@@ -77,7 +70,6 @@ file sealed class Context
     public required ParseResult Result { get; init; }
     public required ParseResultSerializerOptions Options { get; init; }
     public required XmlWriterEx Writer { get; init; }
-    public int Offset { get; init; }
 }
 
 file sealed class Visitor
@@ -168,19 +160,16 @@ file sealed class Visitor
 
     public void VisitToken(Token token, Context context)
     {
-        if (token.Span.Position < context.Offset)
-        {
-            return;
-        }
-
         context.Writer.WriteElement("Token", () =>
         {
             context.Writer.WriteAttribute("Lexeme", token.Lexeme);
             context.Writer.WriteAttribute("Kind", token.Kind);
 
             // Calculate the span
-            var span = new TextSpan(token.Span.Position - context.Offset, token.Span.Length);
-            context.Writer.WriteAttribute("Span", span);
+            if (token.Span != null)
+            {
+                context.Writer.WriteAttribute("Span", token.Span.Value);
+            }
         });
     }
 }

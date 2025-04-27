@@ -2,9 +2,8 @@
 
 internal sealed class TokenizerContext
 {
-    private readonly Command _root;
     private readonly Dictionary<string, Symbol> _symbols;
-    private readonly string[] _args;
+    private readonly StringArgument[] _args;
     private readonly List<Token> _tokens;
     private int _index;
     private int _position;
@@ -14,9 +13,8 @@ internal sealed class TokenizerContext
     public int Position => _position;
     public bool HasEncounteredDoubleDash => _hasEncounteredDoubleDash;
 
-    public TokenizerContext(Command root, IEnumerable<string> args)
+    public TokenizerContext(Command root, List<StringArgument> args)
     {
-        _root = root ?? throw new ArgumentNullException(nameof(root));
         _symbols = new Dictionary<string, Symbol>(StringComparer.Ordinal);
         _args = args.ToArray();
         _tokens = [];
@@ -26,7 +24,8 @@ internal sealed class TokenizerContext
         SetCurrentCommand(root);
     }
 
-    public bool Read([NotNullWhen(true)] out string? arg)
+    public bool Read(
+        [NotNullWhen(true)] out StringArgument? arg)
     {
         if (_index >= _args.Length - 1)
         {
@@ -36,7 +35,10 @@ internal sealed class TokenizerContext
 
         if (_index != -1)
         {
-            _position += _args[_index].Length + 1;
+            if (!_args[_index].IsSynthetic)
+            {
+                _position += _args[_index].Value.Length + 1;
+            }
         }
 
         _index++;
@@ -44,14 +46,14 @@ internal sealed class TokenizerContext
         return true;
     }
 
-    public void AddToken(TokenKind kind, Symbol? symbol, string text, TextSpan? span = null)
+    public void AddToken(TokenKind kind, Symbol? symbol, StringArgument text, TextSpan? span = null)
     {
         if (kind == TokenKind.DoubleDash)
         {
             _hasEncounteredDoubleDash = true;
         }
 
-        _tokens.Add(new Token(kind, symbol, span ?? new TextSpan(Position, text.Length), text));
+        _tokens.Add(new Token(kind, symbol, text.IsSynthetic ? null : span ?? new TextSpan(Position, text.Length), text.Value));
     }
 
     public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
@@ -76,7 +78,10 @@ internal sealed class TokenizerContext
     {
         _symbols.Clear();
 
-        _symbols[current.Name] = current;
+        if (current is RootCommand root)
+        {
+            _symbols[root.Name] = root;
+        }
 
         foreach (var command in current.Commands)
         {

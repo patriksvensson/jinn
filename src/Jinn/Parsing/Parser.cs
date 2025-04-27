@@ -4,7 +4,7 @@ internal static class Parser
 {
     public static ParseResult Parse(
         Configuration configuration,
-        IEnumerable<string> args,
+        IReadOnlyList<string> args,
         Command command)
     {
         var tokens = Tokenizer.Tokenize(args, command);
@@ -16,8 +16,11 @@ internal static class Parser
         {
             Root = syntax,
             Configuration = configuration,
-            Tokens = tokens,
-            Unmatched = context.Unmatched,
+
+            // Filter out any synthetic tokens that did not
+            // originate from the received arguments
+            Unmatched = context.Unmatched.Where(x => !x.Synthetic).ToList(),
+            Tokens = tokens.Where(x => !x.Synthetic).ToList(),
         });
     }
 

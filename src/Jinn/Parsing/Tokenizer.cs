@@ -71,13 +71,14 @@ internal static class Tokenizer
         return context.Tokens;
     }
 
-    private static List<string> NormalizeArguments(IEnumerable<string> args, Command command)
+    private static List<StringArgument> NormalizeArguments(IEnumerable<string> args, Command command)
     {
-        var result = new List<string>(args);
+        var result = new List<StringArgument>(
+            args.Select(arg => new StringArgument(arg, isSynthetic: false)));
 
         if (result.Count > 0)
         {
-            if (result[0] == command.Name)
+            if (result[0].Value == command.Name)
             {
                 return result;
             }
@@ -85,22 +86,22 @@ internal static class Tokenizer
 
         if (command is RootCommand)
         {
-            result.Insert(0, command.Name);
+            result.Insert(0, StringArgument.Syntetic(command.Name));
         }
 
         return result;
     }
 
     private static bool TrySplitArgumentIntoTokens(
-        TokenizerContext context, string arg)
+        TokenizerContext context, StringArgument arg)
     {
-        var index = arg.AsSpan().IndexOfAny(':', '=');
+        var index = arg.Value.AsSpan().IndexOfAny(':', '=');
         if (index == -1)
         {
             return false;
         }
 
-        var option = arg.Substring(0, index);
+        var option = new StringArgument(arg.Value.Substring(0, index), arg.IsSynthetic);
         if (!context.TryGetSymbol<Option>(option, out var optionSymbol))
         {
             return false;
@@ -108,7 +109,7 @@ internal static class Tokenizer
 
         context.AddToken(TokenKind.Option, optionSymbol, option);
 
-        var value = arg[(index + 1)..];
+        var value = new StringArgument(arg.Value[(index + 1)..], arg.IsSynthetic);
         if (value.Length != 0)
         {
             context.AddToken(TokenKind.Argument, optionSymbol, value);
@@ -118,24 +119,24 @@ internal static class Tokenizer
     }
 
     private static bool TryUnbundleOptionsNew(
-        TokenizerContext context, string arg)
+        TokenizerContext context, StringArgument arg)
     {
-        if (arg.Length <= 1 || arg[0] != '-')
+        if (arg.Value.Length <= 1 || arg.Value[0] != '-')
         {
             return false;
         }
 
-        if (arg[1] == '-')
+        if (arg.Value[1] == '-')
         {
             return false;
         }
 
         foreach (var (character, index) in arg.Skip(1).Select((a, b) => (a, b + 1)))
         {
-            var optionName = $"-{character}";
+            var optionName = new StringArgument($"-{character}");
             if (!context.TryGetSymbol<Option>(optionName, out var optionSymbol))
             {
-                var argument = arg[index..];
+                var argument = new StringArgument(arg.Value[index..], arg.IsSynthetic);
                 var argumentSpan = new TextSpan(context.Position + index, argument.Length);
                 context.AddToken(TokenKind.Argument, null, argument, argumentSpan);
                 return true;
@@ -148,7 +149,7 @@ internal static class Tokenizer
         return true;
     }
 
-    private static bool TryAddOptionValue(TokenizerContext context, string arg)
+    private static bool TryAddOptionValue(TokenizerContext context, StringArgument arg)
     {
         if (context.Tokens.Count == 0 ||
             context.Tokens[^1].Kind != TokenKind.Option ||

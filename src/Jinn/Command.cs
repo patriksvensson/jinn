@@ -52,7 +52,7 @@ public sealed class RootCommand : Command
 
     public ParseResult Parse(IEnumerable<string> args)
     {
-        return Parser.Parse(Configuration, args, this);
+        return Parser.Parse(Configuration, args.ToList(), this);
     }
 
     public async Task<int> Invoke(IEnumerable<string> args)
