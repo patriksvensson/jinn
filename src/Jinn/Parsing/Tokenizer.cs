@@ -1,3 +1,5 @@
+using System.Buffers;
+
 namespace Jinn;
 
 internal static class Tokenizer
@@ -71,10 +73,13 @@ internal static class Tokenizer
         return context.GetResult();
     }
 
+    private static SearchValues<char> splitters = SearchValues.Create(":=");
+
     private static bool TrySplitArgumentIntoTokens(
         TokenizerContext context, string arg)
     {
-        var index = arg.AsSpan().IndexOfAny(':', '=');
+        var argSpan = arg.AsSpan();
+        var index = argSpan.IndexOfAny(splitters);
         if (index == -1)
         {
             return false;
@@ -88,10 +93,10 @@ internal static class Tokenizer
 
         context.AddToken(TokenKind.Option, optionSymbol, option);
 
-        var value = arg[(index + 1)..];
+        var value = argSpan[(index + 1)..];
         if (value.Length != 0)
         {
-            context.AddToken(TokenKind.Argument, optionSymbol, value);
+            context.AddToken(TokenKind.Argument, optionSymbol, value.ToString());
         }
 
         return true;
