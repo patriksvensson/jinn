@@ -11,15 +11,24 @@ public sealed class RootCommandFixture
     public RootCommandFixture(params Command[] commands)
     {
         Commands.AddRange(commands);
-        Configuration = new Configuration
-        {
-            ExecutableName = "TestRunner",
-        };
+        Configuration = new Configuration { ExecutableName = "TestRunner", };
     }
 
-    public string ParseAndSerialize(string args, ParseResultSerializerOptions? options = null)
+    public string ParseAndSerialize(
+        string args,
+        bool excludeExecutable = true,
+        ParseResultParts parts = ParseResultParts.Parsed | ParseResultParts.Unmatched)
     {
-        options ??= new ParseResultSerializerOptions();
+        var options = new ParseResultSerializerOptions { Parts = parts, ExcludeExecutable = excludeExecutable, };
+
+        return ParseAndSerialize(args, options);
+    }
+
+    public string ParseAndSerialize(string args, ParseResultSerializerOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        ArgumentNullException.ThrowIfNull(options);
+
         var result = Parse(args);
         return ParseResultSerializer.Serialize(result, options);
     }

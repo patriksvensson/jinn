@@ -10,10 +10,17 @@ public class TokenizerTests
         fixture.Arguments.Add(new Argument<string>("<FOO>"));
 
         // When
-        var result = fixture.ParseAndReturnTokens("foo");
+        var result = fixture.ParseAndSerialize("foo", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens("(Executable)TestRunner (Argument)foo");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="foo" Kind="Argument" Span="0:3" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Fact]
@@ -24,10 +31,17 @@ public class TokenizerTests
         fixture.Arguments.Add(new Argument<List<string>>("<FOO>"));
 
         // When
-        var result = fixture.ParseAndReturnTokens("foo");
+        var result = fixture.ParseAndSerialize("foo", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens("(Executable)TestRunner (Argument)foo");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="foo" Kind="Argument" Span="0:3" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Theory]
@@ -43,27 +57,84 @@ public class TokenizerTests
         fixture.Arguments.Add(new Argument<string>("<FOO>") { Arity = new Arity(min, max) });
 
         // When
-        var result = fixture.ParseAndReturnTokens("foo bar");
+        var result = fixture.ParseAndSerialize("foo bar", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens("(Executable)TestRunner (Argument)foo (Argument)bar");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="foo" Kind="Argument" Span="0:3" />
+                <Token Lexeme="bar" Kind="Argument" Span="4:3" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
-    [Theory]
-    [InlineData("--lol", "(Executable)TestRunner (Option)--lol")]
-    [InlineData("--lol 42", "(Executable)TestRunner (Option)--lol (Argument)42")]
-    [InlineData("--lol 42 32", "(Executable)TestRunner (Option)--lol (Argument)42 (Argument)32")]
-    public void Should_Tokenize_Option(string args, string expected)
+    [Fact]
+    public void Should_Tokenize_Option_Without_Argument()
     {
         // Given
         var fixture = new RootCommandFixture();
         fixture.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = fixture.ParseAndReturnTokens(args);
+        var result = fixture.ParseAndSerialize("--lol", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens(expected);
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="--lol" Kind="Option" Span="0:5" />
+              </Tokens>
+            </ParseResult>
+            """);
+    }
+
+    [Fact]
+    public void Should_Tokenize_Option_With_Single_Argument()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("--lol"));
+
+        // When
+        var result = fixture.ParseAndSerialize("--lol 42", parts: ParseResultParts.Tokens);
+
+        // Then
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="--lol" Kind="Option" Span="0:5" />
+                <Token Lexeme="42" Kind="Argument" Span="6:2" />
+              </Tokens>
+            </ParseResult>
+            """);
+    }
+
+    [Fact]
+    public void Should_Tokenize_Option_With_Multiple_Arguments()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("--lol"));
+
+        // When
+        var result = fixture.ParseAndSerialize("--lol 42 32", parts: ParseResultParts.Tokens);
+
+        // Then
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="--lol" Kind="Option" Span="0:5" />
+                <Token Lexeme="42" Kind="Argument" Span="6:2" />
+                <Token Lexeme="32" Kind="Argument" Span="9:2" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Theory]
@@ -76,11 +147,18 @@ public class TokenizerTests
         fixture.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = fixture.ParseAndReturnTokens(args);
+        var result = fixture.ParseAndSerialize(args, parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens(
-            "(Executable)TestRunner (Option)--lol (Argument)32");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="--lol" Kind="Option" Span="0:5" />
+                <Token Lexeme="32" Kind="Argument" Span="0:2" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Fact]
@@ -93,11 +171,18 @@ public class TokenizerTests
         fixture.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = fixture.ParseAndReturnTokens("-ac");
+        var result = fixture.ParseAndSerialize("-ac", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens(
-            "(Executable)TestRunner (Option)-a (Option)-c");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="-a" Kind="Option" Span="1:1" />
+                <Token Lexeme="-c" Kind="Option" Span="2:1" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Fact]
@@ -107,10 +192,17 @@ public class TokenizerTests
         var fixture = new RootCommandFixture();
 
         // When
-        var result = fixture.ParseAndReturnTokens("--");
+        var result = fixture.ParseAndSerialize("--", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens("(Executable)TestRunner (DoubleDash)--");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="--" Kind="DoubleDash" Span="0:2" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Fact]
@@ -121,16 +213,22 @@ public class TokenizerTests
         fixture.Options.Add(new Option<int>("--lol"));
 
         // When
-        var result = fixture.ParseAndReturnTokens("-- --lol");
+        var result = fixture.ParseAndSerialize("-- --lol", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens("(Executable)TestRunner (DoubleDash)-- (Argument)--lol");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="--" Kind="DoubleDash" Span="0:2" />
+                <Token Lexeme="--lol" Kind="Argument" Span="3:5" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
-    [Theory]
-    [InlineData("-abf", "(Executable)TestRunner (Option)-a (Option)-b (Argument)f")]
-    [InlineData("-afg", "(Executable)TestRunner (Option)-a (Argument)fg")]
-    public void Should_Unbundle_Options_And_Treat_Unknown_Part_As_Argument(string args, string expected)
+    [Fact]
+    public void Should_Unbundle_Options_And_Treat_Unknown_Part_As_Argument()
     {
         // Given
         var fixture = new RootCommandFixture();
@@ -139,10 +237,19 @@ public class TokenizerTests
         fixture.Options.Add(new Option<int>("-c"));
 
         // When
-        var result = fixture.ParseAndReturnTokens(args);
+        var result = fixture.ParseAndSerialize("-abfg", parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens(expected);
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="-a" Kind="Option" Span="1:1" />
+                <Token Lexeme="-b" Kind="Option" Span="2:1" />
+                <Token Lexeme="fg" Kind="Argument" Span="3:2" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Fact]
@@ -161,13 +268,25 @@ public class TokenizerTests
         var fixture = new RootCommandFixture(command);
 
         // When
-        var result = fixture.ParseAndReturnTokens(
-            "foo root --bar --lol qux bar --corgi");
+        var result = fixture.ParseAndSerialize(
+            "foo root --bar --lol qux bar --corgi",
+            parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokens(
-            "(Executable)TestRunner (Command)foo (Argument)root (Option)--bar " +
-            "(Option)--lol (Argument)qux (Command)bar (Option)--corgi");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="foo" Kind="Command" Span="0:3" />
+                <Token Lexeme="root" Kind="Argument" Span="4:4" />
+                <Token Lexeme="--bar" Kind="Option" Span="9:5" />
+                <Token Lexeme="--lol" Kind="Option" Span="15:5" />
+                <Token Lexeme="qux" Kind="Argument" Span="21:3" />
+                <Token Lexeme="bar" Kind="Command" Span="25:3" />
+                <Token Lexeme="--corgi" Kind="Option" Span="29:7" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 
     [Fact]
@@ -189,12 +308,27 @@ public class TokenizerTests
         var fixture = new RootCommandFixture(command);
 
         // When
-        var result = fixture.ParseAndReturnTokens(
-            "foo root --bar -abf --lol qux bar --corgi");
+        var result = fixture.ParseAndSerialize(
+            "foo root --bar -abf --lol qux bar --corgi",
+            parts: ParseResultParts.Tokens);
 
         // Then
-        result.ShouldHaveTokenSpans(
-            "(0:10)TestRunner (11:3)foo (15:4)root (20:5)--bar (27:1)-a " +
-            "(28:1)-b (29:1)f (31:5)--lol (37:3)qux (41:3)bar (45:7)--corgi");
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <Tokens>
+                <Token Lexeme="foo" Kind="Command" Span="0:3" />
+                <Token Lexeme="root" Kind="Argument" Span="4:4" />
+                <Token Lexeme="--bar" Kind="Option" Span="9:5" />
+                <Token Lexeme="-a" Kind="Option" Span="16:1" />
+                <Token Lexeme="-b" Kind="Option" Span="17:1" />
+                <Token Lexeme="f" Kind="Argument" Span="18:1" />
+                <Token Lexeme="--lol" Kind="Option" Span="20:5" />
+                <Token Lexeme="qux" Kind="Argument" Span="26:3" />
+                <Token Lexeme="bar" Kind="Command" Span="30:3" />
+                <Token Lexeme="--corgi" Kind="Option" Span="34:7" />
+              </Tokens>
+            </ParseResult>
+            """);
     }
 }

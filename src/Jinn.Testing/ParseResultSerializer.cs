@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Jinn.Testing;
 
+[Flags]
 public enum ParseResultParts
 {
     None = 0,
@@ -109,57 +110,51 @@ file sealed class Visitor
         }
     }
 
-    public void VisitRootCommand(RootCommandResult root, Context context)
+    public void VisitRootCommand(RootCommandResult result, Context context)
     {
-        if (context.Options.ExcludeExecutable)
+        context.Writer.WriteElement("RootCommand", () =>
         {
-            foreach (var child in root.Children)
+            if (!context.Options.ExcludeExecutable)
+            {
+                context.Writer.WriteAttribute("Name", result.Command.Name);
+            }
+
+            foreach (var child in result.Children)
             {
                 Visit(child, context);
             }
-        }
-        else
-        {
-            context.Writer.WriteElement("RootCommand", () =>
-            {
-                context.Writer.WriteAttribute("Name", root.Command.Name);
-
-                foreach (var child in root.Children)
-                {
-                    Visit(child, context);
-                }
-            });
-        }
+        });
     }
 
-    public void VisitSubCommand(SubCommandResult command, Context context)
+    public void VisitSubCommand(SubCommandResult result, Context context)
     {
         context.Writer.WriteElement("Command", () =>
         {
-            context.Writer.WriteAttribute("Name", command.Token.Lexeme);
+            context.Writer.WriteAttribute("Name", result.Token.Lexeme);
 
-            foreach (var child in command.Children)
+            foreach (var child in result.Children)
             {
                 Visit(child, context);
             }
         });
     }
 
-    public void VisitArgument(ArgumentResult argument, Context context)
+    public void VisitArgument(ArgumentResult result, Context context)
     {
         context.Writer.WriteElement("Argument", () =>
         {
-            VisitTokens(argument.Tokens, context);
+            context.Writer.WriteAttribute("Name", result.Argument.Name);
+            VisitTokens(result.Tokens, context);
         });
     }
 
-    public void VisitOption(OptionResult option, Context context)
+    public void VisitOption(OptionResult result, Context context)
     {
         context.Writer.WriteElement("Option", () =>
         {
-            context.Writer.WriteAttribute("Name", option.Token.Lexeme);
+            context.Writer.WriteAttribute("Name", result.Token.Lexeme);
 
-            VisitTokens(option.Tokens, context);
+            VisitTokens(result.Tokens, context);
         });
     }
 
