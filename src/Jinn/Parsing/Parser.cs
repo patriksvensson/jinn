@@ -4,23 +4,25 @@ internal static class Parser
 {
     public static ParseResult Parse(
         Configuration configuration,
-        IReadOnlyList<string> args,
+        IEnumerable<string> args,
         Command command)
     {
         var tokens = Tokenizer.Tokenize(args, command);
         var context = new ParserContext(command, tokens);
         var syntax = Parse(context, command);
 
+        // The synthetic tokens are not needed anymore,
+        // so let's remove them from the collections.
+        tokens.RemoveAll(token => token.IsSynthetic);
+        context.Unmatched.RemoveAll(token => token.IsSynthetic);
+
         return ParseResultBuilder.Build(
             new SyntaxTree
         {
             Root = syntax,
             Configuration = configuration,
-
-            // Filter out any synthetic tokens that did not
-            // originate from the received arguments
-            Unmatched = context.Unmatched.Where(x => !x.Synthetic).ToList(),
-            Tokens = tokens.Where(x => !x.Synthetic).ToList(),
+            Unmatched = context.Unmatched,
+            Tokens = tokens,
         });
     }
 

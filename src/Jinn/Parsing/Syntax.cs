@@ -13,7 +13,9 @@ internal abstract class Syntax
         _children = [];
     }
 
-    public abstract void Accept<TContext>(SyntaxVisitor<TContext> visitor, TContext context);
+    public abstract void Accept<TContext>(
+        SyntaxVisitor<TContext> visitor,
+        TContext context);
 
     public void AddChild(Syntax child)
     {

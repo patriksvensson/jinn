@@ -3,20 +3,21 @@
 internal sealed class TokenizerContext
 {
     private readonly Dictionary<string, Symbol> _symbols;
-    private readonly StringArgument[] _args;
+    private readonly IReadOnlyList<string> _args;
     private readonly List<Token> _tokens;
+    private readonly bool _hasSyntheticRoot;
     private int _index;
     private int _position;
     private bool _hasEncounteredDoubleDash;
 
-    public IReadOnlyList<Token> Tokens => _tokens;
     public int Position => _position;
     public bool HasEncounteredDoubleDash => _hasEncounteredDoubleDash;
+    public bool HasSyntheticRoot => _hasSyntheticRoot;
 
-    public TokenizerContext(Command root, List<StringArgument> args)
+    public TokenizerContext(Command root, IEnumerable<string> args)
     {
         _symbols = new Dictionary<string, Symbol>(StringComparer.Ordinal);
-        _args = args.ToArray();
+        _args = NormalizeArguments(args, root, out _hasSyntheticRoot);
         _tokens = [];
         _index = -1;
         _position = 0;
@@ -24,10 +25,9 @@ internal sealed class TokenizerContext
         SetCurrentCommand(root);
     }
 
-    public bool Read(
-        [NotNullWhen(true)] out StringArgument? arg)
+    public bool Read([NotNullWhen(true)] out string? arg)
     {
-        if (_index >= _args.Length - 1)
+        if (_index >= _args.Count - 1)
         {
             arg = null;
             return false;
@@ -35,9 +35,10 @@ internal sealed class TokenizerContext
 
         if (_index != -1)
         {
-            if (!_args[_index].IsSynthetic)
+            var isAtSyntheticRoot = _index == 0 && _hasSyntheticRoot;
+            if (!isAtSyntheticRoot)
             {
-                _position += _args[_index].Value.Length + 1;
+                _position += _args[_index].Length + 1;
             }
         }
 
@@ -46,14 +47,19 @@ internal sealed class TokenizerContext
         return true;
     }
 
-    public void AddToken(TokenKind kind, Symbol? symbol, StringArgument text, TextSpan? span = null)
+    public void AddToken(TokenKind kind, Symbol? symbol, string lexeme, TextSpan? span = null)
     {
         if (kind == TokenKind.DoubleDash)
         {
             _hasEncounteredDoubleDash = true;
         }
 
-        _tokens.Add(new Token(kind, symbol, text.IsSynthetic ? null : span ?? new TextSpan(Position, text.Length), text.Value));
+        var isAtSyntheticRoot = _index == 0 && _hasSyntheticRoot;
+        _tokens.Add(
+            new Token(
+                kind, symbol,
+                isAtSyntheticRoot ? null : span ?? new TextSpan(Position, lexeme.Length),
+                lexeme));
     }
 
     public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
@@ -95,5 +101,39 @@ internal sealed class TokenizerContext
                 _symbols[alias] = option;
             }
         }
+    }
+
+    public Token? GetLastToken()
+    {
+        return _tokens.Count == 0 ? null : _tokens[^1];
+    }
+
+    public List<Token> GetResult()
+    {
+        return _tokens;
+    }
+
+    private static List<string> NormalizeArguments(
+        IEnumerable<string> args, Command command, out bool addedExecutable)
+    {
+        addedExecutable = false;
+
+        var result = new List<string>(args);
+
+        if (result.Count > 0)
+        {
+            if (result[0] == command.Name)
+            {
+                return result;
+            }
+        }
+
+        if (command is RootCommand)
+        {
+            addedExecutable = true;
+            result.Insert(0, command.Name);
+        }
+
+        return result;
     }
 }

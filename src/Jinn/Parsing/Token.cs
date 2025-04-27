@@ -8,7 +8,7 @@ public sealed class Token
     public Symbol? Symbol { get; set; }
     public TextSpan? Span { get; }
     public string Lexeme { get; }
-    public bool Synthetic => Span == null;
+    public bool IsSynthetic => Span == null;
 
     public Token(TokenKind kind, Symbol? symbol, TextSpan? span, string? lexeme)
     {

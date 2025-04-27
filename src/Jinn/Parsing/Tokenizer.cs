@@ -2,9 +2,9 @@ namespace Jinn;
 
 internal static class Tokenizer
 {
-    public static IReadOnlyList<Token> Tokenize(IEnumerable<string> args, Command root)
+    public static List<Token> Tokenize(IEnumerable<string> args, Command root)
     {
-        var context = new TokenizerContext(root, NormalizeArguments(args, root));
+        var context = new TokenizerContext(root, args);
 
         while (context.Read(out var arg))
         {
@@ -68,40 +68,19 @@ internal static class Tokenizer
             context.AddToken(TokenKind.Argument, null, arg);
         }
 
-        return context.Tokens;
-    }
-
-    private static List<StringArgument> NormalizeArguments(IEnumerable<string> args, Command command)
-    {
-        var result = new List<StringArgument>(
-            args.Select(arg => new StringArgument(arg, isSynthetic: false)));
-
-        if (result.Count > 0)
-        {
-            if (result[0].Value == command.Name)
-            {
-                return result;
-            }
-        }
-
-        if (command is RootCommand)
-        {
-            result.Insert(0, StringArgument.Syntetic(command.Name));
-        }
-
-        return result;
+        return context.GetResult();
     }
 
     private static bool TrySplitArgumentIntoTokens(
-        TokenizerContext context, StringArgument arg)
+        TokenizerContext context, string arg)
     {
-        var index = arg.Value.AsSpan().IndexOfAny(':', '=');
+        var index = arg.AsSpan().IndexOfAny(':', '=');
         if (index == -1)
         {
             return false;
         }
 
-        var option = new StringArgument(arg.Value.Substring(0, index), arg.IsSynthetic);
+        var option = arg.Substring(0, index);
         if (!context.TryGetSymbol<Option>(option, out var optionSymbol))
         {
             return false;
@@ -109,7 +88,7 @@ internal static class Tokenizer
 
         context.AddToken(TokenKind.Option, optionSymbol, option);
 
-        var value = new StringArgument(arg.Value[(index + 1)..], arg.IsSynthetic);
+        var value = arg[(index + 1)..];
         if (value.Length != 0)
         {
             context.AddToken(TokenKind.Argument, optionSymbol, value);
@@ -119,24 +98,24 @@ internal static class Tokenizer
     }
 
     private static bool TryUnbundleOptionsNew(
-        TokenizerContext context, StringArgument arg)
+        TokenizerContext context, string arg)
     {
-        if (arg.Value.Length <= 1 || arg.Value[0] != '-')
+        if (arg.Length <= 1 || arg[0] != '-')
         {
             return false;
         }
 
-        if (arg.Value[1] == '-')
+        if (arg[1] == '-')
         {
             return false;
         }
 
         foreach (var (character, index) in arg.Skip(1).Select((a, b) => (a, b + 1)))
         {
-            var optionName = new StringArgument($"-{character}");
+            var optionName = $"-{character}";
             if (!context.TryGetSymbol<Option>(optionName, out var optionSymbol))
             {
-                var argument = new StringArgument(arg.Value[index..], arg.IsSynthetic);
+                var argument = arg[index..];
                 var argumentSpan = new TextSpan(context.Position + index, argument.Length);
                 context.AddToken(TokenKind.Argument, null, argument, argumentSpan);
                 return true;
@@ -149,16 +128,19 @@ internal static class Tokenizer
         return true;
     }
 
-    private static bool TryAddOptionValue(TokenizerContext context, StringArgument arg)
+    private static bool TryAddOptionValue(TokenizerContext context, string arg)
     {
-        if (context.Tokens.Count == 0 ||
-            context.Tokens[^1].Kind != TokenKind.Option ||
-            context.Tokens[^1].Symbol is not Option { Argument.Arity.Minimum: > 0 } option)
+        var lastToken = context.GetLastToken();
+        if (lastToken != null)
         {
-            return false;
+            if (lastToken.Kind == TokenKind.Option &&
+                lastToken.Symbol is Option { Argument.Arity.Minimum: > 0 } option)
+            {
+                context.AddToken(TokenKind.Argument, option, arg);
+                return true;
+            }
         }
 
-        context.AddToken(TokenKind.Argument, option, arg);
-        return true;
+        return false;
     }
 }
