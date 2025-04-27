@@ -29,3 +29,27 @@ public sealed class Argument<T> : Argument
     {
     }
 }
+
+public static class ArgumentExtensions
+{
+    public static Argument<T> HasArity<T>(this Argument<T> argument, Arity arity)
+    {
+        ArgumentNullException.ThrowIfNull(argument);
+        argument.Arity = arity;
+        return argument;
+    }
+
+    public static Argument<T> HasArity<T>(this Argument<T> argument, int min, int max)
+    {
+        ArgumentNullException.ThrowIfNull(argument);
+        argument.Arity = new Arity(min, max);
+        return argument;
+    }
+
+    public static Argument<T> Required<T>(this Argument<T> argument, bool isRequired = true)
+    {
+        ArgumentNullException.ThrowIfNull(argument);
+        argument.IsRequired = isRequired;
+        return argument;
+    }
+}

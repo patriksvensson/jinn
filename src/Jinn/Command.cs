@@ -3,11 +3,15 @@ namespace Jinn;
 [PublicAPI]
 public class Command : Symbol
 {
+    private readonly List<Command> _commands = [];
+    private readonly List<Argument> _arguments = [];
+    private readonly List<Option> _options = [];
+
     public string Name { get; }
 
-    public List<Command> Commands { get; init; } = [];
-    public List<Argument> Arguments { get; init; } = [];
-    public List<Option> Options { get; init; } = [];
+    public IReadOnlyList<Command> Commands => _commands;
+    public IReadOnlyList<Argument> Arguments => _arguments;
+    public IReadOnlyList<Option> Options => _options;
 
     public bool HasArguments => Arguments.Count > 0;
     internal Func<InvocationContext, Task>? Handler { get; private set; }
@@ -15,6 +19,21 @@ public class Command : Symbol
     public Command(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
+    }
+
+    public void AddCommand(Command command)
+    {
+        _commands.Add(command);
+    }
+
+    public void AddArgument(Argument argument)
+    {
+        _arguments.Add(argument);
+    }
+
+    public void AddOption(Option option)
+    {
+        _options.Add(option);
     }
 
     public void SetHandler(Action<InvocationContext> handler)
@@ -40,14 +59,21 @@ public sealed class RootCommand : Command
     public RootCommand(params Command[] commands)
         : this(new Configuration())
     {
-        Commands.AddRange(commands);
+        foreach (var command in commands)
+        {
+            AddCommand(command);
+        }
     }
 
     public RootCommand(Configuration configuration, params Command[] commands)
         : base(configuration.ExecutableName)
     {
         Configuration = configuration;
-        Commands.AddRange(commands);
+
+        foreach (var command in commands)
+        {
+            AddCommand(command);
+        }
     }
 
     public ParseResult Parse(IEnumerable<string> args)

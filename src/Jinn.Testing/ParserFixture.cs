@@ -36,8 +36,17 @@ public sealed class RootCommandFixture
     public ParseResult Parse(string args)
     {
         var root = new RootCommand(Configuration, Commands.ToArray());
-        root.Arguments.AddRange(Arguments);
-        root.Options.AddRange(Options);
+
+        foreach (var argument in Arguments)
+        {
+            root.AddArgument(argument);
+        }
+
+        foreach (var option in Options)
+        {
+            root.AddOption(option);
+        }
+
         return root.Parse(StringSplitter.Split(args));
     }
 
