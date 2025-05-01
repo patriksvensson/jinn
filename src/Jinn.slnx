@@ -9,6 +9,7 @@
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
     <File Path=".editorconfig" />
+    <File Path="stylecop.json" />
   </Folder>
   <Project Path="Jinn.Benchmarks\Jinn.Benchmarks.csproj" Type="Classic C#">
     <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />

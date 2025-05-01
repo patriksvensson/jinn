@@ -18,6 +18,12 @@ public abstract class Option : Symbol
         set => Argument.IsRequired = value;
     }
 
+    public string Name
+    {
+        // TODO: Make sure this can't be cleared
+        get => Aliases.First();
+    }
+
     protected Option(string name, Argument argument)
     {
         Aliases.Add(name);

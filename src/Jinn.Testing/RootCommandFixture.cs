@@ -14,6 +14,27 @@ public sealed class RootCommandFixture
         Configuration = new Configuration { ExecutableName = "TestRunner", };
     }
 
+    public void AddCommand(Command command)
+    {
+        Commands.Add(command);
+    }
+
+    public void AddArgument(Argument argument)
+    {
+        Arguments.Add(argument);
+    }
+
+    public void AddOption(Option option)
+    {
+        Options.Add(option);
+    }
+
+    public async Task<int> Invoke(string args)
+    {
+        var root = CreateRootCommand();
+        return await root.Invoke(StringSplitter.Split(args));
+    }
+
     public string ParseAndSerialize(
         string args,
         bool excludeExecutable = true,
@@ -35,6 +56,17 @@ public sealed class RootCommandFixture
 
     public ParseResult Parse(string args)
     {
+        var root = CreateRootCommand();
+        return root.Parse(StringSplitter.Split(args));
+    }
+
+    public IReadOnlyList<Token> ParseAndReturnTokens(string args)
+    {
+        return Parse(args).Tokens;
+    }
+
+    private RootCommand CreateRootCommand()
+    {
         var root = new RootCommand(Configuration, Commands.ToArray());
 
         foreach (var argument in Arguments)
@@ -47,11 +79,6 @@ public sealed class RootCommandFixture
             root.AddOption(option);
         }
 
-        return root.Parse(StringSplitter.Split(args));
-    }
-
-    public IReadOnlyList<Token> ParseAndReturnTokens(string args)
-    {
-        return Parse(args).Tokens;
+        return root;
     }
 }

@@ -4,7 +4,7 @@ namespace Jinn;
 public sealed class Configuration
 {
     public string ExecutableName { get; init; } = GetExecutableName();
-    public Func<ParseResult, Task<IInvocationResult>>? ParseErrorHandler { get; set; }
+    public Func<ParseResult, Task<IInvocationResult>>? ErrorDiagnosticHandler { get; set; }
     public Func<Exception, ParseResult, Task<IInvocationResult>>? ExceptionHandler { get; set; }
 
     internal List<InvocationMiddleware> Middlewares { get; } = [];

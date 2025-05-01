@@ -29,6 +29,23 @@ public abstract class SymbolResult
     {
         _tokens.Add(token);
     }
+
+    internal TResult? FindImmediateResult<TResult>(Symbol symbol)
+        where TResult : SymbolResult
+    {
+        foreach (var child in Children)
+        {
+            if (child is TResult argumentResult)
+            {
+                if (argumentResult.Symbol == symbol)
+                {
+                    return argumentResult;
+                }
+            }
+        }
+
+        return null;
+    }
 }
 
 [PublicAPI]
@@ -69,6 +86,8 @@ public sealed class ArgumentResult : SymbolResult
 {
     public Argument Argument { get; }
 
+    public Arity Arity => Argument.Arity;
+
     public ArgumentResult(Argument argument, SymbolResult? parent)
         : base(argument, parent)
     {
@@ -81,6 +100,8 @@ public sealed class OptionResult : SymbolResult
 {
     public Option Option { get; }
     public Token Token { get; }
+
+    public Arity Arity => Option.Arity;
 
     public OptionResult(Option option, Token token, CommandResult? parent)
         : base(option, parent)
