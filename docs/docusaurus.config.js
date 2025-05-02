@@ -8,7 +8,7 @@ const config = {
   title: 'Jinn',
   tagline: 'A command line parser (and framework) for .NET',
   url: 'https://patriksvensson.github.io',
-  baseUrl: '/',
+  baseUrl: '/jinn/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
