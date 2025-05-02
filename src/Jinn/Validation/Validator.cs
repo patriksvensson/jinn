@@ -50,8 +50,10 @@ file sealed class Visitor
             var argumentResult = result.FindImmediateResult<ArgumentResult>(argument);
             if (argument.IsRequired && argumentResult == null)
             {
-                context.Diagnostics.Add(
+                var diagnostic = context.Diagnostics.Add(
                     ValidationErrors.JINN1000_RequiredArgumentMissing(argument));
+
+                result.AddDiagnostic(diagnostic);
             }
         }
 
@@ -61,8 +63,10 @@ file sealed class Visitor
             var argumentResult = result.FindImmediateResult<OptionResult>(option);
             if (option.IsRequired && argumentResult == null)
             {
-                context.Diagnostics.Add(
+                var diagnostic = context.Diagnostics.Add(
                     ValidationErrors.JINN1001_RequiredOptionMissing(option));
+
+                result.AddDiagnostic(diagnostic);
             }
         }
 
@@ -81,16 +85,20 @@ file sealed class Visitor
             if (result.Arity.Minimum == result.Arity.Maximum)
             {
                 // Expected an exact amount of tokens
-                context.Diagnostics.Add(
+                var diagnostic = context.Diagnostics.Add(
                     ValidationErrors.JINN1002_ArgumentExpectedAnExactAmountOfTokens(
                         result));
+
+                result.AddDiagnostic(diagnostic);
             }
             else
             {
                 // Expected at least an amount of tokens
-                context.Diagnostics.Add(
+                var diagnostic = context.Diagnostics.Add(
                     ValidationErrors.JINN1003_ArgumentExpectedAtLeastAnAmountOfTokens(
                         result));
+
+                result.AddDiagnostic(diagnostic);
             }
         }
     }

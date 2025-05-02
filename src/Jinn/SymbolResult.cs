@@ -8,11 +8,13 @@ public abstract class SymbolResult
 {
     private readonly List<SymbolResult> _children = [];
     private readonly List<Token> _tokens = [];
+    private Diagnostics? _diagnostics;
 
     public Symbol Symbol { get; }
     public SymbolResult? Parent { get; }
     public IReadOnlyList<SymbolResult> Children => _children;
     public IReadOnlyList<Token> Tokens => _tokens;
+    public IReadOnlyList<Diagnostic>? Diagnostics => _diagnostics;
 
     protected SymbolResult(Symbol symbol, SymbolResult? parent)
     {
@@ -28,6 +30,12 @@ public abstract class SymbolResult
     public void AddToken(Token token)
     {
         _tokens.Add(token);
+    }
+
+    internal void AddDiagnostic(Diagnostic diagnostic)
+    {
+        _diagnostics ??= new Diagnostics();
+        _diagnostics.Add(diagnostic);
     }
 
     internal TResult? FindImmediateResult<TResult>(Symbol symbol)

@@ -4,11 +4,13 @@ internal abstract class Syntax
 {
     private readonly List<Syntax> _children;
 
+    public Token Token { get; }
     public Syntax? Parent { get; }
     public IReadOnlyList<Syntax> Children => _children;
 
-    protected Syntax(Syntax? parent)
+    protected Syntax(Token token, Syntax? parent)
     {
+        Token = token ?? throw new ArgumentNullException(nameof(token));
         Parent = parent;
         _children = [];
     }
@@ -26,13 +28,11 @@ internal abstract class Syntax
 internal sealed class CommandSyntax : Syntax
 {
     public Command Command { get; }
-    public Token Token { get; }
 
     public CommandSyntax(Command command, Token token, Syntax? parent)
-        : base(parent)
+        : base(token, parent)
     {
         Command = command ?? throw new ArgumentNullException(nameof(command));
-        Token = token ?? throw new ArgumentNullException(nameof(token));
     }
 
     public override void Accept<TContext>(SyntaxVisitor<TContext> visitor, TContext context)
@@ -44,14 +44,12 @@ internal sealed class CommandSyntax : Syntax
 internal sealed class ArgumentSyntax : Syntax
 {
     public Argument Argument { get; }
-    public Token Token { get; }
     public CommandSyntax ParentCommand { get; }
 
     public ArgumentSyntax(Argument argument, Token token, CommandSyntax parent)
-        : base(parent)
+        : base(token, parent)
     {
         Argument = argument ?? throw new ArgumentNullException(nameof(argument));
-        Token = token ?? throw new ArgumentNullException(nameof(token));
         ParentCommand = parent ?? throw new ArgumentNullException(nameof(parent));
     }
 
@@ -64,14 +62,12 @@ internal sealed class ArgumentSyntax : Syntax
 internal sealed class OptionSyntax : Syntax
 {
     public Option Option { get; }
-    public Token Token { get; }
     public CommandSyntax ParentCommand { get; }
 
     public OptionSyntax(Option option, Token token, CommandSyntax parent)
-        : base(parent)
+        : base(token, parent)
     {
         Option = option ?? throw new ArgumentNullException(nameof(option));
-        Token = token ?? throw new ArgumentNullException(nameof(token));
         ParentCommand = parent ?? throw new ArgumentNullException(nameof(parent));
     }
 
@@ -84,14 +80,12 @@ internal sealed class OptionSyntax : Syntax
 internal sealed class OptionArgumentSyntax : Syntax
 {
     public Argument Argument { get; }
-    public Token Token { get; }
     public OptionSyntax ParentOption { get; }
 
     public OptionArgumentSyntax(Argument argument, Token token, OptionSyntax parent)
-        : base(parent)
+        : base(token, parent)
     {
         Argument = argument ?? throw new ArgumentNullException(nameof(argument));
-        Token = token ?? throw new ArgumentNullException(nameof(token));
         ParentOption = parent ?? throw new ArgumentNullException(nameof(parent));
     }
 

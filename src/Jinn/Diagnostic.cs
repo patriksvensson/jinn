@@ -27,20 +27,25 @@ public sealed class Diagnostics : List<Diagnostic>
     {
     }
 
-    public void Add(DiagnosticDescriptor descriptor)
+    public Diagnostic Add(DiagnosticDescriptor descriptor)
     {
-        Add(descriptor.ToDiagnostic(null));
+        var diagnostic = descriptor.ToDiagnostic(null);
+        Add(diagnostic);
+        return diagnostic;
     }
 
-    public void Add(TextSpan location, DiagnosticDescriptor descriptor)
+    public Diagnostic Add(TextSpan location, DiagnosticDescriptor descriptor)
     {
         var diagnostic = descriptor.ToDiagnostic(location);
         Add(diagnostic);
+        return diagnostic;
     }
 
-    public void Add(Token? token, DiagnosticDescriptor descriptor)
+    public Diagnostic Add(Token? token, DiagnosticDescriptor descriptor)
     {
-        Add(descriptor.ToDiagnostic(token?.Span));
+        var diagnostic = descriptor.ToDiagnostic(token?.Span);
+        Add(diagnostic);
+        return diagnostic;
     }
 
     public Diagnostics Merge(Diagnostics? other)
