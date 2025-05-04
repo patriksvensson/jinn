@@ -5,31 +5,36 @@ namespace Jinn.Validation;
 internal static class ValidationErrors
 {
     public static DiagnosticDescriptor JINN1000_RequiredArgumentMissing(Argument argument) =>
-        new("JINN1000", Severity.Error, $"The required argument {argument.Name} is missing");
+        new("JINN1000", Severity.Error, "Required argument missing",
+            $"The required argument {argument.Name} is missing");
 
     public static DiagnosticDescriptor JINN1001_RequiredOptionMissing(Option option) =>
-        new("JINN1001", Severity.Error, $"The required argument {option.Name} is missing");
+        new("JINN1001", Severity.Error, "Required option missing", $"The required option {option.Name} is missing");
 
     public static DiagnosticDescriptor JINN1002_ArgumentExpectedAnExactAmountOfTokens(ArgumentResult result) =>
         new("JINN1002", Severity.Error,
+            "Not exact argument count",
             $"The argument {result.Argument.Name} expected exactly " +
             $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1003_ArgumentExpectedAtLeastAnAmountOfTokens(ArgumentResult result) =>
         new("JINN1003", Severity.Error,
+            "Too few argument values",
             $"The argument {result.Argument.Name} expected at least " +
             $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1004_OptionExpectedAnExactAmountOfTokens(OptionResult result) =>
         new("JINN1004", Severity.Error,
+            "Not exact amount of option values",
             $"The option {result.Option.Name} expected exactly " +
             $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1005_OptionExpectedAtLeastAnAmountOfTokens(OptionResult result) =>
         new("JINN1005", Severity.Error,
+            "Too few option values",
             $"The option {result.Option.Name} expected at least " +
             $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
             $"got {result.Tokens.Count}");

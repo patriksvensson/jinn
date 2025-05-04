@@ -86,6 +86,7 @@ file sealed class Visitor
             {
                 // Expected an exact amount of tokens
                 var diagnostic = context.Diagnostics.Add(
+                    TextSpan.Between(result.Tokens),
                     ValidationErrors.JINN1002_ArgumentExpectedAnExactAmountOfTokens(
                         result));
 
@@ -95,6 +96,7 @@ file sealed class Visitor
             {
                 // Expected at least an amount of tokens
                 var diagnostic = context.Diagnostics.Add(
+                    TextSpan.Between(result.Tokens),
                     ValidationErrors.JINN1003_ArgumentExpectedAtLeastAnAmountOfTokens(
                         result));
 
@@ -112,6 +114,7 @@ file sealed class Visitor
             {
                 // Expected an exact amount of tokens
                 context.Diagnostics.Add(
+                    TextSpan.Between([result.Token, .. result.Tokens]),
                     ValidationErrors.JINN1004_OptionExpectedAnExactAmountOfTokens(
                         result));
             }
@@ -119,6 +122,7 @@ file sealed class Visitor
             {
                 // Expected at least an amount of tokens
                 context.Diagnostics.Add(
+                    TextSpan.Between([result.Token, .. result.Tokens]),
                     ValidationErrors.JINN1005_OptionExpectedAtLeastAnAmountOfTokens(
                         result));
             }

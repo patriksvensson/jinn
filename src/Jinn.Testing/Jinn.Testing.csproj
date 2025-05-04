@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Errata" />
       <PackageReference Include="Shouldly" />
+      <PackageReference Include="Spectre.Console.Testing" />
     </ItemGroup>
 
     <ItemGroup>

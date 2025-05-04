@@ -24,11 +24,10 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<int>("VALUE").Required());
 
         // When
-        var result = fixture.Parse("");
+        var result = fixture.ParseAndSerializeDiagnostics("");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The required argument VALUE is missing");
+        result.ShouldBe("Error [JINN1000]: The required argument VALUE is missing");
     }
 
     [Fact]
@@ -43,11 +42,10 @@ public sealed class ValidationTests
         fixture.Commands.Add(command);
 
         // When
-        var result = fixture.Parse("LOL sub");
+        var result = fixture.ParseAndSerializeDiagnostics("LOL sub");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The required argument BAR is missing");
+        result.ShouldBe("Error [JINN1000]: The required argument BAR is missing");
     }
 
     [Fact]
@@ -63,11 +61,10 @@ public sealed class ValidationTests
         fixture.Commands.Add(command);
 
         // When
-        var result = fixture.Parse("sub LOL");
+        var result = fixture.ParseAndSerializeDiagnostics("sub LOL");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The required argument FOO is missing");
+        result.ShouldBe("Error [JINN1000]: The required argument FOO is missing");
     }
 
     [Fact]
@@ -78,11 +75,20 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<List<int>>("FOO").HasArity(2, 2));
 
         // When
-        var result = fixture.Parse("42");
+        var result = fixture.ParseAndSerializeDiagnostics("42");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The argument FOO expected exactly 2 values, got 1");
+        result.ShouldBe(
+            """
+            Error [JINN1002]: Not exact argument count
+              ┌─[args]
+              │
+            1 │ 42
+              · ─┬
+              ·  ╰ The argument FOO expected exactly 2 values, got 1
+              │
+              └─
+            """);
     }
 
     [Fact]
@@ -93,11 +99,20 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<List<int>>("FOO").HasArity(2, 3));
 
         // When
-        var result = fixture.Parse("42");
+        var result = fixture.ParseAndSerializeDiagnostics("42");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The argument FOO expected at least 2 values, got 1");
+        result.ShouldBe(
+            """
+            Error [JINN1003]: Too few argument values
+              ┌─[args]
+              │
+            1 │ 42
+              · ─┬
+              ·  ╰ The argument FOO expected at least 2 values, got 1
+              │
+              └─
+            """);
     }
 
     [Fact]
@@ -108,25 +123,44 @@ public sealed class ValidationTests
         fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 2));
 
         // When
-        var result = fixture.Parse("--value 42");
+        var result = fixture.ParseAndSerializeDiagnostics("--value 42");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The option --value expected exactly 2 values, got 1");
+        result.ShouldBe(
+            """
+            Error [JINN1004]: Not exact amount of option values
+              ┌─[args]
+              │
+            1 │ --value 42
+              · ─────┬────
+              ·      ╰──── The option --value expected exactly 2 values, got 1
+              │
+              └─
+            """);
     }
 
     [Fact]
     public void Should_Produce_Diagnostic_If_Option_Has_Too_Few_Values_And_Arity_Is_Not_Same_For_Min_And_Max()
     {
         // Given
-        var fixture = new RootCommandFixture();
-        fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 3));
+        var command = new Command("foo");
+        command.AddOption(new Option<List<int>>("--value").HasArity(2, 3));
+        var root = new RootCommandFixture(command);
 
         // When
-        var result = fixture.Parse("--value 42");
+        var result = root.ParseAndSerializeDiagnostics("foo --value 42");
 
         // Then
-        result.Diagnostics.Count.ShouldBe(1);
-        result.Diagnostics[0].Message.ShouldBe("The option --value expected at least 2 values, got 1");
+        result.ShouldBe(
+            """
+            Error [JINN1005]: Too few option values
+              ┌─[args]
+              │
+            1 │ foo --value 42
+              ·     ─────┬────
+              ·          ╰──── The option --value expected at least 2 values, got 1
+              │
+              └─
+            """);
     }
 }
