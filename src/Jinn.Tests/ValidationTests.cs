@@ -143,12 +143,11 @@ public sealed class ValidationTests
     public void Should_Produce_Diagnostic_If_Option_Has_Too_Few_Values_And_Arity_Is_Not_Same_For_Min_And_Max()
     {
         // Given
-        var command = new Command("foo");
-        command.AddOption(new Option<List<int>>("--value").HasArity(2, 3));
-        var root = new RootCommandFixture(command);
+        var fixture = new RootCommandFixture();
+        fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 3));
 
         // When
-        var result = root.ParseAndSerializeDiagnostics("foo --value 42");
+        var result = fixture.ParseAndSerializeDiagnostics("--value 42");
 
         // Then
         result.ShouldBe(
@@ -156,9 +155,9 @@ public sealed class ValidationTests
             Error [JINN1005]: Too few option values
               ┌─[args]
               │
-            1 │ foo --value 42
-              ·     ─────┬────
-              ·          ╰──── The option --value expected at least 2 values, got 1
+            1 │ --value 42
+              · ─────┬────
+              ·      ╰──── The option --value expected at least 2 values, got 1
               │
               └─
             """);

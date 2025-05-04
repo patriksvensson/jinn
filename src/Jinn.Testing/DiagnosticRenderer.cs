@@ -1,8 +1,3 @@
-using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
-using Errata;
-using Spectre.Console;
-
 namespace Jinn.Testing;
 
 internal sealed class DiagnosticRenderer
@@ -19,6 +14,8 @@ internal sealed class DiagnosticRenderer
         Diagnostics diagnostics,
         ReportSettings? settings = null)
     {
+        settings ??= new ReportSettings { Compact = true };
+
         var repo = new InMemorySourceRepository();
         repo.Register("args", string.Join(" ", result.Tokens.Select(x => x.Lexeme)));
 
