@@ -19,14 +19,28 @@ public abstract class Argument : Symbol
     {
         return ValueType == typeof(bool);
     }
+
+    internal abstract object? GetDefaultValue();
 }
 
 [PublicAPI]
 public sealed class Argument<T> : Argument
 {
+    public Func<T>? DefaultValueFactory { get; set; }
+
     public Argument(string name)
         : base(typeof(T), name)
     {
+    }
+
+    internal override object? GetDefaultValue()
+    {
+        if (DefaultValueFactory != null)
+        {
+            return DefaultValueFactory();
+        }
+
+        return default(T);
     }
 }
 

@@ -27,12 +27,14 @@ file sealed class Context
 
     public ParseResult CreateResult()
     {
-        var parsedCommand = RootCommand ?? throw new InvalidOperationException("Could not find root command");
-        var diagnostics = Validator.Validate(parsedCommand);
+        var rootCommand = RootCommand ?? throw new InvalidOperationException("Could not resolve root command");
+        var parsedCommand = CurrentCommand ?? throw new InvalidOperationException("Could not resolve parsed command");
+        var diagnostics = Validator.Validate(rootCommand);
 
         return new ParseResult
         {
-            ParsedCommand = RootCommand ?? throw new InvalidOperationException("Could not find root command"),
+            Root = RootCommand,
+            Command = parsedCommand,
             Diagnostics = diagnostics,
             Configuration = _tree.Configuration,
             Lookup = Lookup,
@@ -103,6 +105,13 @@ file sealed class Visitor : SyntaxVisitor<Context>
 
             context.CurrentCommand?.AddChild(optionResult);
             context.Lookup[optionResult.Option] = optionResult;
+
+            var optionValueResult = new ArgumentResult(
+                syntax.Option.Argument,
+                optionResult);
+
+            optionResult.AddChild(optionValueResult);
+            context.Lookup[syntax.Option.Argument] = optionValueResult;
         }
 
         // Visit children
@@ -124,12 +133,9 @@ file sealed class Visitor : SyntaxVisitor<Context>
 
         if (!context.Lookup.TryGetValue(argument, out var argumentResult))
         {
-            argumentResult =
-                new ArgumentResult(
-                    syntax.Argument,
-                    optionResult);
-            optionResult.AddChild(argumentResult);
-            context.Lookup[argument] = argumentResult;
+            // The argument result for the option should have been created
+            // together with the option, so something is wrong if we ever get here
+            throw new InvalidOperationException("Could not find argument result");
         }
 
         argumentResult.AddToken(syntax.Token);

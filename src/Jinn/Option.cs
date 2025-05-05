@@ -4,7 +4,7 @@ namespace Jinn;
 public abstract class Option : Symbol
 {
     public HashSet<string> Aliases { get; init; } = [];
-    public Argument Argument { get; }
+    internal Argument Argument { get; }
 
     public Arity Arity
     {
