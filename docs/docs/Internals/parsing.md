@@ -26,7 +26,7 @@ The tokenizer is also responsible for option unbundling (turning `-abc` into `-a
 and argument splitting (turning `--foo=bar` into `--foo bar`).
 
 :::info
-See `src/Parsing/Tokenizer.cs` for implementation
+See [Tokenizer.cs][1] for implementation
 :::
 
 ## 2. Syntax Tree (AST)
@@ -42,7 +42,7 @@ separate list for later use.
 All nodes in the syntax tree represents a specific token from the input.
 
 :::info
-See `src/Parsing/Parser.cs` for implementation
+See [Parser.cs][2] for implementation
 :::
 
 ## 3. Symbol Result Tree
@@ -52,22 +52,30 @@ We now have all the information we need to put together the symbol result tree.
 The symbol result tree resembles the syntax tree but only contains nodes that represents a symbol.
 A symbol does not necessarily need to have a corresponding token (i.e. a root command).
 
+Multiple occurences of an option (i.e `--foo bar --foo baz`) will be merged into a single symbol result in this stage.
+
 The symbol result tree will also contain any validation errors associated with input for a specific symbol.
 
 :::info
-See `src/Parsing/ParseResultBuilder.cs` for implementation
+See [ParseResultBuilder.cs][3] for implementation
 :::
 
 ## 4. Parse Result
 
 The parse results aggregate together all the information we know about the parse operation:
 
-* The symbol tree
+* The parsed command
 * Diagnostics
+* Configuration
 * Tokens
 * Unmatched tokens
-* Lookup table for symbols to their results
+* The symbol tree
 
 :::info
-See `src/Parsing/ParseResult.cs` for implementation
+See [ParseResult.cs][4] for implementation
 :::
+
+[1]: https://github.com/patriksvensson/jinn/blob/main/src/Jinn/Parsing/Tokenizer.cs
+[2]: https://github.com/patriksvensson/jinn/blob/main/src/Jinn/Parsing/Parser.cs
+[3]: https://github.com/patriksvensson/jinn/blob/main/src/Jinn/Parsing/ParseResultBuilder.cs
+[4]: https://github.com/patriksvensson/jinn/blob/main/src/Jinn/Parsing/ParseResult.cs

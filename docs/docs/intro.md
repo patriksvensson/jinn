@@ -9,5 +9,9 @@ Jinn is a a minimal, performant, AOT compliant, command line parser (and framewo
 It's not a fork, but it's design and implementation is based on and inspired by 
 the fantastic [System.CommandLine](https://github.com/dotnet/command-line-api).
 
-_This is just a placeholder for future documentation._  
-_No documentation has been written yet._
+Jinn is the opposite of a "batteries included" package, and you will need to implement 
+some functionality yourself or use existing functionality from a NuGet package for thing like:
+
+* Exception handling
+* Parse error handling
+* Help output

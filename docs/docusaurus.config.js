@@ -75,6 +75,7 @@ const config = {
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
+        additionalLanguages: ['csharp', 'shell-session', 'bash']
       },
       mermaid: {
         theme: { light: 'neutral', dark: 'forest' },
