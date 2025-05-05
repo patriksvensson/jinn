@@ -30,7 +30,7 @@ internal sealed class InvocationPipeline
             async (invocationContext, _) =>
             {
                 // Call the command handler as the last step in the invocation chain.
-                var handler = invocationContext.ParseResult.ParsedCommand.Command.Handler;
+                var handler = invocationContext.ParseResult.Root.Command.Handler;
                 if (handler is not null)
                 {
                     await handler(context);

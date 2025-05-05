@@ -24,10 +24,10 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<int>("VALUE").Required());
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("");
+        var result = fixture.Parse("");
 
         // Then
-        result.ShouldBe("Error [JINN1000]: The required argument VALUE is missing");
+        result.ShouldHaveDiagnostics("Error [JINN1000]: The required argument VALUE is missing");
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public sealed class ValidationTests
         fixture.Commands.Add(command);
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("LOL sub");
+        var result = fixture.Parse("LOL sub");
 
         // Then
-        result.ShouldBe("Error [JINN1000]: The required argument BAR is missing");
+        result.ShouldHaveDiagnostics("Error [JINN1000]: The required argument BAR is missing");
     }
 
     [Fact]
@@ -61,10 +61,10 @@ public sealed class ValidationTests
         fixture.Commands.Add(command);
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("sub LOL");
+        var result = fixture.Parse("sub LOL");
 
         // Then
-        result.ShouldBe("Error [JINN1000]: The required argument FOO is missing");
+        result.ShouldHaveDiagnostics("Error [JINN1000]: The required argument FOO is missing");
     }
 
     [Fact]
@@ -75,10 +75,10 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<List<int>>("FOO").HasArity(2, 2));
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("42");
+        var result = fixture.Parse("42");
 
         // Then
-        result.ShouldBe(
+        result.ShouldHaveDiagnostics(
             """
             Error [JINN1002]: Not exact argument count
               ┌─[args]
@@ -99,10 +99,10 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<List<int>>("FOO").HasArity(2, 3));
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("42");
+        var result = fixture.Parse("42");
 
         // Then
-        result.ShouldBe(
+        result.ShouldHaveDiagnostics(
             """
             Error [JINN1003]: Too few argument values
               ┌─[args]
@@ -123,10 +123,10 @@ public sealed class ValidationTests
         fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 2));
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("--value 42");
+        var result = fixture.Parse("--value 42");
 
         // Then
-        result.ShouldBe(
+        result.ShouldHaveDiagnostics(
             """
             Error [JINN1004]: Not exact amount of option values
               ┌─[args]
@@ -147,10 +147,10 @@ public sealed class ValidationTests
         fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 3));
 
         // When
-        var result = fixture.ParseAndSerializeDiagnostics("--value 42");
+        var result = fixture.Parse("--value 42");
 
         // Then
-        result.ShouldBe(
+        result.ShouldHaveDiagnostics(
             """
             Error [JINN1005]: Too few option values
               ┌─[args]

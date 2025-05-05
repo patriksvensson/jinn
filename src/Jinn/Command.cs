@@ -21,19 +21,34 @@ public class Command : Symbol
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public void AddCommand(Command command)
+    public Command AddCommand(Command command)
     {
         (_commands ??= []).Add(command);
+        return command;
     }
 
-    public void AddArgument(Argument argument)
+    public Argument AddArgument(Argument argument)
     {
         (_arguments ??= []).Add(argument);
+        return argument;
     }
 
-    public void AddOption(Option option)
+    public Argument<T> AddArgument<T>(Argument<T> argument)
+    {
+        (_arguments ??= []).Add(argument);
+        return argument;
+    }
+
+    public Option AddOption(Option option)
     {
         (_options ??= []).Add(option);
+        return option;
+    }
+
+    public Option<T> AddOption<T>(Option<T> option)
+    {
+        (_options ??= []).Add(option);
+        return option;
     }
 
     public void SetHandler(Action<InvocationContext> handler)

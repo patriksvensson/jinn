@@ -27,12 +27,14 @@ file sealed class Context
 
     public ParseResult CreateResult()
     {
-        var parsedCommand = RootCommand ?? throw new InvalidOperationException("Could not find root command");
-        var diagnostics = Validator.Validate(parsedCommand);
+        var rootCommand = RootCommand ?? throw new InvalidOperationException("Could not resolve root command");
+        var parsedCommand = CurrentCommand ?? throw new InvalidOperationException("Could not resolve parsed command");
+        var diagnostics = Validator.Validate(rootCommand);
 
         return new ParseResult
         {
-            ParsedCommand = RootCommand ?? throw new InvalidOperationException("Could not find root command"),
+            Root = RootCommand,
+            Command = parsedCommand,
             Diagnostics = diagnostics,
             Configuration = _tree.Configuration,
             Lookup = Lookup,

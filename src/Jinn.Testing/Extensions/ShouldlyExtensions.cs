@@ -1,3 +1,6 @@
+using Shouldly;
+using Spectre.Console.Testing;
+
 namespace Jinn.Testing;
 
 [PublicAPI]
@@ -12,5 +15,12 @@ public static class ShouldlyExtensions
     {
         action(obj);
         return obj;
+    }
+
+    public static void ShouldHaveDiagnostics(this ParseResult hir, string expected)
+    {
+        hir.ToErrata()
+           .TrimLines()
+           .ShouldBe(expected.TrimLines());
     }
 }

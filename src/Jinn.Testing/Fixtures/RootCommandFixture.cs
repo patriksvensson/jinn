@@ -60,11 +60,6 @@ public sealed class RootCommandFixture
         return root.Parse(StringSplitter.Split(args));
     }
 
-    public string ParseAndSerializeDiagnostics(string args)
-    {
-        return Parse(args).ToErrata();
-    }
-
     public IReadOnlyList<Token> ParseAndReturnTokens(string args)
     {
         return Parse(args).Tokens;
