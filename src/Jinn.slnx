@@ -11,12 +11,14 @@
     <File Path=".editorconfig" />
     <File Path="stylecop.json" />
   </Folder>
-  <Project Path="Jinn.Benchmarks\Jinn.Benchmarks.csproj" Type="Classic C#">
-    <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
-    <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
-    <Configuration Solution="Release|x64" Project="Release|Any CPU" />
-    <Configuration Solution="Release|x86" Project="Release|Any CPU" />
-  </Project>
+  <Folder Name="/Misc/">
+    <Project Path="Jinn.Benchmarks\Jinn.Benchmarks.csproj" Type="Classic C#">
+      <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
+      <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
+      <Configuration Solution="Release|x64" Project="Release|Any CPU" />
+      <Configuration Solution="Release|x86" Project="Release|Any CPU" />
+    </Project>
+  </Folder>
   <Project Path="Jinn.Testing\Jinn.Testing.csproj" Type="Classic C#">
     <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
     <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />

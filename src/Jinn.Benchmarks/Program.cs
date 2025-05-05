@@ -1,6 +1,6 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Diagnostics;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Jinn;
 
 namespace Jinn.Benchmarks;
 

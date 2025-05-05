@@ -39,7 +39,7 @@ public static class ParseResultSerializer
                 {
                     writer.WriteElement("ParsedCommand", () =>
                     {
-                        Visitor.Shared.Visit(result.ParsedCommand, context);
+                        Visitor.Shared.Visit(result.Root, context);
                     });
                 }
 

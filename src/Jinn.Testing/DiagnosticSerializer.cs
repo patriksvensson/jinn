@@ -1,4 +1,3 @@
-using Errata;
 using Spectre.Console.Testing;
 
 namespace Jinn.Testing;
@@ -23,6 +22,6 @@ public static class DiagnosticSerializer
             lines.Add(line.TrimEnd());
         }
 
-        return string.Join("\n", lines).Trim();
+        return string.Join("\n", lines).Trim().NormalizeLineEndings();
     }
 }

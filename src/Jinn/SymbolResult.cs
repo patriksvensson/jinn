@@ -93,7 +93,6 @@ public sealed class SubCommandResult : CommandResult
 public sealed class ArgumentResult : SymbolResult
 {
     public Argument Argument { get; }
-
     public Arity Arity => Argument.Arity;
 
     public ArgumentResult(Argument argument, SymbolResult? parent)
