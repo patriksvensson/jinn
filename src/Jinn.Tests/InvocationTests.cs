@@ -108,7 +108,7 @@ public sealed class InvocationTests
 
         var rootCommand = new RootCommandFixture();
         rootCommand.AddArgument(new Argument<int>("VALUE").HasArity(2, 2));
-        rootCommand.Configuration.ErrorDiagnosticHandler = parseResult =>
+        rootCommand.Configuration.ParseErrorHandler = parseResult =>
         {
             diagnostics = parseResult.Diagnostics;
             return Task.FromResult<IInvocationResult>(

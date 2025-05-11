@@ -6,15 +6,49 @@ internal static class ParseErrorMiddleware
     {
         if (ctx.ParseResult.Diagnostics.HasErrors)
         {
-            if (ctx.Configuration.ErrorDiagnosticHandler == null)
+            if (ctx.Configuration.ParseErrorHandler != null)
             {
-                throw new InvalidOperationException("Parse result contains errors");
+                ctx.InvocationResult = await ctx.Configuration.ParseErrorHandler(ctx.ParseResult);
+            }
+            else
+            {
+                ctx.InvocationResult = new DefaultParseErrorInvocationResult();
             }
 
-            ctx.InvocationResult = await ctx.Configuration.ErrorDiagnosticHandler(ctx.ParseResult);
             return;
         }
 
         await next(ctx);
+    }
+}
+
+internal sealed class CustomParseErrorInvocationResult : IInvocationResult
+{
+    private readonly Action<InvocationContext> _action;
+
+    public CustomParseErrorInvocationResult(Action<InvocationContext> action)
+    {
+        _action = action;
+    }
+
+    public void Invoke(InvocationContext context)
+    {
+        _action(context);
+    }
+}
+
+internal sealed class DefaultParseErrorInvocationResult : IInvocationResult
+{
+    public void Invoke(InvocationContext context)
+    {
+        foreach (var diagnostic in context.ParseResult.Diagnostics.Where(x => x.Severity == Severity.Error))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("Error: ");
+            Console.ResetColor();
+            Console.WriteLine(diagnostic.Message);
+        }
+
+        context.ExitCode = 1;
     }
 }

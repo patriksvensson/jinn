@@ -11,6 +11,7 @@
     <PackageVersion Include="MinVer" PrivateAssets="All" Version="6.0.0" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.13.1" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.50.0" />
     <PackageVersion Include="Spectre.Console.Testing" Version="0.50.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <PackageVersion Include="Verify" Version="29.2.0" />
