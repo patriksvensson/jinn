@@ -29,7 +29,7 @@ file sealed class Context
     {
         var rootCommand = RootCommand ?? throw new InvalidOperationException("Could not resolve root command");
         var parsedCommand = CurrentCommand ?? throw new InvalidOperationException("Could not resolve parsed command");
-        var diagnostics = Validator.Validate(rootCommand);
+        var diagnostics = Validator.Validate(rootCommand, _tree.Unmatched);
 
         return new ParseResult
         {

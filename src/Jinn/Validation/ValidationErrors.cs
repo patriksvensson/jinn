@@ -37,6 +37,24 @@ internal static class ValidationErrors
             $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
+    public static DiagnosticDescriptor JINN1006_TooManyArgumentValues(ArgumentResult result) =>
+        new("JINN1006", Severity.Error,
+            "Too many argument values",
+            $"The argument {result.Argument.Name} expected maximum " +
+            $"{Pluralize(result.Arity.Maximum, "value", "values")}, " +
+            $"got {result.Tokens.Count}");
+
+    public static DiagnosticDescriptor JINN1007_TooManyOptionValues(OptionResult result) =>
+        new("JINN1005", Severity.Error,
+            "Too many option values",
+            $"The option {result.Option.Name} expected maximum " +
+            $"{Pluralize(result.Arity.Maximum, "value", "values")}, " +
+            $"got {result.Tokens.Count}");
+
+    public static DiagnosticDescriptor JINN1008_UnrecognizedCommandOrArgument(Token token) =>
+        new("JINN1008", Severity.Error, "Unrecognized command or argument",
+            $"Unrecognized command or argument '{token.Lexeme}'");
+
     private static string Pluralize(int count, string singular, string plural)
     {
         return count == 1
