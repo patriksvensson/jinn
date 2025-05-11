@@ -1,5 +1,3 @@
-using Jinn.Utilities;
-
 namespace Jinn.Validation;
 
 internal static class ValidationErrors
@@ -15,27 +13,34 @@ internal static class ValidationErrors
         new("JINN1002", Severity.Error,
             "Not exact argument count",
             $"The argument {result.Argument.Name} expected exactly " +
-            $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
+            $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1003_ArgumentExpectedAtLeastAnAmountOfTokens(ArgumentResult result) =>
         new("JINN1003", Severity.Error,
             "Too few argument values",
             $"The argument {result.Argument.Name} expected at least " +
-            $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
+            $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1004_OptionExpectedAnExactAmountOfTokens(OptionResult result) =>
         new("JINN1004", Severity.Error,
             "Not exact amount of option values",
             $"The option {result.Option.Name} expected exactly " +
-            $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
+            $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1005_OptionExpectedAtLeastAnAmountOfTokens(OptionResult result) =>
         new("JINN1005", Severity.Error,
             "Too few option values",
             $"The option {result.Option.Name} expected at least " +
-            $"{result.Arity.Minimum.Pluralize("value", "values")}, " +
+            $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
+
+    private static string Pluralize(int count, string singular, string plural)
+    {
+        return count == 1
+            ? $"{count} {singular}"
+            : $"{count} {plural}";
+    }
 }

@@ -1,6 +1,6 @@
 namespace Jinn;
 
-internal static class ErrorDiagnosticMiddleware
+internal static class ParseErrorMiddleware
 {
     public static async Task Invoke(InvocationContext ctx, Func<InvocationContext, Task> next)
     {

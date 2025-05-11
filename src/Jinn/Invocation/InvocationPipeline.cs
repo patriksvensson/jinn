@@ -25,7 +25,7 @@ internal sealed class InvocationPipeline
         List<InvocationMiddleware> middlewares =
         [
             ExceptionMiddleware.Invoke,
-            ErrorDiagnosticMiddleware.Invoke,
+            ParseErrorMiddleware.Invoke,
             .. _parseResult.Configuration.Middlewares,
             async (invocationContext, _) =>
             {

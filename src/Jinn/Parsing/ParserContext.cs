@@ -58,20 +58,4 @@ internal sealed class ParserContext
             Unmatched.Add(CurrentToken);
         }
     }
-
-    // public ParseResult CreateResult()
-    // {
-    //     // Perform validation
-    //     var errors = ParseValidator.Validate(CurrentCommand);
-    //
-    //     return new ParseResult
-    //     {
-    //         Root = RootCommand,
-    //         Command = CurrentCommand,
-    //         Tokens = _tokenizationResult.Tokens,
-    //         UnmatchedTokens = Unmatched,
-    //         Arguments = _tokenizationResult.Arguments,
-    //         Errors = errors,
-    //     };
-    // }
 }
