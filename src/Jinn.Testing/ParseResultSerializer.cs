@@ -108,7 +108,7 @@ file sealed class Visitor
         {
             if (!context.Options.ExcludeExecutable)
             {
-                context.Writer.WriteAttribute("Name", result.Command.Name);
+                context.Writer.WriteAttribute("Name", result.CommandSymbol.Name);
             }
 
             foreach (var child in result.Children)
@@ -135,7 +135,7 @@ file sealed class Visitor
     {
         context.Writer.WriteElement("Argument", () =>
         {
-            context.Writer.WriteAttribute("Name", result.Argument.Name);
+            context.Writer.WriteAttribute("Name", result.ArgumentSymbol.Name);
             VisitTokens(result.Tokens, context);
         });
     }

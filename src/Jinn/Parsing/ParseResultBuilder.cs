@@ -34,7 +34,7 @@ file sealed class Context
         return new ParseResult
         {
             Root = RootCommand,
-            Command = parsedCommand,
+            ParsedCommand = parsedCommand,
             Diagnostics = diagnostics,
             Configuration = _tree.Configuration,
             Lookup = Lookup,
@@ -84,10 +84,10 @@ file sealed class Visitor : SyntaxVisitor<Context>
             argumentResult = new ArgumentResult(syntax.Argument, context.CurrentCommand);
 
             context.CurrentCommand?.AddChild(argumentResult);
-            context.Lookup[argumentResult.Argument] = argumentResult;
+            context.Lookup[argumentResult.ArgumentSymbol] = argumentResult;
         }
 
-        syntax.Token.Symbol ??= argumentResult.Argument;
+        syntax.Token.Symbol ??= argumentResult.ArgumentSymbol;
         argumentResult.AddToken(syntax.Token);
         context.CurrentCommand?.AddToken(syntax.Token);
     }
@@ -104,7 +104,7 @@ file sealed class Visitor : SyntaxVisitor<Context>
                 context.CurrentCommand);
 
             context.CurrentCommand?.AddChild(optionResult);
-            context.Lookup[optionResult.Option] = optionResult;
+            context.Lookup[optionResult.OptionSymbol] = optionResult;
 
             var optionValueResult = new ArgumentResult(
                 syntax.Option.Argument,

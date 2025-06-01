@@ -56,14 +56,14 @@ internal static class ArgumentBinder
         if (result.Arity.Minimum == 1 && result.Arity.Maximum == 1)
         {
             Trace.Assert(result.Tokens.Count > 0, "Expected at least one token"); // Validation would have caught this
-            return ConvertToken(result, result.Argument.ValueType, result.Tokens[0]);
+            return ConvertToken(result, result.ArgumentSymbol.ValueType, result.Tokens[0]);
         }
 
         // Want no tokens?
         if (result.Arity.Maximum == 0)
         {
             // This would be a boolean flag if anything
-            return new ArgumentResultValue.Success(result.Argument, true);
+            return new ArgumentResultValue.Success(result.ArgumentSymbol, true);
         }
 
         // Want a maximum of one token?
@@ -72,17 +72,17 @@ internal static class ArgumentBinder
             if (result.Tokens.Count == 0)
             {
                 // Is this a bool?
-                if (result.Argument.ValueType == typeof(bool))
+                if (result.ArgumentSymbol.ValueType == typeof(bool))
                 {
-                    return new ArgumentResultValue.Success(result.Argument, true);
+                    return new ArgumentResultValue.Success(result.ArgumentSymbol, true);
                 }
 
                 // Get the default value
-                var defaultValue = result.Argument.GetDefaultValue();
-                return new ArgumentResultValue.Success(result.Argument, defaultValue);
+                var defaultValue = result.ArgumentSymbol.GetDefaultValue();
+                return new ArgumentResultValue.Success(result.ArgumentSymbol, defaultValue);
             }
 
-            return ConvertToken(result, result.Argument.ValueType, result.Tokens[0]);
+            return ConvertToken(result, result.ArgumentSymbol.ValueType, result.Tokens[0]);
         }
 
         // Wants a maximum of more than one token
@@ -108,8 +108,8 @@ internal static class ArgumentBinder
 
         // Custom converter is needed
         return new ArgumentResultValue.Failure(
-            result.Argument,
-            ArgumentBindingErrors.JINN2002_CustomConverterNeeded(result.Argument)
+            result.ArgumentSymbol,
+            ArgumentBindingErrors.JINN2002_CustomConverterNeeded(result.ArgumentSymbol)
                 .ToDiagnostic(span: null));
     }
 
@@ -122,8 +122,8 @@ internal static class ArgumentBinder
             {
                 // JINN2000: Can't find converter
                 return new ArgumentResultValue.Failure(
-                    result.Argument,
-                    ArgumentBindingErrors.JINN2000_CannotFindConverter(result.Argument)
+                    result.ArgumentSymbol,
+                    ArgumentBindingErrors.JINN2000_CannotFindConverter(result.ArgumentSymbol)
                         .ToDiagnostic(span: null));
             }
         }
@@ -132,11 +132,11 @@ internal static class ArgumentBinder
         {
             // JINN2001: Can't convert argument
             return new ArgumentResultValue.Failure(
-                result.Argument,
-                ArgumentBindingErrors.JINN2001_CannotConvertArgument(result.Argument, token)
+                result.ArgumentSymbol,
+                ArgumentBindingErrors.JINN2001_CannotConvertArgument(result.ArgumentSymbol, token)
                     .ToDiagnostic(token.Span));
         }
 
-        return new ArgumentResultValue.Success(result.Argument, bound);
+        return new ArgumentResultValue.Success(result.ArgumentSymbol, bound);
     }
 }

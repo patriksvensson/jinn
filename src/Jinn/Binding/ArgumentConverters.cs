@@ -31,7 +31,7 @@ internal static class ArgumentConverters
 
     public static bool TryGetConverter(ArgumentResult result, [NotNullWhen(true)] out TryBindSingleToken? binder)
     {
-        return _binders.TryGetValue(result.Argument.ValueType, out binder);
+        return _binders.TryGetValue(result.ArgumentSymbol.ValueType, out binder);
     }
 
     private static bool TryConvert<T>(Token token, out object? result)

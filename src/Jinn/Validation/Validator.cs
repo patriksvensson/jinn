@@ -54,7 +54,7 @@ file sealed class Visitor
     private void VisitCommand(ValidationContext context, CommandResult result)
     {
         // Do we have all required arguments?
-        foreach (var argument in result.Command.Arguments)
+        foreach (var argument in result.CommandSymbol.Arguments)
         {
             var argumentResult = result.FindImmediateResult<ArgumentResult>(argument);
             if (argument.IsRequired && argumentResult == null)
@@ -67,7 +67,7 @@ file sealed class Visitor
         }
 
         // Do we have all required options?
-        foreach (var option in result.Command.Options)
+        foreach (var option in result.CommandSymbol.Options)
         {
             var argumentResult = result.FindImmediateResult<OptionResult>(option);
             if (option.IsRequired && argumentResult == null)

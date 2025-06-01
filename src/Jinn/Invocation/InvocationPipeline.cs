@@ -40,12 +40,12 @@ internal sealed class InvocationPipeline
                         if (child is ArgumentResult argumentResult)
                         {
                             // Invoke
-                            argumentResult.Argument.Handler?.Invoke(invocationContext);
+                            argumentResult.ArgumentSymbol.Handler?.Invoke(invocationContext);
                         }
                         else if (child is OptionResult optionResult)
                         {
                             // Invoke
-                            optionResult.Option.Argument.Handler?.Invoke(invocationContext);
+                            optionResult.OptionSymbol.Argument.Handler?.Invoke(invocationContext);
                         }
                         else if (child is CommandResult commandResult)
                         {
@@ -62,7 +62,7 @@ internal sealed class InvocationPipeline
                 }
 
                 // Call the command handler as the last step in the invocation chain.
-                var handler = invocationContext.ParseResult.Command?.Command.Handler;
+                var handler = invocationContext.ParseResult.ParsedCommand.CommandSymbol.Handler;
                 if (handler is not null)
                 {
                     await handler(context);

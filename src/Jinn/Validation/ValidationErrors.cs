@@ -12,42 +12,42 @@ internal static class ValidationErrors
     public static DiagnosticDescriptor JINN1002_ArgumentExpectedAnExactAmountOfTokens(ArgumentResult result) =>
         new("JINN1002", Severity.Error,
             "Not exact argument count",
-            $"The argument {result.Argument.Name} expected exactly " +
+            $"The argument {result.ArgumentSymbol.Name} expected exactly " +
             $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1003_ArgumentExpectedAtLeastAnAmountOfTokens(ArgumentResult result) =>
         new("JINN1003", Severity.Error,
             "Too few argument values",
-            $"The argument {result.Argument.Name} expected at least " +
+            $"The argument {result.ArgumentSymbol.Name} expected at least " +
             $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1004_OptionExpectedAnExactAmountOfTokens(OptionResult result) =>
         new("JINN1004", Severity.Error,
             "Not exact amount of option values",
-            $"The option {result.Option.Name} expected exactly " +
+            $"The option {result.OptionSymbol.Name} expected exactly " +
             $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1005_OptionExpectedAtLeastAnAmountOfTokens(OptionResult result) =>
         new("JINN1005", Severity.Error,
             "Too few option values",
-            $"The option {result.Option.Name} expected at least " +
+            $"The option {result.OptionSymbol.Name} expected at least " +
             $"{Pluralize(result.Arity.Minimum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1006_TooManyArgumentValues(ArgumentResult result) =>
         new("JINN1006", Severity.Error,
             "Too many argument values",
-            $"The argument {result.Argument.Name} expected maximum " +
+            $"The argument {result.ArgumentSymbol.Name} expected maximum " +
             $"{Pluralize(result.Arity.Maximum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 
     public static DiagnosticDescriptor JINN1007_TooManyOptionValues(OptionResult result) =>
         new("JINN1005", Severity.Error,
             "Too many option values",
-            $"The option {result.Option.Name} expected maximum " +
+            $"The option {result.OptionSymbol.Name} expected maximum " +
             $"{Pluralize(result.Arity.Maximum, "value", "values")}, " +
             $"got {result.Tokens.Count}");
 

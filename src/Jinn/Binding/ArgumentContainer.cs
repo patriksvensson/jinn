@@ -30,15 +30,15 @@ internal sealed class ArgumentContainer
 
     public ArgumentResultValue GetResult()
     {
-        return new ArgumentResultValue.Success(_result.Argument, _container);
+        return new ArgumentResultValue.Success(_result.ArgumentSymbol, _container);
     }
 
     public static ArgumentContainer? CreateContainer(ArgumentResult result)
     {
-        var type = result.Argument.ValueType;
+        var type = result.ArgumentSymbol.ValueType;
 
         var capacity = result.Tokens.Count;
-        var elementType = GetContainerElementType(result.Argument.ValueType);
+        var elementType = GetContainerElementType(result.ArgumentSymbol.ValueType);
         if (elementType == null)
         {
             return null;

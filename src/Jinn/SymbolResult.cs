@@ -59,12 +59,12 @@ public abstract class SymbolResult
 [PublicAPI]
 public abstract class CommandResult : SymbolResult
 {
-    public Command Command { get; }
+    public Command CommandSymbol { get; }
 
     protected CommandResult(Command command, SymbolResult? parent)
         : base(command, parent)
     {
-        Command = command ?? throw new ArgumentNullException(nameof(command));
+        CommandSymbol = command ?? throw new ArgumentNullException(nameof(command));
     }
 }
 
@@ -92,28 +92,28 @@ public sealed class SubCommandResult : CommandResult
 [PublicAPI]
 public sealed class ArgumentResult : SymbolResult
 {
-    public Argument Argument { get; }
-    public Arity Arity => Argument.Arity;
+    public Argument ArgumentSymbol { get; }
+    public Arity Arity => ArgumentSymbol.Arity;
 
     public ArgumentResult(Argument argument, SymbolResult? parent)
         : base(argument, parent)
     {
-        Argument = argument ?? throw new ArgumentNullException(nameof(argument));
+        ArgumentSymbol = argument ?? throw new ArgumentNullException(nameof(argument));
     }
 }
 
 [PublicAPI]
 public sealed class OptionResult : SymbolResult
 {
-    public Option Option { get; }
+    public Option OptionSymbol { get; }
     public Token Token { get; }
 
-    public Arity Arity => Option.Arity;
+    public Arity Arity => OptionSymbol.Arity;
 
     public OptionResult(Option option, Token token, CommandResult? parent)
         : base(option, parent)
     {
-        Option = option ?? throw new ArgumentNullException(nameof(option));
+        OptionSymbol = option ?? throw new ArgumentNullException(nameof(option));
         Token = token ?? throw new ArgumentNullException(nameof(token));
     }
 }

@@ -31,7 +31,7 @@ public sealed class MiddlewareTests
         fixture.AddCommand(command);
         fixture.Configuration.SetHelpProvider(ctx =>
         {
-            invokedCommand = ctx.ParseResult.Command?.Command;
+            invokedCommand = ctx.ParseResult.ParsedCommand.CommandSymbol;
         });
 
         // When
