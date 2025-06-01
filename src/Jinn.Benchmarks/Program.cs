@@ -34,4 +34,8 @@ public class ParserBenchmarks
     [Benchmark]
     public void Jinn_Parse() => _root.Parse(
         ["foo", "42", "--flag", "bar", "--baz", "--qux", "32"]);
+
+    [Benchmark]
+    public async Task Jinn_Invoke() => await _root.Invoke(
+        ["foo", "42", "--flag", "bar", "--baz", "--qux", "32"]);
 }
