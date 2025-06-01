@@ -12,7 +12,7 @@ internal static class ParseErrorMiddleware
             }
             else
             {
-                ctx.InvocationResult = new DefaultParseErrorInvocationResult();
+                throw new InvalidOperationException("No parse error handler has been registered");
             }
 
             return;
@@ -34,21 +34,5 @@ internal sealed class CustomParseErrorInvocationResult : IInvocationResult
     public void Invoke(InvocationContext context)
     {
         _action(context);
-    }
-}
-
-internal sealed class DefaultParseErrorInvocationResult : IInvocationResult
-{
-    public void Invoke(InvocationContext context)
-    {
-        foreach (var diagnostic in context.ParseResult.Diagnostics.Where(x => x.Severity == Severity.Error))
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("Error: ");
-            Console.ResetColor();
-            Console.WriteLine(diagnostic.Message);
-        }
-
-        context.ExitCode = 1;
     }
 }

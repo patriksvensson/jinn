@@ -19,6 +19,7 @@ public class Command : Symbol
     public Command(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
+        AddOption(new HelpOption());
     }
 
     public Command AddCommand(Command command)

@@ -7,6 +7,7 @@ public abstract class Argument : Symbol
     public Arity Arity { get; set; }
     public Type ValueType { get; }
     public bool IsRequired { get; set; }
+    internal Func<InvocationContext, Task>? Handler { get; private set; }
 
     protected Argument(Type type, string name)
     {
@@ -21,6 +22,20 @@ public abstract class Argument : Symbol
     }
 
     internal abstract object? GetDefaultValue();
+
+    public void SetHandler(Action<InvocationContext> handler)
+    {
+        Handler = (ctx) =>
+        {
+            handler(ctx);
+            return Task.CompletedTask;
+        };
+    }
+
+    public void SetHandler(Func<InvocationContext, Task> handler)
+    {
+        Handler = handler;
+    }
 }
 
 [PublicAPI]

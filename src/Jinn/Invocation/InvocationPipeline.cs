@@ -25,12 +25,44 @@ internal sealed class InvocationPipeline
         List<InvocationMiddleware> middlewares =
         [
             ExceptionMiddleware.Invoke,
+            HelpMiddleware.Invoke,
             ParseErrorMiddleware.Invoke,
             .. _parseResult.Configuration.Middlewares,
             async (invocationContext, _) =>
             {
+                // Invoke all options and arguments
+                var current = (CommandResult)invocationContext.ParseResult.Root;
+                while (current != null)
+                {
+                    var foundCommand = false;
+                    foreach (var child in current.Children)
+                    {
+                        if (child is ArgumentResult argumentResult)
+                        {
+                            // Invoke
+                            argumentResult.Argument.Handler?.Invoke(invocationContext);
+                        }
+                        else if (child is OptionResult optionResult)
+                        {
+                            // Invoke
+                            optionResult.Option.Argument.Handler?.Invoke(invocationContext);
+                        }
+                        else if (child is CommandResult commandResult)
+                        {
+                            // Proceed to the next command
+                            current = commandResult;
+                            foundCommand = true;
+                        }
+                    }
+
+                    if (!foundCommand)
+                    {
+                        break;
+                    }
+                }
+
                 // Call the command handler as the last step in the invocation chain.
-                var handler = invocationContext.ParseResult.Root.Command.Handler;
+                var handler = invocationContext.ParseResult.Command?.Command.Handler;
                 if (handler is not null)
                 {
                     await handler(context);

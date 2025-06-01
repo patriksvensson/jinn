@@ -46,7 +46,10 @@ internal sealed class ArgumentContainer
 
         if (type.IsArray)
         {
+#pragma warning disable IL3050
+            // IL3050: Type is known
             var list = Array.CreateInstance(elementType, capacity);
+#pragma warning restore IL3050
             return new ArgumentContainer(result, list, elementType, true);
         }
 
@@ -58,7 +61,10 @@ internal sealed class ArgumentContainer
                 typeof(IList<>).IsAssignableFrom(def) ||
                 typeof(ICollection<>).IsAssignableFrom(def))
             {
+#pragma warning disable IL3050
+                // IL3050: Type is known
                 var list = Array.CreateInstance(elementType, capacity);
+#pragma warning restore IL3050
                 return new ArgumentContainer(result, list, elementType, false);
             }
             else if (def == typeof(List<>))

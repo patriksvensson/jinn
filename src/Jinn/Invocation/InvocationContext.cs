@@ -11,6 +11,7 @@ public sealed class InvocationContext
     public Configuration Configuration { get; }
     public IInvocationResult? InvocationResult { get; set; }
     public int ExitCode { get; set; }
+    public bool ShowHelp { get; set; }
 
     public InvocationContext(ParseResult parseResult)
     {

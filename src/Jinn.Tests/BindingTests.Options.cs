@@ -331,7 +331,7 @@ public sealed partial class BindingTests
         public async Task Should_Bind_Multiple_Integers()
         {
             // Given
-            List<int> result = null;
+            List<int>? result = null;
             var rootCommand = new RootCommand();
             var opt = rootCommand.AddOption(new Option<List<int>>("--value"));
             rootCommand.SetHandler(ctx =>

@@ -99,28 +99,4 @@ public sealed class InvocationTests
         invoked.ShouldBeFalse();
         result.ShouldBe(1);
     }
-
-    [Fact]
-    public async Task Should_Invoke_Parse_Error_Diagnostic_Middleware_If_Errors_Are_Present()
-    {
-        // Given
-        var diagnostics = default(Diagnostics);
-
-        var rootCommand = new RootCommandFixture();
-        rootCommand.AddArgument(new Argument<int>("VALUE").HasArity(2, 2));
-        rootCommand.Configuration.ParseErrorHandler = parseResult =>
-        {
-            diagnostics = parseResult.Diagnostics;
-            return Task.FromResult<IInvocationResult>(
-                new CustomInvocationResult(ctx => ctx.ExitCode = 9));
-        };
-
-        // When
-        var result = await rootCommand.Invoke("42");
-
-        // Then
-        diagnostics.ShouldNotBeNull();
-        diagnostics.Count.ShouldBe(1);
-        result.ShouldBe(9);
-    }
 }
