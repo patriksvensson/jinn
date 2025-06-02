@@ -5,7 +5,7 @@ slug: /
 
 # Introduction
 
-Jinn is a a minimal, performant, AOT compliant, command line parser (and framework) for .NET.  
+Jinn is a minimal, performant, AOT compliant, command line parser (and framework) for .NET.  
 It's not a fork, but it's design and implementation is based on and inspired by 
 the fantastic [System.CommandLine](https://github.com/dotnet/command-line-api).
 
