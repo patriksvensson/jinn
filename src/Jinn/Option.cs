@@ -40,6 +40,7 @@ public sealed class Option<T> : Option
     }
 }
 
+[PublicAPI]
 public static class OptionExtensions
 {
     public static Option<T> AddAlias<T>(this Option<T> option, string alias)

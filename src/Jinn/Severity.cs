@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public enum Severity
 {
     Information = 0,

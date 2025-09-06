@@ -50,15 +50,13 @@ public sealed class Argument<T> : Argument
 
     internal override object? GetDefaultValue()
     {
-        if (DefaultValueFactory != null)
-        {
-            return DefaultValueFactory();
-        }
-
-        return default(T);
+        return DefaultValueFactory != null
+            ? DefaultValueFactory()
+            : default(T);
     }
 }
 
+[PublicAPI]
 public static class ArgumentExtensions
 {
     public static Argument<T> HasArity<T>(this Argument<T> argument, Arity arity)

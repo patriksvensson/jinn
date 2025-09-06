@@ -21,12 +21,7 @@ internal static class Validator
 
 file sealed class ValidationContext
 {
-    public Diagnostics Diagnostics { get; }
-
-    public ValidationContext()
-    {
-        Diagnostics = new Diagnostics();
-    }
+    public Diagnostics Diagnostics { get; } = new();
 }
 
 file sealed class Visitor
@@ -37,17 +32,17 @@ file sealed class Visitor
     {
         RuntimeHelpers.EnsureSufficientExecutionStack();
 
-        if (result is CommandResult root)
+        switch (result)
         {
-            VisitCommand(context, root);
-        }
-        else if (result is ArgumentResult argument)
-        {
-            VisitArgument(context, argument);
-        }
-        else if (result is OptionResult option)
-        {
-            VisitOption(context, option);
+            case CommandResult root:
+                VisitCommand(context, root);
+                break;
+            case ArgumentResult argument:
+                VisitArgument(context, argument);
+                break;
+            case OptionResult option:
+                VisitOption(context, option);
+                break;
         }
     }
 
@@ -86,7 +81,7 @@ file sealed class Visitor
         }
     }
 
-    private void VisitArgument(ValidationContext context, ArgumentResult result)
+    private static void VisitArgument(ValidationContext context, ArgumentResult result)
     {
         // Not enought tokens present?
         if (result.Tokens.Count < result.Arity.Minimum)
@@ -123,7 +118,7 @@ file sealed class Visitor
         }
     }
 
-    private void VisitOption(ValidationContext context, OptionResult result)
+    private static void VisitOption(ValidationContext context, OptionResult result)
     {
         // Not enought tokens present?
         if (result.Tokens.Count < result.Arity.Minimum)

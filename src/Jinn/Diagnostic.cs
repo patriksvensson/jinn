@@ -1,5 +1,6 @@
 namespace Jinn;
 
+[PublicAPI]
 public sealed class Diagnostic
 {
     public string? Code { get; init; }
@@ -16,6 +17,7 @@ public sealed class Diagnostic
     }
 }
 
+[PublicAPI]
 public sealed class Diagnostics : List<Diagnostic>
 {
     public bool HasErrors => this.Any(x => x.Severity == Severity.Error);
@@ -58,6 +60,7 @@ public sealed class Diagnostics : List<Diagnostic>
     }
 }
 
+[PublicAPI]
 public sealed class DiagnosticDescriptor
 {
     public string? Code { get; }

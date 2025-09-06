@@ -4,6 +4,8 @@ namespace Jinn;
 
 internal static class Tokenizer
 {
+    private static readonly SearchValues<char> _splitters = SearchValues.Create(":=");
+
     public static List<Token> Tokenize(IEnumerable<string> args, Command root)
     {
         var context = new TokenizerContext(root, args);
@@ -73,19 +75,17 @@ internal static class Tokenizer
         return context.GetResult();
     }
 
-    private static SearchValues<char> splitters = SearchValues.Create(":=");
-
     private static bool TrySplitArgumentIntoTokens(
         TokenizerContext context, string arg)
     {
         var argSpan = arg.AsSpan();
-        var index = argSpan.IndexOfAny(splitters);
+        var index = argSpan.IndexOfAny(_splitters);
         if (index == -1)
         {
             return false;
         }
 
-        var option = arg.Substring(0, index);
+        var option = arg[..index];
         if (!context.TryGetSymbol<Option>(option, out var optionSymbol))
         {
             return false;
@@ -136,16 +136,12 @@ internal static class Tokenizer
     private static bool TryAddOptionValue(TokenizerContext context, string arg)
     {
         var lastToken = context.GetLastToken();
-        if (lastToken != null)
+        if (lastToken is not { Kind: TokenKind.Option, Symbol: Option { Argument.Arity.Minimum: > 0 } option })
         {
-            if (lastToken.Kind == TokenKind.Option &&
-                lastToken.Symbol is Option { Argument.Arity.Minimum: > 0 } option)
-            {
-                context.AddToken(TokenKind.Argument, option, arg);
-                return true;
-            }
+            return false;
         }
 
-        return false;
+        context.AddToken(TokenKind.Argument, option, arg);
+        return true;
     }
 }

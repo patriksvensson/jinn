@@ -4,7 +4,7 @@ internal abstract class ArgumentResultValue
 {
     public Argument Argument { get; }
 
-    protected ArgumentResultValue(Argument argument)
+    private ArgumentResultValue(Argument argument)
     {
         Argument = argument;
     }

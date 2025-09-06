@@ -2,22 +2,6 @@ namespace Jinn.Binding;
 
 internal static class ArgumentBinder
 {
-    public static object? GetValue(
-        ArgumentBinderContext context,
-        ArgumentResult argumentResult)
-    {
-        var value = Bind(context, argumentResult);
-        switch (value)
-        {
-            case ArgumentResultValue.Failure failure:
-                throw new InvalidOperationException(failure.Error.Message);
-            case ArgumentResultValue.Success success:
-                return success.Value;
-            default:
-                throw new InvalidOperationException("Unknown argument binding result");
-        }
-    }
-
     public static T? GetValue<T>(
         ArgumentBinderContext context,
         ArgumentResult argumentResult)
@@ -36,7 +20,7 @@ internal static class ArgumentBinder
         }
     }
 
-    public static ArgumentResultValue Bind(
+    private static ArgumentResultValue Bind(
         ArgumentBinderContext context,
         ArgumentResult result)
     {

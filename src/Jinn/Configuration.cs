@@ -24,6 +24,7 @@ public sealed class Configuration
     }
 }
 
+[PublicAPI]
 public static class ConfigurationExtensions
 {
     public static void SetHelpProvider(this Configuration configuration, Action<InvocationContext> action)

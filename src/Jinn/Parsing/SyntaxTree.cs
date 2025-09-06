@@ -1,6 +1,5 @@
 namespace Jinn;
 
-[PublicAPI]
 internal sealed class SyntaxTree
 {
     public required CommandSyntax Root { get; init; }

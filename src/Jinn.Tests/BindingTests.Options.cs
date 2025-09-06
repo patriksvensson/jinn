@@ -65,7 +65,7 @@ public sealed partial class BindingTests
         public async Task Should_Bind_TimeSpan()
         {
             // Given
-            var value = default(TimeSpan);
+            var value = TimeSpan.Zero;
             var rootCommand = new RootCommand();
             var opt = rootCommand.AddOption(new Option<TimeSpan>("--value"));
             rootCommand.SetHandler(ctx =>
@@ -141,7 +141,7 @@ public sealed partial class BindingTests
         public async Task Should_Bind_Signed_Long()
         {
             // Given
-            var value = default(long);
+            var value = 0L;
             var rootCommand = new RootCommand();
             var opt = rootCommand.AddOption(new Option<long>("--value"));
             rootCommand.SetHandler(ctx =>
@@ -198,7 +198,7 @@ public sealed partial class BindingTests
         public async Task Should_Bind_Unsigned_Integer()
         {
             // Given
-            var value = default(uint);
+            var value = 0U;
             var rootCommand = new RootCommand();
             var opt = rootCommand.AddOption(new Option<uint>("--value"));
             rootCommand.SetHandler(ctx =>
@@ -217,7 +217,7 @@ public sealed partial class BindingTests
         public async Task Should_Bind_Unsigned_Long()
         {
             // Given
-            var value = default(ulong);
+            var value = 0UL;
             var rootCommand = new RootCommand();
             var opt = rootCommand.AddOption(new Option<ulong>("--value"));
             rootCommand.SetHandler(ctx =>

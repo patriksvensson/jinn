@@ -7,12 +7,9 @@ internal sealed class TokenizerContext
     private readonly List<Token> _tokens;
     private readonly bool _hasSyntheticRoot;
     private int _index;
-    private int _position;
-    private bool _hasEncounteredDoubleDash;
 
-    public int Position => _position;
-    public bool HasEncounteredDoubleDash => _hasEncounteredDoubleDash;
-    public bool HasSyntheticRoot => _hasSyntheticRoot;
+    public int Position { get; private set; }
+    public bool HasEncounteredDoubleDash { get; private set; }
 
     public TokenizerContext(Command root, IEnumerable<string> args)
     {
@@ -20,7 +17,8 @@ internal sealed class TokenizerContext
         _args = NormalizeArguments(args, root, out _hasSyntheticRoot);
         _tokens = [];
         _index = -1;
-        _position = 0;
+
+        Position = 0;
 
         SetCurrentCommand(root);
     }
@@ -38,7 +36,7 @@ internal sealed class TokenizerContext
             var isAtSyntheticRoot = _index == 0 && _hasSyntheticRoot;
             if (!isAtSyntheticRoot)
             {
-                _position += _args[_index].Length + 1;
+                Position += _args[_index].Length + 1;
             }
         }
 
@@ -51,7 +49,7 @@ internal sealed class TokenizerContext
     {
         if (kind == TokenKind.DoubleDash)
         {
-            _hasEncounteredDoubleDash = true;
+            HasEncounteredDoubleDash = true;
         }
 
         var isAtSyntheticRoot = _index == 0 && _hasSyntheticRoot;

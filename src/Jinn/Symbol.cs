@@ -8,6 +8,7 @@ public abstract class Symbol
     public Symbol? Parent { get; internal set; }
 }
 
+[PublicAPI]
 public static class SymbolExtensions
 {
     public static T Description<T>(this T symbol, string? description)
