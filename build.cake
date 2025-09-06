@@ -4,6 +4,12 @@ var configuration = Argument("configuration", "Release");
 ////////////////////////////////////////////////////////////////
 // Tasks
 
+Task("Clean")
+    .Does(context =>
+{
+    context.CleanDirectory("./.artifacts");
+});
+
 Task("Build")
     .Does(context => 
 {
@@ -27,11 +33,10 @@ Task("Test")
 });
 
 Task("Package")
+    .IsDependentOn("Clean")
     .IsDependentOn("Test")
     .Does(context => 
 {
-    context.CleanDirectory("./.artifacts");
-
     context.DotNetPack($"./src/Jinn.slnx", new DotNetPackSettings {
         Configuration = configuration,
         NoRestore = true,
@@ -76,4 +81,4 @@ Task("Default")
 ////////////////////////////////////////////////////////////////
 // Execution
 
-RunTarget(target)
+RunTarget(target);
