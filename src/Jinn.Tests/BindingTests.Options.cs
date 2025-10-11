@@ -10,10 +10,12 @@ public sealed partial class BindingTests
             // Given
             var value = false;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<bool>("--value"));
+            var option = new Option<bool>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -29,10 +31,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(DateTime);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<DateTime>("--value"));
+            var option = new Option<DateTime>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -48,10 +52,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(DateTimeOffset);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<DateTimeOffset>("--value"));
+            var option = new Option<DateTimeOffset>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -67,10 +73,12 @@ public sealed partial class BindingTests
             // Given
             var value = TimeSpan.Zero;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<TimeSpan>("--value"));
+            var option = new Option<TimeSpan>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -86,10 +94,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(sbyte);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<sbyte>("--value"));
+            var option = new Option<sbyte>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -105,10 +115,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(short);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<short>("--value"));
+            var option = new Option<short>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -124,10 +136,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<int>("--value"));
+            var option = new Option<int>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -143,10 +157,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0L;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<long>("--value"));
+            var option = new Option<long>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -162,10 +178,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(byte);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<byte>("--value"));
+            var option = new Option<byte>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -181,10 +199,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(ushort);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<ushort>("--value"));
+            var option = new Option<ushort>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -200,10 +220,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0U;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<uint>("--value"));
+            var option = new Option<uint>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -219,10 +241,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0UL;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<ulong>("--value"));
+            var option = new Option<ulong>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -238,10 +262,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(string);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<string>("--value"));
+            var option = new Option<string>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -257,10 +283,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(Uri);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<Uri>("--value"));
+            var option = new Option<Uri>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -276,10 +304,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(int?);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<int?>("--value"));
+            var option = new Option<int?>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -295,10 +325,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(int?);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<int?>("--value"));
+            var option = new Option<int?>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -314,10 +346,12 @@ public sealed partial class BindingTests
             // Given
             var value = false;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<bool>("--value"));
+            var option = new Option<bool>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When
@@ -333,10 +367,12 @@ public sealed partial class BindingTests
             // Given
             List<int>? result = null;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<List<int>>("--value"));
+            var option = new Option<List<int>>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                result = ctx.GetValue(opt);
+                result = ctx.GetValue(option);
             });
 
             // When
@@ -356,10 +392,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddOption(new Option<int>("--value"));
+            var option = new Option<int>("--value");
+
+            rootCommand.Options.Add(option);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(option);
             });
 
             // When

@@ -3,8 +3,9 @@ using Spectre.Console;
 using Spectre.Console.Rendering;
 
 var root = new RootCommand();
-var option = root.AddOption(new Option<List<int>>("--item").HasArity(2, 5));
+var option = new Option<List<int>>("--item").HasArity(2, 5);
 
+root.Options.Add(option);
 root.SetHandler(ctx =>
 {
     var items = ctx.GetValue(option);

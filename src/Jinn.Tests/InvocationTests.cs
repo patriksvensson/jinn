@@ -106,9 +106,8 @@ public sealed class InvocationTests
         // Given
         var invokedArgument = false;
         var invokedCommand = false;
-        var rootCommand = new RootCommand();
 
-        var argument = rootCommand.AddArgument(new Argument<bool>("TEST"));
+        var argument = new Argument<bool>("TEST");
         argument.Arity = Arity.ZeroOrOne;
         argument.SetHandler(_ =>
         {
@@ -116,6 +115,8 @@ public sealed class InvocationTests
             return false;
         });
 
+        var rootCommand = new RootCommand();
+        rootCommand.Arguments.Add(argument);
         rootCommand.SetHandler(_ =>
         {
             invokedCommand = true;
@@ -135,9 +136,8 @@ public sealed class InvocationTests
         // Given
         var invokedArgument = false;
         var invokedCommand = false;
-        var rootCommand = new RootCommand();
 
-        var argument = rootCommand.AddArgument(new Argument<bool>("TEST"));
+        var argument = new Argument<bool>("TEST");
         argument.Arity = Arity.ZeroOrOne;
         argument.SetHandler(_ =>
         {
@@ -145,6 +145,8 @@ public sealed class InvocationTests
             return true;
         });
 
+        var rootCommand = new RootCommand();
+        rootCommand.Arguments.Add(argument);
         rootCommand.SetHandler(_ =>
         {
             invokedCommand = true;
@@ -166,7 +168,7 @@ public sealed class InvocationTests
         var invokedCommand = false;
         var rootCommand = new RootCommand();
 
-        var option = rootCommand.AddOption(new Option<bool>("--test"));
+        var option = new Option<bool>("--test");
         option.Arity = Arity.ZeroOrOne;
         option.SetHandler(_ =>
         {
@@ -174,6 +176,7 @@ public sealed class InvocationTests
             return false;
         });
 
+        rootCommand.Options.Add(option);
         rootCommand.SetHandler(_ =>
         {
             invokedCommand = true;
@@ -195,7 +198,7 @@ public sealed class InvocationTests
         var invokedCommand = false;
         var rootCommand = new RootCommand();
 
-        var option = rootCommand.AddOption(new Option<bool>("--test"));
+        var option = new Option<bool>("--test");
         option.Arity = Arity.ZeroOrOne;
         option.SetHandler(_ =>
         {
@@ -203,6 +206,7 @@ public sealed class InvocationTests
             return true;
         });
 
+        rootCommand.Options.Add(option);
         rootCommand.SetHandler(_ =>
         {
             invokedCommand = true;

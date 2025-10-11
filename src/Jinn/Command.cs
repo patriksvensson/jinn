@@ -3,15 +3,11 @@ namespace Jinn;
 [PublicAPI]
 public class Command : Symbol
 {
-    private List<Command>? _commands;
-    private List<Argument>? _arguments;
-    private List<Option>? _options;
-
     public string Name { get; }
 
-    public IReadOnlyList<Command> Commands => (IReadOnlyList<Command>?)_commands ?? [];
-    public IReadOnlyList<Argument> Arguments => (IReadOnlyList<Argument>?)_arguments ?? [];
-    public IReadOnlyList<Option> Options => (IReadOnlyList<Option>?)_options ?? [];
+    public List<Command> Commands { get; init; } = [];
+    public List<Argument> Arguments { get; init; } = [];
+    public List<Option> Options { get; init; } = [];
 
     public bool HasArguments => Arguments.Count > 0;
     internal Func<InvocationContext, Task>? Handler { get; private set; }
@@ -19,37 +15,9 @@ public class Command : Symbol
     public Command(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
-        AddOption(new HelpOption());
-    }
 
-    public Command AddCommand(Command command)
-    {
-        (_commands ??= []).Add(command);
-        return command;
-    }
-
-    public Argument AddArgument(Argument argument)
-    {
-        (_arguments ??= []).Add(argument);
-        return argument;
-    }
-
-    public Argument<T> AddArgument<T>(Argument<T> argument)
-    {
-        (_arguments ??= []).Add(argument);
-        return argument;
-    }
-
-    public Option AddOption(Option option)
-    {
-        (_options ??= []).Add(option);
-        return option;
-    }
-
-    public Option<T> AddOption<T>(Option<T> option)
-    {
-        (_options ??= []).Add(option);
-        return option;
+        // Add default options
+        Options.Add(new HelpOption());
     }
 
     public void SetHandler(Action<InvocationContext> handler)
@@ -75,21 +43,14 @@ public sealed class RootCommand : Command
     public RootCommand(params Command[] commands)
         : this(new Configuration())
     {
-        foreach (var command in commands)
-        {
-            AddCommand(command);
-        }
+        Commands.AddRange(commands);
     }
 
     public RootCommand(Configuration configuration, params Command[] commands)
         : base(configuration.ExecutableName)
     {
         Configuration = configuration;
-
-        foreach (var command in commands)
-        {
-            AddCommand(command);
-        }
+        Commands.AddRange(commands);
     }
 
     public ParseResult Parse(IEnumerable<string> args)
@@ -102,5 +63,39 @@ public sealed class RootCommand : Command
         var result = Parse(args);
         var pipeline = new InvocationPipeline(result);
         return await pipeline.Invoke();
+    }
+}
+
+[PublicAPI]
+public static class CommandExtensions
+{
+    public static Command AddCommand(this Command source, Command command)
+    {
+        source.Commands.Add(command);
+        return command;
+    }
+
+    public static Argument AddArgument(this Command source, Argument argument)
+    {
+        source.Arguments.Add(argument);
+        return argument;
+    }
+
+    public static Argument<T> AddArgument<T>(this Command source, Argument<T> argument)
+    {
+        source.Arguments.Add(argument);
+        return argument;
+    }
+
+    public static Option AddOption(this Command source, Option option)
+    {
+        source.Options.Add(option);
+        return option;
+    }
+
+    public static Option<T> AddOption<T>(this Command source, Option<T> option)
+    {
+        source.Options.Add(option);
+        return option;
     }
 }

@@ -38,7 +38,8 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<int>("FOO").Required());
 
         var command = new Command("sub");
-        command.AddArgument(new Argument<int>("BAR").Required());
+        var argument = new Argument<int>("BAR").Required();
+        command.Arguments.Add(argument);
         fixture.Commands.Add(command);
 
         // When
@@ -56,7 +57,8 @@ public sealed class ValidationTests
         fixture.Arguments.Add(new Argument<int>("FOO").Required());
 
         var command = new Command("sub");
-        command.AddArgument(new Argument<int>("BAR").Required());
+        var argument = new Argument<int>("BAR").Required();
+        command.Arguments.Add(argument);
 
         fixture.Commands.Add(command);
 

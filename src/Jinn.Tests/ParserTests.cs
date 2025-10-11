@@ -78,7 +78,7 @@ public sealed class ParserTests
     {
         // Given
         var command = new Command("foo");
-        command.AddCommand(new Command("bar"));
+        command.Commands.Add(new Command("bar"));
         var fixture = new RootCommandFixture(command);
 
         // When
@@ -212,7 +212,7 @@ public sealed class ParserTests
     {
         // Given
         var command = new Command("foo");
-        command.AddArgument(new Argument<int>("VALUE"));
+        command.Arguments.Add(new Argument<int>("VALUE"));
         var fixture = new RootCommandFixture(command);
 
         // When

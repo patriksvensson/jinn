@@ -10,11 +10,10 @@ public sealed partial class BindingTests
             // Given
             var value = false;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<bool>("VALUE"));
-            rootCommand.SetHandler(ctx =>
-            {
-                value = ctx.GetValue(opt);
-            });
+            var argument = new Argument<bool>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
+            rootCommand.SetHandler(ctx => value = ctx.GetValue(argument));
 
             // When
             await rootCommand.Invoke(["true"]);
@@ -29,10 +28,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(DateTime);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<DateTime>("VALUE"));
+            var argument = new Argument<DateTime>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -48,10 +49,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(DateTimeOffset);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<DateTimeOffset>("VALUE"));
+            var argument = new Argument<DateTimeOffset>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -67,10 +70,12 @@ public sealed partial class BindingTests
             // Given
             var value = TimeSpan.Zero;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<TimeSpan>("VALUE"));
+            var argument = new Argument<TimeSpan>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -86,10 +91,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(sbyte);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<sbyte>("VALUE"));
+            var argument = new Argument<sbyte>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -105,10 +112,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(short);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<short>("VALUE"));
+            var argument = new Argument<short>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -124,10 +133,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<int>("VALUE"));
+            var argument = new Argument<int>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -143,10 +154,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0L;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<long>("VALUE"));
+            var argument = new Argument<long>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -162,10 +175,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(byte);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<byte>("VALUE"));
+            var argument = new Argument<byte>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -181,10 +196,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(ushort);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<ushort>("VALUE"));
+            var argument = new Argument<ushort>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -200,10 +217,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0U;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<uint>("VALUE"));
+            var argument = new Argument<uint>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -219,10 +238,12 @@ public sealed partial class BindingTests
             // Given
             var value = 0UL;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<ulong>("VALUE"));
+            var argument = new Argument<ulong>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -238,10 +259,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(string);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<string>("VALUE"));
+            var argument = new Argument<string>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -257,10 +280,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(Uri);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<Uri>("VALUE"));
+            var argument = new Argument<Uri>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -276,10 +301,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(int?);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<int?>("VALUE"));
+            var argument = new Argument<int?>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -295,10 +322,12 @@ public sealed partial class BindingTests
             // Given
             var value = default(int?);
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<int?>("VALUE"));
+            var argument = new Argument<int?>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                value = ctx.GetValue(argument);
             });
 
             // When
@@ -314,10 +343,12 @@ public sealed partial class BindingTests
             // Given
             List<int>? result = null;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<List<int>>("VALUES"));
+            var argument = new Argument<List<int>>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                result = ctx.GetValue(opt);
+                result = ctx.GetValue(argument);
             });
 
             // When
@@ -335,19 +366,21 @@ public sealed partial class BindingTests
         public async Task Should_Return_Default_Value()
         {
             // Given
-            var value = 0;
+            var result = 0;
             var rootCommand = new RootCommand();
-            var opt = rootCommand.AddArgument(new Argument<int>("--value"));
+            var argument = new Argument<int>("VALUE");
+
+            rootCommand.Arguments.Add(argument);
             rootCommand.SetHandler(ctx =>
             {
-                value = ctx.GetValue(opt);
+                result = ctx.GetValue(argument);
             });
 
             // When
             await rootCommand.Invoke([]);
 
             // Then
-            value.ShouldBe(0);
+            result.ShouldBe(0);
         }
     }
 }

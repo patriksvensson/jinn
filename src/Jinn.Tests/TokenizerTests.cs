@@ -257,13 +257,13 @@ public class TokenizerTests
     {
         // Given
         var command = new Command("foo");
-        command.AddArgument(new Argument<string>("<FOO>"));
-        command.AddOption(new Option<int>("--lol"));
-        command.AddOption(new Option<bool>("--bar"));
+        command.Arguments.Add(new Argument<string>("<FOO>"));
+        command.Options.Add(new Option<int>("--lol"));
+        command.Options.Add(new Option<bool>("--bar"));
 
         var command2 = new Command("bar");
-        command2.AddOption(new Option<bool>("--corgi"));
-        command.AddCommand(command2);
+        command2.Options.Add(new Option<bool>("--corgi"));
+        command.Commands.Add(command2);
 
         var fixture = new RootCommandFixture(command);
 
@@ -294,16 +294,16 @@ public class TokenizerTests
     {
         // Given
         var command = new Command("foo");
-        command.AddArgument(new Argument<string>("<FOO>"));
-        command.AddOption(new Option<bool>("--bar"));
-        command.AddOption(new Option<bool>("-a"));
-        command.AddOption(new Option<bool>("-b"));
-        command.AddOption(new Option<bool>("-c"));
-        command.AddOption(new Option<int>("--lol"));
+        command.Arguments.Add(new Argument<string>("<FOO>"));
+        command.Options.Add(new Option<bool>("--bar"));
+        command.Options.Add(new Option<bool>("-a"));
+        command.Options.Add(new Option<bool>("-b"));
+        command.Options.Add(new Option<bool>("-c"));
+        command.Options.Add(new Option<int>("--lol"));
 
         var command2 = new Command("bar");
-        command2.AddOption(new Option<bool>("--corgi"));
-        command.AddCommand(command2);
+        command2.Options.Add(new Option<bool>("--corgi"));
+        command.Commands.Add(command2);
 
         var fixture = new RootCommandFixture(command);
 

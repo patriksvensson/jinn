@@ -68,16 +68,8 @@ public sealed class RootCommandFixture
     private RootCommand CreateRootCommand()
     {
         var root = new RootCommand(Configuration, Commands.ToArray());
-
-        foreach (var argument in Arguments)
-        {
-            root.AddArgument(argument);
-        }
-
-        foreach (var option in Options)
-        {
-            root.AddOption(option);
-        }
+        root.Arguments.AddRange(Arguments);
+        root.Options.AddRange(Options);
 
         return root;
     }

@@ -23,13 +23,13 @@ public class ParserBenchmarks
     public ParserBenchmarks()
     {
         var bar = new Command("bar");
-        bar.AddOption(new Option<bool>("--baz"));
-        bar.AddOption(new Option<int>("--qux"));
+        bar.Options.Add(new Option<bool>("--baz"));
+        bar.Options.Add(new Option<int>("--qux"));
 
         var foo = new Command("foo");
-        foo.AddArgument(new Argument<int>("VALUE"));
-        foo.AddOption(new Option<bool>("--flag"));
-        foo.AddCommand(bar);
+        foo.Arguments.Add(new Argument<int>("VALUE"));
+        foo.Options.Add(new Option<bool>("--flag"));
+        foo.Commands.Add(bar);
 
         _root = new RootCommand(foo);
     }
