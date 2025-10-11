@@ -7,7 +7,7 @@ public abstract class Argument : Symbol
     public Arity Arity { get; set; }
     public Type ValueType { get; }
     public bool IsRequired { get; set; }
-    internal Func<InvocationContext, Task>? Handler { get; private set; }
+    public Func<InvocationContext, Task<bool>>? Handler { get; set; }
 
     protected Argument(Type type, string name)
     {
@@ -22,20 +22,6 @@ public abstract class Argument : Symbol
     }
 
     internal abstract object? GetDefaultValue();
-
-    public void SetHandler(Action<InvocationContext> handler)
-    {
-        Handler = (ctx) =>
-        {
-            handler(ctx);
-            return Task.CompletedTask;
-        };
-    }
-
-    public void SetHandler(Func<InvocationContext, Task> handler)
-    {
-        Handler = handler;
-    }
 }
 
 [PublicAPI]
@@ -59,6 +45,20 @@ public sealed class Argument<T> : Argument
 [PublicAPI]
 public static class ArgumentExtensions
 {
+    public static void SetHandler<T>(this Argument<T> argument, Func<InvocationContext, Task<bool>> handler)
+    {
+        argument.Handler = async (ctx) => await handler(ctx);
+    }
+
+    public static void SetHandler<T>(this Argument<T> argument, Func<InvocationContext, bool> handler)
+    {
+        argument.SetHandler(ctx =>
+        {
+            var result = handler(ctx);
+            return Task.FromResult(result);
+        });
+    }
+
     public static Argument<T> HasArity<T>(this Argument<T> argument, Arity arity)
     {
         ArgumentNullException.ThrowIfNull(argument);

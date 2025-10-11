@@ -6,9 +6,10 @@ internal sealed class HelpOption : Option
         : base("--help", new Argument<bool>("value"))
     {
         Aliases.Add("-h");
-        Argument.SetHandler(ctx =>
+        Handler = ctx =>
         {
             ctx.ShowHelp = true;
-        });
+            return Task.FromResult(false);
+        };
     }
 }

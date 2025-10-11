@@ -6,6 +6,12 @@ public abstract class Option : Symbol
     public HashSet<string> Aliases { get; init; } = [];
     internal Argument Argument { get; }
 
+    public Func<InvocationContext, Task<bool>>? Handler
+    {
+        get => Argument.Handler;
+        set => Argument.Handler = value;
+    }
+
     public Arity Arity
     {
         get => Argument.Arity;
@@ -43,6 +49,20 @@ public sealed class Option<T> : Option
 [PublicAPI]
 public static class OptionExtensions
 {
+    public static void SetHandler<T>(this Option<T> option, Func<InvocationContext, Task<bool>> handler)
+    {
+        option.Handler = async (ctx) => await handler(ctx);
+    }
+
+    public static void SetHandler<T>(this Option<T> option, Func<InvocationContext, bool> handler)
+    {
+        option.Handler = ctx =>
+        {
+            var result = handler(ctx);
+            return Task.FromResult(result);
+        };
+    }
+
     public static Option<T> AddAlias<T>(this Option<T> option, string alias)
     {
         ArgumentNullException.ThrowIfNull(option);

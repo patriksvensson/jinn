@@ -32,20 +32,28 @@ internal sealed class InvocationPipeline
             {
                 // Invoke all options and arguments
                 var current = (CommandResult)invocationContext.ParseResult.Root;
-                while (current != null)
+                while (true)
                 {
                     var foundCommand = false;
                     foreach (var child in current.Children)
                     {
-                        if (child is ArgumentResult argumentResult)
+                        if (child is ArgumentResult { ArgumentSymbol.Handler: not null } argumentResult)
                         {
                             // Invoke
-                            argumentResult.ArgumentSymbol.Handler?.Invoke(invocationContext);
+                            var shouldContinue = await argumentResult.ArgumentSymbol.Handler.Invoke(invocationContext);
+                            if (!shouldContinue)
+                            {
+                                return;
+                            }
                         }
-                        else if (child is OptionResult optionResult)
+                        else if (child is OptionResult { OptionSymbol.Argument.Handler: not null } optionResult)
                         {
                             // Invoke
-                            optionResult.OptionSymbol.Argument.Handler?.Invoke(invocationContext);
+                            var shouldContinue = await optionResult.OptionSymbol.Argument.Handler.Invoke(invocationContext);
+                            if (!shouldContinue)
+                            {
+                                return;
+                            }
                         }
                         else if (child is CommandResult commandResult)
                         {

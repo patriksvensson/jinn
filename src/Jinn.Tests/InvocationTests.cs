@@ -99,4 +99,120 @@ public sealed class InvocationTests
         invoked.ShouldBeFalse();
         result.ShouldBe(1);
     }
+
+    [Fact]
+    public async Task Should_Not_Call_Command_Handler_If_Argument_Handler_Was_Called_And_It_Returned_False()
+    {
+        // Given
+        var invokedArgument = false;
+        var invokedCommand = false;
+        var rootCommand = new RootCommand();
+
+        var argument = rootCommand.AddArgument(new Argument<bool>("TEST"));
+        argument.Arity = Arity.ZeroOrOne;
+        argument.SetHandler(_ =>
+        {
+            invokedArgument = true;
+            return false;
+        });
+
+        rootCommand.SetHandler(_ =>
+        {
+            invokedCommand = true;
+        });
+
+        // When
+        await rootCommand.Invoke(["FOO"]);
+
+        // Then
+        invokedCommand.ShouldBeFalse();
+        invokedArgument.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Should_Call_Command_Handler_If_Argument_Handler_Was_Called_And_It_Returned_True()
+    {
+        // Given
+        var invokedArgument = false;
+        var invokedCommand = false;
+        var rootCommand = new RootCommand();
+
+        var argument = rootCommand.AddArgument(new Argument<bool>("TEST"));
+        argument.Arity = Arity.ZeroOrOne;
+        argument.SetHandler(_ =>
+        {
+            invokedArgument = true;
+            return true;
+        });
+
+        rootCommand.SetHandler(_ =>
+        {
+            invokedCommand = true;
+        });
+
+        // When
+        await rootCommand.Invoke(["FOO"]);
+
+        // Then
+        invokedCommand.ShouldBeTrue();
+        invokedArgument.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Should_Not_Call_Command_Handler_If_Option_Handler_Was_Called_And_It_Returned_False()
+    {
+        // Given
+        var invokedArgument = false;
+        var invokedCommand = false;
+        var rootCommand = new RootCommand();
+
+        var option = rootCommand.AddOption(new Option<bool>("--test"));
+        option.Arity = Arity.ZeroOrOne;
+        option.SetHandler(_ =>
+        {
+            invokedArgument = true;
+            return false;
+        });
+
+        rootCommand.SetHandler(_ =>
+        {
+            invokedCommand = true;
+        });
+
+        // When
+        await rootCommand.Invoke(["--test"]);
+
+        // Then
+        invokedCommand.ShouldBeFalse();
+        invokedArgument.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Should_Call_Command_Handler_If_Option_Handler_Was_Called_And_It_Returned_True()
+    {
+        // Given
+        var invokedArgument = false;
+        var invokedCommand = false;
+        var rootCommand = new RootCommand();
+
+        var option = rootCommand.AddOption(new Option<bool>("--test"));
+        option.Arity = Arity.ZeroOrOne;
+        option.SetHandler(_ =>
+        {
+            invokedArgument = true;
+            return true;
+        });
+
+        rootCommand.SetHandler(_ =>
+        {
+            invokedCommand = true;
+        });
+
+        // When
+        await rootCommand.Invoke(["--test"]);
+
+        // Then
+        invokedCommand.ShouldBeTrue();
+        invokedArgument.ShouldBeTrue();
+    }
 }
