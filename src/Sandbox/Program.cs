@@ -30,7 +30,7 @@ root.Configuration.SetParseErrorHandler(ctx =>
         .Header($"{ctx.ParseResult.Diagnostics.Count} Error(s)")
         .RoundedBorder());
 
-    ctx.ExitCode = 32;
+    ctx.SetExitCode(32);
 });
 
 return await root.Invoke(args);

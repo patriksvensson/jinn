@@ -12,7 +12,7 @@ public sealed class InvocationTests
         rootCommand.SetHandler(ctx =>
         {
             invoked = true;
-            ctx.ExitCode = 1;
+            ctx.SetExitCode(1);
         });
 
         // When
@@ -54,14 +54,14 @@ public sealed class InvocationTests
         rootCommand.Configuration.AddMiddleware(async (ctx, next) =>
         {
             invokedMiddleware = true;
-            ctx.ExitCode = 1;
+            ctx.SetExitCode(1);
             await next(ctx);
         });
 
         rootCommand.SetHandler(ctx =>
         {
             invokedCommand = true;
-            ctx.ExitCode = 2;
+            ctx.SetExitCode(2);
         });
 
         // When
@@ -82,14 +82,14 @@ public sealed class InvocationTests
 
         rootCommand.Configuration.AddMiddleware((ctx, _) =>
         {
-            ctx.ExitCode = 1;
+            ctx.SetExitCode(1);
             return Task.CompletedTask;
         });
 
         rootCommand.SetHandler(ctx =>
         {
             invoked = true;
-            ctx.ExitCode = 2;
+            ctx.SetExitCode(2);
         });
 
         // When

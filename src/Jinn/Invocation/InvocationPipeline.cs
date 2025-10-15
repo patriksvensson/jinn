@@ -17,7 +17,7 @@ internal sealed class InvocationPipeline
         await chain.Invoke(context, static _ => Task.CompletedTask);
 
         context.InvocationResult?.Invoke(context);
-        return context.ExitCode;
+        return context.GetExitCode();
     }
 
     private InvocationMiddleware BuildInvocationChain(InvocationContext context)

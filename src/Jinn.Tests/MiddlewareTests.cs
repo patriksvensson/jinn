@@ -85,7 +85,7 @@ public sealed class MiddlewareTests
         {
             diagnostics = parseResult.Diagnostics;
             return Task.FromResult<IInvocationResult>(
-                new CustomInvocationResult(ctx => ctx.ExitCode = 9));
+                new CustomInvocationResult(ctx => ctx.SetExitCode(9)));
         };
 
         // When

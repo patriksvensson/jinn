@@ -8,7 +8,7 @@ internal sealed class HelpOption : Option
         Aliases.Add("-h");
         Handler = ctx =>
         {
-            ctx.ShowHelp = true;
+            ctx.SetProperty(Constants.Invocation.ShowHelp, true);
             return Task.FromResult(false);
         };
     }
