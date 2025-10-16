@@ -7,8 +7,7 @@ internal static class HelpMiddleware
         await next(ctx);
 
         // Should we show help?
-        var showHelp = ctx.GetProperty<bool>(Constants.Invocation.ShowHelp);
-        if (showHelp && ctx.Configuration.HelpEnabled)
+        if (ctx.GetProperty<bool>(Constants.Invocation.ShowHelp))
         {
             if (ctx.Configuration.HelpProvider != null)
             {

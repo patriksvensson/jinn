@@ -4,7 +4,6 @@ namespace Jinn;
 public sealed class Configuration
 {
     public string ExecutableName { get; init; } = GetExecutableName();
-    public bool HelpEnabled { get; set; } = true;
 
     public Func<ParseResult, Task<IInvocationResult>>? HelpProvider { get; set; }
     public Func<ParseResult, Task<IInvocationResult>>? ParseErrorHandler { get; set; }

@@ -59,21 +59,6 @@ public sealed class MiddlewareTests
     }
 
     [Fact]
-    public async Task Should_Not_Throw_If_No_Help_Provider_Has_Been_Registered_But_Help_Is_Disabled()
-    {
-        // Given
-        var fixture = new RootCommandFixture();
-        fixture.Configuration.HelpEnabled = false;
-
-        // When
-        var result = await Record.ExceptionAsync(
-            async () => await fixture.Invoke("--help"));
-
-        // Then
-        result.ShouldBe(null);
-    }
-
-    [Fact]
     public async Task Should_Invoke_Parse_Error_Diagnostic_Middleware_If_Errors_Are_Present()
     {
         // Given
