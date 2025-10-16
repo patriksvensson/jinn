@@ -40,8 +40,7 @@ internal sealed class InvocationPipeline
                         if (child is ArgumentResult { ArgumentSymbol.Handler: not null } argumentResult)
                         {
                             // Invoke
-                            var shouldContinue = await argumentResult.ArgumentSymbol.Handler.Invoke(invocationContext);
-                            if (!shouldContinue)
+                            if (!await argumentResult.ArgumentSymbol.Handler.Invoke(invocationContext))
                             {
                                 return;
                             }
@@ -49,8 +48,7 @@ internal sealed class InvocationPipeline
                         else if (child is OptionResult { OptionSymbol.Argument.Handler: not null } optionResult)
                         {
                             // Invoke
-                            var shouldContinue = await optionResult.OptionSymbol.Argument.Handler.Invoke(invocationContext);
-                            if (!shouldContinue)
+                            if (!await optionResult.OptionSymbol.Argument.Handler.Invoke(invocationContext))
                             {
                                 return;
                             }
@@ -78,9 +76,8 @@ internal sealed class InvocationPipeline
             }
         ];
 
-        return middlewares.Aggregate(
-            (first, second) =>
-                (ctx, next) =>
-                    first(ctx, c => second(c, next)));
+        return middlewares.Aggregate((first, second) =>
+            (ctx, next) =>
+                first(ctx, c => second(c, next)));
     }
 }
