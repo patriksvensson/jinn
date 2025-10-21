@@ -11,8 +11,13 @@ Task("Clean")
 });
 
 Task("Build")
-    .Does(context => 
+    .Does(context =>
 {
+    DotNetFormatStyle("./src/Jinn.slnx", new DotNetFormatSettings
+    {
+        VerifyNoChanges = true,
+    });
+
     DotNetBuild("./src/Jinn.slnx", new DotNetBuildSettings {
         Configuration = configuration,
         NoIncremental = context.HasArgument("rebuild"),

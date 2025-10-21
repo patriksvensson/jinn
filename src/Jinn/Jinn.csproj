@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="Properties/stylecop.json" />
     <Additionalfiles Include="Properties/BannedSymbols.txt" />
   </ItemGroup>
 

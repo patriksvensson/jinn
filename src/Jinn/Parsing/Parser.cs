@@ -18,12 +18,12 @@ internal static class Parser
 
         return ParseResultBuilder.Build(
             new SyntaxTree
-        {
-            Root = syntax,
-            Configuration = configuration,
-            Unmatched = context.Unmatched,
-            Tokens = tokens,
-        });
+            {
+                Root = syntax,
+                Configuration = configuration,
+                Unmatched = context.Unmatched,
+                Tokens = tokens,
+            });
     }
 
     private static CommandSyntax Parse(ParserContext context, Command command)
