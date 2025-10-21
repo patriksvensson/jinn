@@ -16,3 +16,22 @@ internal static class ExceptionMiddleware
         }
     }
 }
+
+internal sealed class CustomExceptionInvocationResult : IInvocationResult
+{
+    private readonly Action<InvocationContext, Exception> _action;
+    private readonly Exception _exception;
+
+    public CustomExceptionInvocationResult(
+        Action<InvocationContext, Exception> action,
+        Exception exception)
+    {
+        _action = action ?? throw new ArgumentNullException(nameof(action));
+        _exception = exception ?? throw new ArgumentNullException(nameof(exception));
+    }
+
+    public void Invoke(InvocationContext context)
+    {
+        _action(context, _exception);
+    }
+}

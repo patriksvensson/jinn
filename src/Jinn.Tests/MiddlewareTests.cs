@@ -96,4 +96,41 @@ public sealed class MiddlewareTests
         result.ShouldBeOfType<InvalidOperationException>()
             .And().Message.ShouldBe("No parse error handler has been registered");
     }
+
+    [Fact]
+    public async Task Should_Propagate_Exception_If_No_Exception_Handler_Has_Been_Registered()
+    {
+        // Given
+        var root = new RootCommand();
+        root.SetHandler(_ => throw new InvalidOperationException("An expected error occured"));
+
+        // When
+        var result = await Record.ExceptionAsync(
+            async () => await root.Invoke([]));
+
+        // Then
+        result.ShouldBeOfType<InvalidOperationException>()
+            .And().Message.ShouldBe("An expected error occured");
+    }
+
+    [Fact]
+    public async Task Should_Handle_Exception_If_Exception_Handler_Has_Been_Registered()
+    {
+        // Given
+        var root = new RootCommand();
+        var errorMessage = default(string?);
+        root.SetHandler(_ => throw new InvalidOperationException("An expected error occured"));
+        root.Configuration.SetExceptionHandler((ctx, ex) =>
+        {
+            errorMessage = ex.Message;
+            ctx.SetExitCode(9);
+        });
+
+        // When
+        var result = await root.Invoke([]);
+
+        // Then
+        result.ShouldBe(9);
+        errorMessage.ShouldBe("An expected error occured");
+    }
 }

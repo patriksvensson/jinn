@@ -29,18 +29,22 @@ public static class ConfigurationExtensions
     public static void SetHelpProvider(this Configuration configuration, Action<InvocationContext> action)
     {
         configuration.HelpProvider = _ =>
-        {
-            return Task.FromResult<IInvocationResult>(
+            Task.FromResult<IInvocationResult>(
                 new CustomHelpInvocationResult(action));
-        };
     }
 
     public static void SetParseErrorHandler(this Configuration configuration, Action<InvocationContext> action)
     {
         configuration.ParseErrorHandler = _ =>
-        {
-            return Task.FromResult<IInvocationResult>(
+            Task.FromResult<IInvocationResult>(
                 new CustomParseErrorInvocationResult(action));
-        };
+    }
+
+    public static void SetExceptionHandler(
+        this Configuration configuration, Action<InvocationContext, Exception> action)
+    {
+        configuration.ExceptionHandler = (ex, _) =>
+            Task.FromResult<IInvocationResult>(
+                new CustomExceptionInvocationResult(action, ex));
     }
 }
