@@ -9,7 +9,6 @@
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
     <File Path=".editorconfig" />
-    <File Path="stylecop.json" />
   </Folder>
   <Folder Name="/Misc/">
     <Project Path="Sandbox\Sandbox.csproj" Type="Classic C#">
