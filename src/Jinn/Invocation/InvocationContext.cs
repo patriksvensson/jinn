@@ -72,13 +72,16 @@ public sealed class InvocationContext
 [PublicAPI]
 public static class InvocationContextExtensions
 {
-    public static int GetExitCode(this InvocationContext ctx)
+    extension(InvocationContext ctx)
     {
-        return ctx.GetProperty<int>(Constants.Invocation.ExitCode);
-    }
+        public int GetExitCode()
+        {
+            return ctx.GetProperty<int>(Constants.Invocation.ExitCode);
+        }
 
-    public static void SetExitCode(this InvocationContext ctx, int exitCode)
-    {
-        ctx.SetProperty(Constants.Invocation.ExitCode, exitCode);
+        public void SetExitCode(int exitCode)
+        {
+            ctx.SetProperty(Constants.Invocation.ExitCode, exitCode);
+        }
     }
 }

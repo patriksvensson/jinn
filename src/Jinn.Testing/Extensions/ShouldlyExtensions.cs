@@ -6,21 +6,27 @@ namespace Jinn.Testing;
 [PublicAPI]
 public static class ShouldlyExtensions
 {
-    public static T And<T>(this T obj)
+    extension(ParseResult hir)
     {
-        return obj;
+        public void ShouldHaveDiagnostics(string expected)
+        {
+            hir.ToErrata()
+                .TrimLines()
+                .ShouldBe(expected.TrimLines());
+        }
     }
 
-    public static T And<T>(this T obj, Action<T> action)
+    extension<T>(T obj)
     {
-        action(obj);
-        return obj;
-    }
+        public T And()
+        {
+            return obj;
+        }
 
-    public static void ShouldHaveDiagnostics(this ParseResult hir, string expected)
-    {
-        hir.ToErrata()
-           .TrimLines()
-           .ShouldBe(expected.TrimLines());
+        public T And(Action<T> action)
+        {
+            action(obj);
+            return obj;
+        }
     }
 }

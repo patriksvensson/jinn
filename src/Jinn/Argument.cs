@@ -45,38 +45,41 @@ public sealed class Argument<T> : Argument
 [PublicAPI]
 public static class ArgumentExtensions
 {
-    public static void SetHandler<T>(this Argument<T> argument, Func<InvocationContext, Task<bool>> handler)
+    extension<T>(Argument<T> argument)
     {
-        argument.Handler = async (ctx) => await handler(ctx);
-    }
-
-    public static void SetHandler<T>(this Argument<T> argument, Func<InvocationContext, bool> handler)
-    {
-        argument.SetHandler(ctx =>
+        public void SetHandler(Func<InvocationContext, Task<bool>> handler)
         {
-            var result = handler(ctx);
-            return Task.FromResult(result);
-        });
-    }
+            argument.Handler = async (ctx) => await handler(ctx);
+        }
 
-    public static Argument<T> HasArity<T>(this Argument<T> argument, Arity arity)
-    {
-        ArgumentNullException.ThrowIfNull(argument);
-        argument.Arity = arity;
-        return argument;
-    }
+        public void SetHandler(Func<InvocationContext, bool> handler)
+        {
+            argument.SetHandler(ctx =>
+            {
+                var result = handler(ctx);
+                return Task.FromResult(result);
+            });
+        }
 
-    public static Argument<T> HasArity<T>(this Argument<T> argument, int min, int max)
-    {
-        ArgumentNullException.ThrowIfNull(argument);
-        argument.Arity = new Arity(min, max);
-        return argument;
-    }
+        public Argument<T> HasArity(Arity arity)
+        {
+            ArgumentNullException.ThrowIfNull(argument);
+            argument.Arity = arity;
+            return argument;
+        }
 
-    public static Argument<T> Required<T>(this Argument<T> argument, bool isRequired = true)
-    {
-        ArgumentNullException.ThrowIfNull(argument);
-        argument.IsRequired = isRequired;
-        return argument;
+        public Argument<T> HasArity(int min, int max)
+        {
+            ArgumentNullException.ThrowIfNull(argument);
+            argument.Arity = new Arity(min, max);
+            return argument;
+        }
+
+        public Argument<T> Required(bool isRequired = true)
+        {
+            ArgumentNullException.ThrowIfNull(argument);
+            argument.IsRequired = isRequired;
+            return argument;
+        }
     }
 }

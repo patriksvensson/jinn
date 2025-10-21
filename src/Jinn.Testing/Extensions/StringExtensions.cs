@@ -2,14 +2,17 @@ namespace Jinn.Testing;
 
 internal static class StringExtensions
 {
-    public static string NormalizeLineEndings(this string? value)
+    extension(string? value)
     {
-        if (value != null)
+        public string NormalizeLineEndings()
         {
-            value = value.Replace("\r\n", "\n");
-            return value.Replace("\r", string.Empty);
-        }
+            if (value != null)
+            {
+                value = value.Replace("\r\n", "\n");
+                return value.Replace("\r", string.Empty);
+            }
 
-        return string.Empty;
+            return string.Empty;
+        }
     }
 }

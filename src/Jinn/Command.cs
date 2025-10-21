@@ -71,33 +71,36 @@ public sealed class RootCommand : Command
 [PublicAPI]
 public static class CommandExtensions
 {
-    public static Command AddCommand(this Command source, Command command)
+    extension(Command source)
     {
-        source.Commands.Add(command);
-        return command;
-    }
+        public Command AddCommand(Command command)
+        {
+            source.Commands.Add(command);
+            return command;
+        }
 
-    public static Argument AddArgument(this Command source, Argument argument)
-    {
-        source.Arguments.Add(argument);
-        return argument;
-    }
+        public Argument AddArgument(Argument argument)
+        {
+            source.Arguments.Add(argument);
+            return argument;
+        }
 
-    public static Argument<T> AddArgument<T>(this Command source, Argument<T> argument)
-    {
-        source.Arguments.Add(argument);
-        return argument;
-    }
+        public Argument<T> AddArgument<T>(Argument<T> argument)
+        {
+            source.Arguments.Add(argument);
+            return argument;
+        }
 
-    public static Option AddOption(this Command source, Option option)
-    {
-        source.Options.Add(option);
-        return option;
-    }
+        public Option AddOption(Option option)
+        {
+            source.Options.Add(option);
+            return option;
+        }
 
-    public static Option<T> AddOption<T>(this Command source, Option<T> option)
-    {
-        source.Options.Add(option);
-        return option;
+        public Option<T> AddOption<T>(Option<T> option)
+        {
+            source.Options.Add(option);
+            return option;
+        }
     }
 }

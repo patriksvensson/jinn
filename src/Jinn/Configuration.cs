@@ -26,25 +26,27 @@ public sealed class Configuration
 [PublicAPI]
 public static class ConfigurationExtensions
 {
-    public static void SetHelpProvider(this Configuration configuration, Action<InvocationContext> action)
+    extension(Configuration configuration)
     {
-        configuration.HelpProvider = _ =>
-            Task.FromResult<IInvocationResult>(
-                new CustomHelpInvocationResult(action));
-    }
+        public void SetHelpProvider(Action<InvocationContext> action)
+        {
+            configuration.HelpProvider = _ =>
+                Task.FromResult<IInvocationResult>(
+                    new CustomHelpInvocationResult(action));
+        }
 
-    public static void SetParseErrorHandler(this Configuration configuration, Action<InvocationContext> action)
-    {
-        configuration.ParseErrorHandler = _ =>
-            Task.FromResult<IInvocationResult>(
-                new CustomParseErrorInvocationResult(action));
-    }
+        public void SetParseErrorHandler(Action<InvocationContext> action)
+        {
+            configuration.ParseErrorHandler = _ =>
+                Task.FromResult<IInvocationResult>(
+                    new CustomParseErrorInvocationResult(action));
+        }
 
-    public static void SetExceptionHandler(
-        this Configuration configuration, Action<InvocationContext, Exception> action)
-    {
-        configuration.ExceptionHandler = (ex, _) =>
-            Task.FromResult<IInvocationResult>(
-                new CustomExceptionInvocationResult(action, ex));
+        public void SetExceptionHandler(Action<InvocationContext, Exception> action)
+        {
+            configuration.ExceptionHandler = (ex, _) =>
+                Task.FromResult<IInvocationResult>(
+                    new CustomExceptionInvocationResult(action, ex));
+        }
     }
 }

@@ -49,59 +49,62 @@ public sealed class Option<T> : Option
 [PublicAPI]
 public static class OptionExtensions
 {
-    public static void SetHandler<T>(this Option<T> option, Func<InvocationContext, Task<bool>> handler)
+    extension<T>(Option<T> option)
     {
-        option.Handler = async (ctx) => await handler(ctx);
-    }
-
-    public static void SetHandler<T>(this Option<T> option, Func<InvocationContext, bool> handler)
-    {
-        option.Handler = ctx =>
+        public void SetHandler(Func<InvocationContext, Task<bool>> handler)
         {
-            var result = handler(ctx);
-            return Task.FromResult(result);
-        };
-    }
-
-    public static Option<T> AddAlias<T>(this Option<T> option, string alias)
-    {
-        ArgumentNullException.ThrowIfNull(option);
-        ArgumentNullException.ThrowIfNull(alias);
-        option.Aliases.Add(alias);
-        return option;
-    }
-
-    public static Option<T> AddAliases<T>(this Option<T> option, params string[] aliases)
-    {
-        ArgumentNullException.ThrowIfNull(option);
-        ArgumentNullException.ThrowIfNull(aliases);
-
-        foreach (var alias in aliases)
-        {
-            option.AddAlias(alias);
+            option.Handler = async (ctx) => await handler(ctx);
         }
 
-        return option;
-    }
+        public void SetHandler(Func<InvocationContext, bool> handler)
+        {
+            option.Handler = ctx =>
+            {
+                var result = handler(ctx);
+                return Task.FromResult(result);
+            };
+        }
 
-    public static Option<T> HasArity<T>(this Option<T> option, Arity arity)
-    {
-        ArgumentNullException.ThrowIfNull(option);
-        option.Arity = arity;
-        return option;
-    }
+        public Option<T> AddAlias(string alias)
+        {
+            ArgumentNullException.ThrowIfNull(option);
+            ArgumentNullException.ThrowIfNull(alias);
+            option.Aliases.Add(alias);
+            return option;
+        }
 
-    public static Option<T> HasArity<T>(this Option<T> option, int min, int max)
-    {
-        ArgumentNullException.ThrowIfNull(option);
-        option.Arity = new Arity(min, max);
-        return option;
-    }
+        public Option<T> AddAliases(params string[] aliases)
+        {
+            ArgumentNullException.ThrowIfNull(option);
+            ArgumentNullException.ThrowIfNull(aliases);
 
-    public static Option<T> Required<T>(this Option<T> option, bool isRequired = true)
-    {
-        ArgumentNullException.ThrowIfNull(option);
-        option.IsRequired = isRequired;
-        return option;
+            foreach (var alias in aliases)
+            {
+                option.AddAlias(alias);
+            }
+
+            return option;
+        }
+
+        public Option<T> HasArity(Arity arity)
+        {
+            ArgumentNullException.ThrowIfNull(option);
+            option.Arity = arity;
+            return option;
+        }
+
+        public Option<T> HasArity(int min, int max)
+        {
+            ArgumentNullException.ThrowIfNull(option);
+            option.Arity = new Arity(min, max);
+            return option;
+        }
+
+        public Option<T> Required(bool isRequired = true)
+        {
+            ArgumentNullException.ThrowIfNull(option);
+            option.IsRequired = isRequired;
+            return option;
+        }
     }
 }
