@@ -14,8 +14,8 @@ public enum ParseResultParts
 
 public sealed class ParseResultSerializerOptions
 {
-    public ParseResultParts Parts { get; set; } = ParseResultParts.All;
-    public bool ExcludeExecutable { get; set; } = true;
+    public ParseResultParts Parts { get; init; } = ParseResultParts.All;
+    public bool ExcludeExecutable { get; init; } = true;
 }
 
 public static class ParseResultSerializer

@@ -66,12 +66,11 @@ public sealed class MiddlewareTests
 
         var rootCommand = new RootCommandFixture();
         rootCommand.AddArgument(new Argument<int>("VALUE").HasArity(2, 2));
-        rootCommand.Configuration.ParseErrorHandler = parseResult =>
+        rootCommand.Configuration.SetParseErrorHandler(ctx =>
         {
-            diagnostics = parseResult.Diagnostics;
-            return Task.FromResult<IInvocationResult>(
-                new CustomInvocationResult(ctx => ctx.SetExitCode(9)));
-        };
+            diagnostics = ctx.ParseResult.Diagnostics;
+            ctx.SetExitCode(9);
+        });
 
         // When
         var result = await rootCommand.Invoke("42");

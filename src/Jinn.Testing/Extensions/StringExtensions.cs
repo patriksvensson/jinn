@@ -2,7 +2,7 @@ namespace Jinn.Testing;
 
 internal static class StringExtensions
 {
-    public static string NormalizeLineEndings(this string value)
+    public static string NormalizeLineEndings(this string? value)
     {
         if (value != null)
         {
