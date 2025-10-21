@@ -9,11 +9,15 @@ internal sealed class InvocationPipeline
         _parseResult = parseResult ?? throw new ArgumentNullException(nameof(parseResult));
     }
 
-    public async Task<int> Invoke()
+    public async Task<int> Invoke(Action<InvocationContext>? initialize)
     {
         var context = new InvocationContext(_parseResult);
-        var chain = BuildInvocationChain(context);
+        if (initialize != null)
+        {
+            initialize(context);
+        }
 
+        var chain = BuildInvocationChain(context);
         await chain.Invoke(context, static _ => Task.CompletedTask);
 
         context.InvocationResult?.Invoke(context);

@@ -58,11 +58,13 @@ public sealed class RootCommand : Command
         return Parser.Parse(Configuration, args, this);
     }
 
-    public async Task<int> Invoke(IEnumerable<string> args)
+    public async Task<int> Invoke(
+        IEnumerable<string> args,
+        Action<InvocationContext>? initialize = null)
     {
         var result = Parse(args);
         var pipeline = new InvocationPipeline(result);
-        return await pipeline.Invoke();
+        return await pipeline.Invoke(initialize);
     }
 }
 
