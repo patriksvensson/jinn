@@ -10,19 +10,27 @@ Based on and inspired by the fantastic `System.CommandLine`.
 
 ## Building
 
-We're using [Cake](https://github.com/cake-build/cake) as a 
-[dotnet tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) 
-for building. So make sure that you've restored Cake by running 
-the following in the repository root:
+We're using [Cake](https://github.com/cake-build/cake) for building. 
 
+```shell
+$ dotnet run build.cs
 ```
-> dotnet tool restore
+
+### Building using .NET Make
+
+You can also use [.NET Make](https://github.com/patriksvensson/dotnet-make) 
+to run the build. _.NET Make_ is a tool that detects what build orchestration
+you are using and takes care of executing the build for you, regardless 
+what your current directory in the repository is.
+
+```shell
+$ dotnet tool restore
 ```
 
 After that, running the build is as easy as writing:
 
-```
-> dotnet cake
+```shell
+$ dotnet make
 ```
 
 ## Copyright
