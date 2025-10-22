@@ -12,14 +12,19 @@ Task("Clean")
     context.CleanDirectory("./.artifacts");
 });
 
-Task("Build")
+Task("Lint")
     .Does(context =>
 {
     DotNetFormatStyle("./src/Jinn.slnx", new DotNetFormatSettings
     {
         VerifyNoChanges = true,
     });
+});
 
+Task("Build")
+    .IsDependentOn("Lint")
+    .Does(context =>
+{
     DotNetBuild("./src/Jinn.slnx", new DotNetBuildSettings {
         Configuration = configuration,
         NoIncremental = context.HasArgument("rebuild"),
