@@ -4,6 +4,7 @@ namespace Jinn;
 public class Command : Symbol
 {
     public string Name { get; }
+    public HashSet<string> Aliases { get; init; } = [];
 
     public List<Command> Commands { get; init; } = [];
     public List<Argument> Arguments { get; init; } = [];
@@ -102,5 +103,27 @@ public static class CommandExtensions
             source.Options.Add(option);
             return option;
         }
+
+        public Command AddAlias(string alias)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(alias);
+            source.Aliases.Add(alias);
+            return source;
+        }
+
+        public Command AddAliases(params string[] aliases)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(aliases);
+
+            foreach (var alias in aliases)
+            {
+                source.AddAlias(alias);
+            }
+
+            return source;
+        }
+
     }
 }

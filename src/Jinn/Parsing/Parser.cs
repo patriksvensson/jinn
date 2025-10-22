@@ -84,7 +84,7 @@ internal static class Parser
 
     private static void ParseArgument(ParserContext context, CommandSyntax parent)
     {
-        while (!context.IsAtEnd && context.CurrentToken.Kind == TokenKind.Argument)
+        while (context is { IsAtEnd: false, CurrentToken.Kind: TokenKind.Argument })
         {
             while (context.CurrentCommand.HasArguments &&
                    context.CurrentArgumentIndex < context.CurrentCommand.Arguments.Count)

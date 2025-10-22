@@ -331,4 +331,55 @@ public class TokenizerTests
             </ParseResult>
             """);
     }
+
+    [Fact]
+    public void Should_Throw_If_Duplicate_Option_Names_Exist()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("-a"));
+        fixture.Options.Add(new Option<int>("-a"));
+        fixture.Options.Add(new Option<int>("-b"));
+
+        // When
+        var result = Record.Exception(() => fixture.Parse("-a"));
+
+        // Then
+        result.ShouldBeOfType<InvalidOperationException>()
+            .And().Message.ShouldBe("The option name '-a' is in use by more than one option");
+    }
+
+    [Fact]
+    public void Should_Throw_If_Duplicate_Command_Names_Exist()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Commands.Add(new Command("foo"));
+        fixture.Commands.Add(new Command("foo"));
+        fixture.Commands.Add(new Command("bar"));
+
+        // When
+        var result = Record.Exception(() => fixture.Parse("foo"));
+
+        // Then
+        result.ShouldBeOfType<InvalidOperationException>()
+            .And().Message.ShouldBe("The command name 'foo' is in use by more than one command");
+    }
+
+    [Fact]
+    public void Should_Throw_If_Duplicate_Command_Names_Exist_As_Alias()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Commands.Add(new Command("foo"));
+        fixture.Commands.Add(new Command("bar").AddAlias("foo"));
+        fixture.Commands.Add(new Command("baz"));
+
+        // When
+        var result = Record.Exception(() => fixture.Parse("foo"));
+
+        // Then
+        result.ShouldBeOfType<InvalidOperationException>()
+            .And().Message.ShouldBe("The command name 'foo' is in use by more than one command");
+    }
 }

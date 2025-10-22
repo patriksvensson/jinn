@@ -60,11 +60,6 @@ internal sealed class TokenizerContext
                 lexeme));
     }
 
-    public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
-    {
-        return _symbols.TryGetValue(name, out result);
-    }
-
     public bool TryGetSymbol<T>(string name, [NotNullWhen(true)] out T? result)
         where T : Symbol
     {
@@ -78,6 +73,11 @@ internal sealed class TokenizerContext
         return false;
     }
 
+    public bool TryGetSymbol(string name, [NotNullWhen(true)] out Symbol? result)
+    {
+        return _symbols.TryGetValue(name, out result);
+    }
+
     public void SetCurrentCommand(Command current)
     {
         _symbols.Clear();
@@ -89,14 +89,31 @@ internal sealed class TokenizerContext
 
         foreach (var command in current.Commands)
         {
-            _symbols[command.Name] = command;
+            if (!_symbols.TryAdd(command.Name, command))
+            {
+                throw new InvalidOperationException(
+                    $"The command name '{command.Name}' is in use by more than one command");
+            }
+
+            foreach (var alias in command.Aliases)
+            {
+                if (!_symbols.TryAdd(alias, command))
+                {
+                    throw new InvalidOperationException(
+                        $"The command name '{alias}' is in use by more than one command");
+                }
+            }
         }
 
         foreach (var option in current.Options)
         {
             foreach (var alias in option.Aliases)
             {
-                _symbols[alias] = option;
+                if (!_symbols.TryAdd(alias, option))
+                {
+                    throw new InvalidOperationException(
+                        $"The option name '{alias}' is in use by more than one option");
+                }
             }
         }
     }
