@@ -107,9 +107,9 @@ internal sealed class TokenizerContext
 
         foreach (var option in current.Options)
         {
-            foreach (var alias in option.NameAndAliases)
+            foreach (var alias in option.Names)
             {
-                if (!_symbols.TryAdd(alias, option))
+                if (!_symbols.TryAdd(alias.Name, option))
                 {
                     throw new InvalidOperationException(
                         $"The option name '{alias}' is in use by more than one option");
