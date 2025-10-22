@@ -7,6 +7,7 @@ var configuration = Argument("configuration", "Release");
 // Tasks
 
 Task("Clean")
+    .WithCriteria((context) => context.HasArgument("rebuild"))
     .Does(context =>
 {
     context.CleanDirectory("./.artifacts");

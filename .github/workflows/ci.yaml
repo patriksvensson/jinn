@@ -38,5 +38,5 @@ jobs:
         run: |
           dotnet nuget locals http-cache --clear
           dotnet tool restore
-          dotnet make --target="Publish" \
+          dotnet make --target="Publish" --rebuild \
             --nuget-key="${{secrets.NUGET_API_KEY}}"
