@@ -107,7 +107,7 @@ internal sealed class TokenizerContext
 
         foreach (var option in current.Options)
         {
-            foreach (var alias in option.Aliases)
+            foreach (var alias in option.NameAndAliases)
             {
                 if (!_symbols.TryAdd(alias, option))
                 {

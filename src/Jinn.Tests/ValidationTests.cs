@@ -7,7 +7,10 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.Arguments.Add(new Argument<int>("VALUE").Required());
+        fixture.Arguments.Add(new Argument<int>("VALUE")
+        {
+            IsRequired = true,
+        });
 
         // When
         var result = fixture.Parse("42");
@@ -21,7 +24,10 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.Arguments.Add(new Argument<int>("VALUE").Required());
+        fixture.Arguments.Add(new Argument<int>("VALUE")
+        {
+            IsRequired = true,
+        });
 
         // When
         var result = fixture.Parse("");
@@ -35,10 +41,17 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.Arguments.Add(new Argument<int>("FOO").Required());
+        fixture.Arguments.Add(new Argument<int>("FOO")
+        {
+            IsRequired = true,
+        });
 
         var command = new Command("sub");
-        var argument = new Argument<int>("BAR").Required();
+        var argument = new Argument<int>("BAR")
+        {
+            IsRequired = true,
+        };
+
         command.Arguments.Add(argument);
         fixture.Commands.Add(command);
 
@@ -54,12 +67,18 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.Arguments.Add(new Argument<int>("FOO").Required());
+        fixture.Arguments.Add(new Argument<int>("FOO")
+        {
+            IsRequired = true,
+        });
 
         var command = new Command("sub");
-        var argument = new Argument<int>("BAR").Required();
-        command.Arguments.Add(argument);
+        var argument = new Argument<int>("BAR")
+        {
+            IsRequired = true,
+        };
 
+        command.Arguments.Add(argument);
         fixture.Commands.Add(command);
 
         // When
@@ -74,7 +93,10 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.Arguments.Add(new Argument<List<int>>("FOO").HasArity(2, 2));
+        fixture.Arguments.Add(new Argument<List<int>>("FOO")
+        {
+            Arity = new Arity(2, 2),
+        });
 
         // When
         var result = fixture.Parse("42");
@@ -98,7 +120,10 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.Arguments.Add(new Argument<List<int>>("FOO").HasArity(2, 3));
+        fixture.Arguments.Add(new Argument<List<int>>("FOO")
+        {
+            Arity = new Arity(2, 3),
+        });
 
         // When
         var result = fixture.Parse("42");
@@ -122,7 +147,10 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 2));
+        fixture.AddOption(new Option<List<int>>("--value")
+        {
+            Arity = new Arity(2, 2),
+        });
 
         // When
         var result = fixture.Parse("--value 42");
@@ -146,7 +174,10 @@ public sealed class ValidationTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.AddOption(new Option<List<int>>("--value").HasArity(2, 3));
+        fixture.AddOption(new Option<List<int>>("--value")
+        {
+            Arity = new Arity(2, 3),
+        });
 
         // When
         var result = fixture.Parse("--value 42");

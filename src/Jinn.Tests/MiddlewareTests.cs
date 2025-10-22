@@ -63,9 +63,13 @@ public sealed class MiddlewareTests
     {
         // Given
         var diagnostics = default(Diagnostics);
-
         var rootCommand = new RootCommandFixture();
-        rootCommand.AddArgument(new Argument<int>("VALUE").HasArity(2, 2));
+
+        rootCommand.AddArgument(new Argument<int>("VALUE")
+        {
+            Arity = new Arity(2, 2),
+        });
+
         rootCommand.Configuration.SetParseErrorHandler(ctx =>
         {
             diagnostics = ctx.ParseResult.Diagnostics;
@@ -86,7 +90,10 @@ public sealed class MiddlewareTests
     {
         // Given
         var fixture = new RootCommandFixture();
-        fixture.AddArgument(new Argument<int>("VALUE").HasArity(2, 2));
+        fixture.AddArgument(new Argument<int>("VALUE")
+        {
+            Arity = new Arity(2, 2),
+        });
 
         // When
         var result = await Record.ExceptionAsync(

@@ -372,8 +372,11 @@ public class TokenizerTests
         // Given
         var fixture = new RootCommandFixture();
         fixture.Commands.Add(new Command("foo"));
-        fixture.Commands.Add(new Command("bar").AddAlias("foo"));
         fixture.Commands.Add(new Command("baz"));
+
+        var barCommand = new Command("bar");
+        barCommand.Aliases.Add("foo");
+        fixture.Commands.Add(barCommand);
 
         // When
         var result = Record.Exception(() => fixture.Parse("foo"));

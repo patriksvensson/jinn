@@ -3,6 +3,7 @@ namespace Jinn;
 [PublicAPI]
 public abstract class Option : Symbol
 {
+    public string Name { get; }
     public HashSet<string> Aliases { get; init; } = [];
     internal Argument Argument { get; }
 
@@ -24,15 +25,21 @@ public abstract class Option : Symbol
         set => Argument.IsRequired = value;
     }
 
-    public string Name
+    internal IEnumerable<string> NameAndAliases
     {
-        // TODO: Make sure this can't be cleared
-        get => Aliases.First();
+        get
+        {
+            yield return Name;
+            foreach (var alias in Aliases)
+            {
+                yield return alias;
+            }
+        }
     }
 
     protected Option(string name, Argument argument)
     {
-        Aliases.Add(name);
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         Argument = argument ?? throw new ArgumentNullException(nameof(argument));
     }
 }
@@ -63,48 +70,6 @@ public static class OptionExtensions
                 var result = handler(ctx);
                 return Task.FromResult(result);
             };
-        }
-
-        public Option<T> AddAlias(string alias)
-        {
-            ArgumentNullException.ThrowIfNull(option);
-            ArgumentNullException.ThrowIfNull(alias);
-            option.Aliases.Add(alias);
-            return option;
-        }
-
-        public Option<T> AddAliases(params string[] aliases)
-        {
-            ArgumentNullException.ThrowIfNull(option);
-            ArgumentNullException.ThrowIfNull(aliases);
-
-            foreach (var alias in aliases)
-            {
-                option.AddAlias(alias);
-            }
-
-            return option;
-        }
-
-        public Option<T> HasArity(Arity arity)
-        {
-            ArgumentNullException.ThrowIfNull(option);
-            option.Arity = arity;
-            return option;
-        }
-
-        public Option<T> HasArity(int min, int max)
-        {
-            ArgumentNullException.ThrowIfNull(option);
-            option.Arity = new Arity(min, max);
-            return option;
-        }
-
-        public Option<T> Required(bool isRequired = true)
-        {
-            ArgumentNullException.ThrowIfNull(option);
-            option.IsRequired = isRequired;
-            return option;
         }
     }
 }

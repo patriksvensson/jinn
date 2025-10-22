@@ -60,26 +60,5 @@ public static class ArgumentExtensions
                 return Task.FromResult(result);
             });
         }
-
-        public Argument<T> HasArity(Arity arity)
-        {
-            ArgumentNullException.ThrowIfNull(argument);
-            argument.Arity = arity;
-            return argument;
-        }
-
-        public Argument<T> HasArity(int min, int max)
-        {
-            ArgumentNullException.ThrowIfNull(argument);
-            argument.Arity = new Arity(min, max);
-            return argument;
-        }
-
-        public Argument<T> Required(bool isRequired = true)
-        {
-            ArgumentNullException.ThrowIfNull(argument);
-            argument.IsRequired = isRequired;
-            return argument;
-        }
     }
 }

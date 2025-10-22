@@ -11,7 +11,7 @@ public class Command : Symbol
     public List<Option> Options { get; init; } = [];
 
     public bool HasArguments => Arguments.Count > 0;
-    internal Func<InvocationContext, Task>? Handler { get; private set; }
+    public Func<InvocationContext, Task>? Handler { get; set; }
 
     public Command(string name)
     {
@@ -19,20 +19,6 @@ public class Command : Symbol
 
         // Add default options
         Options.Add(new HelpOption());
-    }
-
-    public void SetHandler(Action<InvocationContext> handler)
-    {
-        Handler = (ctx) =>
-        {
-            handler(ctx);
-            return Task.CompletedTask;
-        };
-    }
-
-    public void SetHandler(Func<InvocationContext, Task> handler)
-    {
-        Handler = handler;
     }
 }
 
@@ -72,58 +58,20 @@ public sealed class RootCommand : Command
 [PublicAPI]
 public static class CommandExtensions
 {
-    extension(Command source)
+    extension(Command command)
     {
-        public Command AddCommand(Command command)
+        public void SetHandler(Action<InvocationContext> handler)
         {
-            source.Commands.Add(command);
-            return command;
-        }
-
-        public Argument AddArgument(Argument argument)
-        {
-            source.Arguments.Add(argument);
-            return argument;
-        }
-
-        public Argument<T> AddArgument<T>(Argument<T> argument)
-        {
-            source.Arguments.Add(argument);
-            return argument;
-        }
-
-        public Option AddOption(Option option)
-        {
-            source.Options.Add(option);
-            return option;
-        }
-
-        public Option<T> AddOption<T>(Option<T> option)
-        {
-            source.Options.Add(option);
-            return option;
-        }
-
-        public Command AddAlias(string alias)
-        {
-            ArgumentNullException.ThrowIfNull(source);
-            ArgumentNullException.ThrowIfNull(alias);
-            source.Aliases.Add(alias);
-            return source;
-        }
-
-        public Command AddAliases(params string[] aliases)
-        {
-            ArgumentNullException.ThrowIfNull(source);
-            ArgumentNullException.ThrowIfNull(aliases);
-
-            foreach (var alias in aliases)
+            command.Handler = (ctx) =>
             {
-                source.AddAlias(alias);
-            }
-
-            return source;
+                handler(ctx);
+                return Task.CompletedTask;
+            };
         }
 
+        public void SetHandler(Func<InvocationContext, Task> handler)
+        {
+            command.Handler = handler;
+        }
     }
 }
