@@ -67,6 +67,11 @@ public sealed class InvocationContext
     {
         _properties[name] = value;
     }
+
+    public void ShowHelp()
+    {
+        SetProperty(Constants.Invocation.ShowHelp, true);
+    }
 }
 
 [PublicAPI]

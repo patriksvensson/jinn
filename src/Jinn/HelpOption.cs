@@ -7,7 +7,7 @@ internal sealed class HelpOption : Option
     {
         Handler = ctx =>
         {
-            ctx.SetProperty(Constants.Invocation.ShowHelp, true);
+            ctx.ShowHelp();
             return Task.FromResult(false);
         };
     }
