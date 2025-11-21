@@ -1,4 +1,6 @@
-﻿#:sdk Cake.Sdk@5.1.25292.90-beta
+﻿#:sdk Cake.Sdk@6.0.0
+
+using Cake.Common.Build;
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
