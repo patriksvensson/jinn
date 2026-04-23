@@ -11,7 +11,11 @@ public sealed class RootCommandFixture
     public RootCommandFixture(params Command[] commands)
     {
         Commands.AddRange(commands);
-        Configuration = new Configuration { ExecutableName = "TestRunner", };
+        Configuration = new Configuration
+        {
+            ExecutableName = "TestRunner",
+            ExecutableVersion = "1.0.0",
+        };
     }
 
     public void AddCommand(Command command)

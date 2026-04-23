@@ -1,9 +1,12 @@
+using System.Reflection;
+
 namespace Jinn;
 
 [PublicAPI]
 public sealed class Configuration
 {
-    public string ExecutableName { get; init; } = GetExecutableName();
+    public string ExecutableName { get; init; } = Executable.GetName();
+    public string ExecutableVersion { get; init; } = Executable.GetVersion();
 
     public Func<ParseResult, Task<IInvocationResult>>? HelpProvider { get; set; }
     public Func<ParseResult, Task<IInvocationResult>>? ParseErrorHandler { get; set; }
@@ -20,6 +23,43 @@ public sealed class Configuration
     {
         var path = Environment.GetCommandLineArgs().First();
         return Path.GetFileNameWithoutExtension(path);
+    }
+
+    // Based on https://github.com/dotnet/command-line-api/blob/main/src/System.CommandLine/RootCommand.cs
+    private static class Executable
+    {
+        private static Assembly? _assembly;
+        private static string? _executableName;
+        private static string? _executableVersion;
+
+        public static string GetName()
+        {
+            return _executableName ??= GetVersionFromArguments();
+
+            static string GetVersionFromArguments()
+            {
+                var path = Environment.GetCommandLineArgs().First();
+                return Path.GetFileNameWithoutExtension(path);
+            }
+        }
+
+        public static string GetVersion()
+        {
+            return _executableVersion ??= GetVersionFromEntryAssembly();
+
+            static string GetVersionFromEntryAssembly()
+            {
+                _assembly ??= Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+                var assemblyVersionAttribute = _assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+
+                if (assemblyVersionAttribute is null)
+                {
+                    return _assembly.GetName().Version?.ToString() ?? "1.0";
+                }
+
+                return assemblyVersionAttribute.InformationalVersion;
+            }
+        }
     }
 }
 
