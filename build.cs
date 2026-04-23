@@ -1,4 +1,4 @@
-﻿#:sdk Cake.Sdk@6.0.0
+﻿#:sdk Cake.Sdk@6.1.0
 
 using Cake.Common.Build;
 
@@ -25,7 +25,7 @@ Task("Lint")
 });
 
 Task("Build")
-    .IsDependentOn("Lint")
+    .IsDependentOn("Clean")
     .Does(context =>
 {
     DotNetBuild("./src/Jinn.slnx", new DotNetBuildSettings {
