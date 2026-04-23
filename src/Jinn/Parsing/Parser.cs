@@ -127,16 +127,21 @@ internal static class Parser
 
         // Create a syntax node and add it to the command
         var syntax = new OptionSyntax(option, context.CurrentToken, parent);
-        parent.AddChild(syntax);
+        if (!context.CurrentToken.Ignore)
+        {
+            parent.AddChild(syntax);
+        }
 
         // Consume the token
         context.ConsumeToken();
 
         // Parse option values
-        ParseOptionValues(context, syntax);
+        ParseOptionValues(context, syntax, context.CurrentToken.Ignore);
     }
 
-    private static void ParseOptionValues(ParserContext context, OptionSyntax parent)
+    private static void ParseOptionValues(
+        ParserContext context, OptionSyntax parent,
+        bool ignore)
     {
         var argumentCount = 0;
 
@@ -162,9 +167,12 @@ internal static class Parser
                 break;
             }
 
-            // Create a syntax node and add it to the option
-            var syntax = new OptionArgumentSyntax(parent.Option.Argument, context.CurrentToken, parent);
-            parent.AddChild(syntax);
+            if (!ignore)
+            {
+                // Create a syntax node and add it to the option
+                var syntax = new OptionArgumentSyntax(parent.Option.Argument, context.CurrentToken, parent);
+                parent.AddChild(syntax);
+            }
 
             argumentCount++;
             context.ConsumeToken();

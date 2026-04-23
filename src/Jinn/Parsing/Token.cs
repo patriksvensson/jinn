@@ -8,14 +8,16 @@ public sealed class Token
     public Symbol? Symbol { get; set; }
     public TextSpan? Span { get; }
     public string Lexeme { get; }
+    public bool Ignore { get; }
     public bool IsSynthetic => Span == null;
 
-    public Token(TokenKind kind, Symbol? symbol, TextSpan? span, string? lexeme)
+    public Token(TokenKind kind, Symbol? symbol, TextSpan? span, string? lexeme, bool ignore)
     {
         Kind = kind;
         Symbol = symbol;
         Span = span;
         Lexeme = lexeme ?? string.Empty;
+        Ignore = ignore;
     }
 
     private string GetDebugString()

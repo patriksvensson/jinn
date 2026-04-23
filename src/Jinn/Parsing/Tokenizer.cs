@@ -27,6 +27,15 @@ internal static class Tokenizer
                 continue;
             }
 
+            // Should this token be ignored?
+            var ignore = arg.StartsWith("-/") || arg.StartsWith("--/");
+            if (ignore)
+            {
+                arg = arg
+                    .Replace("-/", "-")
+                    .Replace("--/", "--");
+            }
+
             // Is the current argument a known symbol?
             if (context.TryGetSymbol(arg, out var symbol))
             {
@@ -42,7 +51,7 @@ internal static class Tokenizer
                         continue;
 
                     case Option:
-                        context.AddToken(TokenKind.Option, symbol, arg);
+                        context.AddToken(TokenKind.Option, symbol, arg, ignore: ignore);
                         continue;
 
                     default:
@@ -57,7 +66,7 @@ internal static class Tokenizer
             }
 
             // A valid option in -abc form that needs to be unbundled?
-            if (TryUnbundleOptionsNew(context, arg))
+            if (TryUnbundleOptionsNew(context, arg, ignore))
             {
                 continue;
             }
@@ -103,7 +112,8 @@ internal static class Tokenizer
     }
 
     private static bool TryUnbundleOptionsNew(
-        TokenizerContext context, string arg)
+        TokenizerContext context, string arg,
+        bool ignore)
     {
         if (arg.Length <= 1 || arg[0] != '-')
         {
@@ -122,12 +132,12 @@ internal static class Tokenizer
             {
                 var argument = arg[index..];
                 var argumentSpan = new TextSpan(context.Position + index, argument.Length);
-                context.AddToken(TokenKind.Argument, null, argument, argumentSpan);
+                context.AddToken(TokenKind.Argument, null, argument, argumentSpan, ignore: ignore);
                 return true;
             }
 
             var optionSpan = new TextSpan(context.Position + index, 1);
-            context.AddToken(TokenKind.Option, optionSymbol, optionName, optionSpan);
+            context.AddToken(TokenKind.Option, optionSymbol, optionName, optionSpan, ignore);
         }
 
         return true;

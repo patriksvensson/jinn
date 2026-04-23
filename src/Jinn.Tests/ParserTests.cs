@@ -208,6 +208,50 @@ public sealed class ParserTests
     }
 
     [Fact]
+    public void Should_Ignore_Long_Option_With_Tsoding_Modifier()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<List<int>>("--lol"));
+
+        // When
+        var result = fixture.ParseAndSerialize("--/lol 1 2 3");
+
+        // Then
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <ParsedCommand>
+                <RootCommand />
+              </ParsedCommand>
+              <Unmatched />
+            </ParseResult>
+            """);
+    }
+
+    [Fact]
+    public void Should_Ignore_Short_Option_With_Tsoding_Modifier()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<List<int>>("-l"));
+
+        // When
+        var result = fixture.ParseAndSerialize("-/l 1 2 3");
+
+        // Then
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <ParsedCommand>
+                <RootCommand />
+              </ParsedCommand>
+              <Unmatched />
+            </ParseResult>
+            """);
+    }
+
+    [Fact]
     public void Should_Parse_Argument_With_Arity_Of_One()
     {
         // Given
@@ -291,6 +335,30 @@ public sealed class ParserTests
                     <Token Lexeme="42" Kind="Argument" Span="4:2" />
                   </Option>
                 </RootCommand>
+              </ParsedCommand>
+              <Unmatched />
+            </ParseResult>
+            """);
+    }
+
+    [Fact]
+    public void Should_Ignore_Bundled_Options_With_Tsoding_Modifier()
+    {
+        // Given
+        var fixture = new RootCommandFixture();
+        fixture.Options.Add(new Option<int>("-a"));
+        fixture.Options.Add(new Option<int>("-b"));
+        fixture.Options.Add(new Option<bool>("-c"));
+
+        // When
+        var result = fixture.ParseAndSerialize("-/ab 42");
+
+        // Then
+        result.ShouldBe(
+            """
+            <ParseResult>
+              <ParsedCommand>
+                <RootCommand />
               </ParsedCommand>
               <Unmatched />
             </ParseResult>

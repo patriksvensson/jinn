@@ -45,7 +45,9 @@ internal sealed class TokenizerContext
         return true;
     }
 
-    public void AddToken(TokenKind kind, Symbol? symbol, string lexeme, TextSpan? span = null)
+    public void AddToken(
+        TokenKind kind, Symbol? symbol, string lexeme,
+        TextSpan? span = null, bool ignore = false)
     {
         if (kind == TokenKind.DoubleDash)
         {
@@ -57,7 +59,7 @@ internal sealed class TokenizerContext
             new Token(
                 kind, symbol,
                 isAtSyntheticRoot ? null : span ?? new TextSpan(Position, lexeme.Length),
-                lexeme));
+                lexeme, ignore));
     }
 
     public bool TryGetSymbol<T>(string name, [NotNullWhen(true)] out T? result)
