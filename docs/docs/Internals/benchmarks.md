@@ -4,6 +4,22 @@ sidebar_position: 100
 
 # Benchmarks
 
+## 2026-04-24
+
+```
+BenchmarkDotNet v0.15.8, macOS Tahoe 26.4.1 (25E253) [Darwin 25.4.0]
+Apple M3 Pro, 1 CPU, 11 logical and 11 physical cores
+.NET SDK 10.0.203
+  [Host]     : .NET 10.0.7 (10.0.7, 10.0.726.21808), Arm64 RyuJIT armv8.0-a
+  DefaultJob : .NET 10.0.7 (10.0.7, 10.0.726.21808), Arm64 RyuJIT armv8.0-a
+
+
+| Method      | Mean     | Error     | StdDev    | Gen0   | Gen1   | Allocated |
+|------------ |---------:|----------:|----------:|-------:|-------:|----------:|
+| Jinn_Parse  | 1.261 us | 0.0069 us | 0.0054 us | 0.7420 | 0.0076 |   6.07 KB |
+| Jinn_Invoke | 1.468 us | 0.0105 us | 0.0098 us | 0.8774 | 0.0095 |   7.18 KB |
+```
+
 ## 2025-10-16
 
 ```
