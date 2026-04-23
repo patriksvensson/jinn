@@ -12,13 +12,12 @@ Apple M3 Pro, 1 CPU, 11 logical and 11 physical cores
 .NET SDK 10.0.203
   [Host]     : .NET 10.0.7 (10.0.7, 10.0.726.21808), Arm64 RyuJIT armv8.0-a
   DefaultJob : .NET 10.0.7 (10.0.7, 10.0.726.21808), Arm64 RyuJIT armv8.0-a
-
+```
 
 | Method      | Mean     | Error     | StdDev    | Gen0   | Gen1   | Allocated |
 |------------ |---------:|----------:|----------:|-------:|-------:|----------:|
 | Jinn_Parse  | 1.261 us | 0.0069 us | 0.0054 us | 0.7420 | 0.0076 |   6.07 KB |
 | Jinn_Invoke | 1.468 us | 0.0105 us | 0.0098 us | 0.8774 | 0.0095 |   7.18 KB |
-```
 
 ## 2025-10-16
 
@@ -29,7 +28,7 @@ Apple M3 Pro, 1 CPU, 11 logical and 11 physical cores
   [Host]    : .NET 10.0.0 (10.0.25.50307), Arm64 RyuJIT AdvSIMD
   .NET 10.0 : .NET 10.0.0 (10.0.25.50307), Arm64 RyuJIT AdvSIMD
   .NET 9.0  : .NET 9.0.9 (9.0.925.41916), Arm64 RyuJIT AdvSIMD
-
+```
 
 | Method      | Job       | Runtime   | Mean     | Error     | StdDev    | Gen0   | Gen1   | Allocated |
 |------------ |---------- |---------- |---------:|----------:|----------:|-------:|-------:|----------:|
@@ -37,7 +36,6 @@ Apple M3 Pro, 1 CPU, 11 logical and 11 physical cores
 | Jinn_Invoke | .NET 10.0 | .NET 10.0 | 1.387 us | 0.0119 us | 0.0111 us | 0.8411 | 0.0095 |   6.88 KB |
 | Jinn_Parse  | .NET 9.0  | .NET 9.0  | 1.498 us | 0.0090 us | 0.0084 us | 0.7439 | 0.0076 |   6.09 KB |
 | Jinn_Invoke | .NET 9.0  | .NET 9.0  | 1.765 us | 0.0071 us | 0.0067 us | 0.8793 | 0.0095 |    7.2 KB |
-```
 
 ## 2025-06-01
 
@@ -47,10 +45,9 @@ Apple M3 Pro, 1 CPU, 11 logical and 11 physical cores
 .NET SDK 9.0.202
   [Host]     : .NET 9.0.3 (9.0.325.11113), Arm64 RyuJIT AdvSIMD
   DefaultJob : .NET 9.0.3 (9.0.325.11113), Arm64 RyuJIT AdvSIMD
-
+```
 
 | Method      | Mean     | Error     | StdDev    | Gen0   | Gen1   | Allocated |
 |------------ |---------:|----------:|----------:|-------:|-------:|----------:|
 | Jinn_Parse  | 1.630 us | 0.0298 us | 0.0279 us | 0.7877 | 0.0076 |   6.44 KB |
 | Jinn_Invoke | 1.880 us | 0.0364 us | 0.0357 us | 0.9136 | 0.0095 |   7.47 KB |
-```
