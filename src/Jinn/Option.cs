@@ -8,6 +8,8 @@ public abstract class Option : Symbol
     public IReadOnlySet<OptionName> Names { get; }
     internal Argument Argument { get; }
 
+    public Type ValueType => Argument.ValueType;
+
     public Func<InvocationContext, Task<bool>>? Handler
     {
         get => Argument.Handler;
