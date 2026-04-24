@@ -7,7 +7,7 @@ public abstract class Argument : Symbol
     public Arity Arity { get; set; }
     public Type ValueType { get; }
     public bool IsRequired { get; set; }
-    public Func<InvocationContext, Task<bool>>? Handler { get; set; }
+    public Func<InvocationContext, CancellationToken, Task<bool>>? Handler { get; set; }
 
     protected Argument(Type type, string name)
     {
@@ -47,16 +47,16 @@ public static class ArgumentExtensions
 {
     extension<T>(Argument<T> argument)
     {
-        public void SetHandler(Func<InvocationContext, Task<bool>> handler)
+        public void SetHandler(Func<InvocationContext, CancellationToken, Task<bool>> handler)
         {
-            argument.Handler = async (ctx) => await handler(ctx);
+            argument.Handler = async (ctx, ct) => await handler(ctx, ct);
         }
 
-        public void SetHandler(Func<InvocationContext, bool> handler)
+        public void SetHandler(Func<InvocationContext, CancellationToken, bool> handler)
         {
-            argument.SetHandler(ctx =>
+            argument.SetHandler((ctx, ct) =>
             {
-                var result = handler(ctx);
+                var result = handler(ctx, ct);
                 return Task.FromResult(result);
             });
         }

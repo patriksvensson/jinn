@@ -9,7 +9,7 @@ var option = new Option<List<int>>("--item")
 };
 
 root.Options.Add(option);
-root.SetHandler(ctx =>
+root.SetHandler((ctx, _) =>
 {
     var items = ctx.GetValue(option);
     if (items != null)

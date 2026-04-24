@@ -2,9 +2,11 @@ namespace Jinn;
 
 internal static class HelpMiddleware
 {
-    public static async Task Invoke(InvocationContext ctx, Func<InvocationContext, Task> next)
+    public static async Task Invoke(
+        InvocationContext ctx, Func<InvocationContext, CancellationToken, Task> next,
+        CancellationToken cancellationToken = default)
     {
-        await next(ctx);
+        await next(ctx, cancellationToken);
 
         // Should we show help?
         if (ctx.GetProperty<bool>(Constants.Invocation.ShowHelp))

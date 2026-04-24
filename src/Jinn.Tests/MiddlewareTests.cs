@@ -109,7 +109,7 @@ public sealed class MiddlewareTests
     {
         // Given
         var root = new RootCommand();
-        root.SetHandler(_ => throw new InvalidOperationException("An expected error occured"));
+        root.SetHandler((_, _) => throw new InvalidOperationException("An expected error occured"));
 
         // When
         var result = await Record.ExceptionAsync(
@@ -126,7 +126,7 @@ public sealed class MiddlewareTests
         // Given
         var root = new RootCommand();
         var errorMessage = default(string?);
-        root.SetHandler(_ => throw new InvalidOperationException("An expected error occured"));
+        root.SetHandler((_, _) => throw new InvalidOperationException("An expected error occured"));
         root.Configuration.SetExceptionHandler((ctx, ex) =>
         {
             errorMessage = ex.Message;

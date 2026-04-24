@@ -13,7 +13,7 @@ public sealed partial class BindingTests
             var argument = new Argument<bool>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx => value = ctx.GetValue(argument));
+            rootCommand.SetHandler((ctx, _) => value = ctx.GetValue(argument));
 
             // When
             await rootCommand.Invoke(["true"]);
@@ -31,7 +31,7 @@ public sealed partial class BindingTests
             var argument = new Argument<DateTime>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -52,7 +52,7 @@ public sealed partial class BindingTests
             var argument = new Argument<DateTimeOffset>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -73,7 +73,7 @@ public sealed partial class BindingTests
             var argument = new Argument<TimeSpan>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -94,7 +94,7 @@ public sealed partial class BindingTests
             var argument = new Argument<sbyte>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -115,7 +115,7 @@ public sealed partial class BindingTests
             var argument = new Argument<short>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -136,7 +136,7 @@ public sealed partial class BindingTests
             var argument = new Argument<int>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -157,7 +157,7 @@ public sealed partial class BindingTests
             var argument = new Argument<long>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -178,7 +178,7 @@ public sealed partial class BindingTests
             var argument = new Argument<byte>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -199,7 +199,7 @@ public sealed partial class BindingTests
             var argument = new Argument<ushort>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -220,7 +220,7 @@ public sealed partial class BindingTests
             var argument = new Argument<uint>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -241,7 +241,7 @@ public sealed partial class BindingTests
             var argument = new Argument<ulong>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -262,7 +262,7 @@ public sealed partial class BindingTests
             var argument = new Argument<string>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -283,7 +283,7 @@ public sealed partial class BindingTests
             var argument = new Argument<Uri>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -304,7 +304,7 @@ public sealed partial class BindingTests
             var argument = new Argument<int?>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -325,7 +325,7 @@ public sealed partial class BindingTests
             var argument = new Argument<int?>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(argument);
             });
@@ -346,7 +346,7 @@ public sealed partial class BindingTests
             var argument = new Argument<List<int>>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 result = ctx.GetValue(argument);
             });
@@ -371,7 +371,7 @@ public sealed partial class BindingTests
             var argument = new Argument<int>("VALUE");
 
             rootCommand.Arguments.Add(argument);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 result = ctx.GetValue(argument);
             });

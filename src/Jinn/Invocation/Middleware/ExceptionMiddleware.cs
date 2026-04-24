@@ -2,11 +2,13 @@ namespace Jinn;
 
 internal static class ExceptionMiddleware
 {
-    public static async Task Invoke(InvocationContext ctx, Func<InvocationContext, Task> next)
+    public static async Task Invoke(
+        InvocationContext ctx, Func<InvocationContext, CancellationToken, Task> next,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            await next(ctx);
+            await next(ctx, cancellationToken);
         }
         catch (Exception ex) when (ctx.Configuration.ExceptionHandler != null)
         {

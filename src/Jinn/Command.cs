@@ -11,7 +11,7 @@ public class Command : Symbol
     public List<Option> Options { get; init; } = [];
 
     public bool HasArguments => Arguments.Count > 0;
-    public Func<InvocationContext, Task>? Handler { get; set; }
+    public Func<InvocationContext, CancellationToken, Task>? Handler { get; set; }
 
     public Command(string name)
     {
@@ -47,11 +47,12 @@ public sealed class RootCommand : Command
 
     public async Task<int> Invoke(
         IEnumerable<string> args,
-        Action<InvocationContext>? initialize = null)
+        Action<InvocationContext>? initialize = null,
+        CancellationToken cancellationToken = default)
     {
         var result = Parse(args);
         var pipeline = new InvocationPipeline(result);
-        return await pipeline.Invoke(initialize);
+        return await pipeline.Invoke(initialize, cancellationToken);
     }
 }
 
@@ -60,16 +61,16 @@ public static class CommandExtensions
 {
     extension(Command command)
     {
-        public void SetHandler(Action<InvocationContext> handler)
+        public void SetHandler(Action<InvocationContext, CancellationToken> handler)
         {
-            command.Handler = (ctx) =>
+            command.Handler = (ctx, ct) =>
             {
-                handler(ctx);
+                handler(ctx, ct);
                 return Task.CompletedTask;
             };
         }
 
-        public void SetHandler(Func<InvocationContext, Task> handler)
+        public void SetHandler(Func<InvocationContext, CancellationToken, Task> handler)
         {
             command.Handler = handler;
         }

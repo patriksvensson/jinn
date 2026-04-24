@@ -2,7 +2,9 @@ namespace Jinn;
 
 internal static class ParseErrorMiddleware
 {
-    public static async Task Invoke(InvocationContext ctx, Func<InvocationContext, Task> next)
+    public static async Task Invoke(
+        InvocationContext ctx, Func<InvocationContext, CancellationToken, Task> next,
+        CancellationToken cancellationToken = default)
     {
         if (ctx.ParseResult.Diagnostics.HasErrors)
         {
@@ -18,7 +20,7 @@ internal static class ParseErrorMiddleware
             return;
         }
 
-        await next(ctx);
+        await next(ctx, cancellationToken);
     }
 }
 

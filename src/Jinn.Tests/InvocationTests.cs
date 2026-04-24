@@ -9,7 +9,7 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.SetHandler(ctx =>
+        rootCommand.SetHandler((ctx, _) =>
         {
             invoked = true;
             ctx.SetExitCode(1);
@@ -30,10 +30,10 @@ public sealed class InvocationTests
         var invoked = false;
 
         var rootCommand = new RootCommand();
-        rootCommand.Configuration.AddMiddleware(async (ctx, next) =>
+        rootCommand.Configuration.AddMiddleware(async (ctx, next, ct) =>
         {
             invoked = true;
-            await next(ctx);
+            await next(ctx, ct);
         });
 
         // When
@@ -51,14 +51,14 @@ public sealed class InvocationTests
         var invokedMiddleware = false;
         var rootCommand = new RootCommand();
 
-        rootCommand.Configuration.AddMiddleware(async (ctx, next) =>
+        rootCommand.Configuration.AddMiddleware(async (ctx, next, ct) =>
         {
             invokedMiddleware = true;
             ctx.SetExitCode(1);
-            await next(ctx);
+            await next(ctx, ct);
         });
 
-        rootCommand.SetHandler(ctx =>
+        rootCommand.SetHandler((ctx, _) =>
         {
             invokedCommand = true;
             ctx.SetExitCode(2);
@@ -80,13 +80,13 @@ public sealed class InvocationTests
         var invoked = false;
         var rootCommand = new RootCommand();
 
-        rootCommand.Configuration.AddMiddleware((ctx, _) =>
+        rootCommand.Configuration.AddMiddleware((ctx, _, _) =>
         {
             ctx.SetExitCode(1);
             return Task.CompletedTask;
         });
 
-        rootCommand.SetHandler(ctx =>
+        rootCommand.SetHandler((ctx, _) =>
         {
             invoked = true;
             ctx.SetExitCode(2);
@@ -109,7 +109,7 @@ public sealed class InvocationTests
 
         var argument = new Argument<bool>("TEST");
         argument.Arity = Arity.ZeroOrOne;
-        argument.SetHandler(_ =>
+        argument.SetHandler((_, _) =>
         {
             invokedArgument = true;
             return false;
@@ -117,7 +117,7 @@ public sealed class InvocationTests
 
         var rootCommand = new RootCommand();
         rootCommand.Arguments.Add(argument);
-        rootCommand.SetHandler(_ =>
+        rootCommand.SetHandler((_, _) =>
         {
             invokedCommand = true;
         });
@@ -139,7 +139,7 @@ public sealed class InvocationTests
 
         var argument = new Argument<bool>("TEST");
         argument.Arity = Arity.ZeroOrOne;
-        argument.SetHandler(_ =>
+        argument.SetHandler((_, _) =>
         {
             invokedArgument = true;
             return true;
@@ -147,7 +147,7 @@ public sealed class InvocationTests
 
         var rootCommand = new RootCommand();
         rootCommand.Arguments.Add(argument);
-        rootCommand.SetHandler(_ =>
+        rootCommand.SetHandler((_, _) =>
         {
             invokedCommand = true;
         });
@@ -170,14 +170,14 @@ public sealed class InvocationTests
 
         var option = new Option<bool>("--test");
         option.Arity = Arity.ZeroOrOne;
-        option.SetHandler(_ =>
+        option.SetHandler((_, _) =>
         {
             invokedArgument = true;
             return false;
         });
 
         rootCommand.Options.Add(option);
-        rootCommand.SetHandler(_ =>
+        rootCommand.SetHandler((_, _) =>
         {
             invokedCommand = true;
         });
@@ -200,14 +200,14 @@ public sealed class InvocationTests
 
         var option = new Option<bool>("--test");
         option.Arity = Arity.ZeroOrOne;
-        option.SetHandler(_ =>
+        option.SetHandler((_, _) =>
         {
             invokedArgument = true;
             return true;
         });
 
         rootCommand.Options.Add(option);
-        rootCommand.SetHandler(_ =>
+        rootCommand.SetHandler((_, _) =>
         {
             invokedCommand = true;
         });

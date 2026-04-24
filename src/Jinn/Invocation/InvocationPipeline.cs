@@ -9,7 +9,9 @@ internal sealed class InvocationPipeline
         _parseResult = parseResult ?? throw new ArgumentNullException(nameof(parseResult));
     }
 
-    public async Task<int> Invoke(Action<InvocationContext>? initialize)
+    public async Task<int> Invoke(
+        Action<InvocationContext>? initialize,
+        CancellationToken cancellationToken)
     {
         var context = new InvocationContext(_parseResult);
         if (initialize != null)
@@ -18,7 +20,7 @@ internal sealed class InvocationPipeline
         }
 
         var chain = BuildInvocationChain(context);
-        await chain.Invoke(context, static _ => Task.CompletedTask);
+        await chain.Invoke(context, static (_, _) => Task.CompletedTask, cancellationToken);
 
         context.InvocationResult?.Invoke(context);
         return context.GetExitCode();
@@ -32,7 +34,7 @@ internal sealed class InvocationPipeline
             HelpMiddleware.Invoke,
             ParseErrorMiddleware.Invoke,
             .. _parseResult.Configuration.Middlewares,
-            async (invocationContext, _) =>
+            async (invocationContext, _, ct) =>
             {
                 // Invoke all options and arguments
                 var current = (CommandResult)invocationContext.ParseResult.Root;
@@ -44,7 +46,7 @@ internal sealed class InvocationPipeline
                         if (child is ArgumentResult { ArgumentSymbol.Handler: not null } argumentResult)
                         {
                             // Invoke
-                            if (!await argumentResult.ArgumentSymbol.Handler.Invoke(invocationContext))
+                            if (!await argumentResult.ArgumentSymbol.Handler.Invoke(invocationContext, ct))
                             {
                                 return;
                             }
@@ -52,7 +54,7 @@ internal sealed class InvocationPipeline
                         else if (child is OptionResult { OptionSymbol.Argument.Handler: not null } optionResult)
                         {
                             // Invoke
-                            if (!await optionResult.OptionSymbol.Argument.Handler.Invoke(invocationContext))
+                            if (!await optionResult.OptionSymbol.Argument.Handler.Invoke(invocationContext, ct))
                             {
                                 return;
                             }
@@ -75,13 +77,13 @@ internal sealed class InvocationPipeline
                 var handler = invocationContext.ParseResult.ParsedCommand.CommandSymbol.Handler;
                 if (handler is not null)
                 {
-                    await handler(context);
+                    await handler(context, ct);
                 }
             }
         ];
 
         return middlewares.Aggregate((first, second) =>
-            (ctx, next) =>
-                first(ctx, c => second(c, next)));
+            (ctx, next, ct) =>
+                first(ctx, (c, ct2) => second(c, next, ct2), ct));
     }
 }

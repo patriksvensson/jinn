@@ -13,7 +13,7 @@ public sealed partial class BindingTests
             var option = new Option<bool>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, ct) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -34,7 +34,7 @@ public sealed partial class BindingTests
             var option = new Option<DateTime>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -55,7 +55,7 @@ public sealed partial class BindingTests
             var option = new Option<DateTimeOffset>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -76,7 +76,7 @@ public sealed partial class BindingTests
             var option = new Option<TimeSpan>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -97,7 +97,7 @@ public sealed partial class BindingTests
             var option = new Option<sbyte>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -118,7 +118,7 @@ public sealed partial class BindingTests
             var option = new Option<short>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -139,7 +139,7 @@ public sealed partial class BindingTests
             var option = new Option<int>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -160,7 +160,7 @@ public sealed partial class BindingTests
             var option = new Option<long>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -181,7 +181,7 @@ public sealed partial class BindingTests
             var option = new Option<byte>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -202,7 +202,7 @@ public sealed partial class BindingTests
             var option = new Option<ushort>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -223,7 +223,7 @@ public sealed partial class BindingTests
             var option = new Option<uint>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -244,7 +244,7 @@ public sealed partial class BindingTests
             var option = new Option<ulong>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -265,7 +265,7 @@ public sealed partial class BindingTests
             var option = new Option<string>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -286,7 +286,7 @@ public sealed partial class BindingTests
             var option = new Option<Uri>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -307,7 +307,7 @@ public sealed partial class BindingTests
             var option = new Option<int?>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -328,7 +328,7 @@ public sealed partial class BindingTests
             var option = new Option<int?>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -349,7 +349,7 @@ public sealed partial class BindingTests
             var option = new Option<bool>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });
@@ -370,7 +370,7 @@ public sealed partial class BindingTests
             var option = new Option<List<int>>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 result = ctx.GetValue(option);
             });
@@ -395,7 +395,7 @@ public sealed partial class BindingTests
             var option = new Option<int>("--value");
 
             rootCommand.Options.Add(option);
-            rootCommand.SetHandler(ctx =>
+            rootCommand.SetHandler((ctx, _) =>
             {
                 value = ctx.GetValue(option);
             });

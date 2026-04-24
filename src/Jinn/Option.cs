@@ -10,7 +10,7 @@ public abstract class Option : Symbol
 
     public Type ValueType => Argument.ValueType;
 
-    public Func<InvocationContext, Task<bool>>? Handler
+    public Func<InvocationContext, CancellationToken, Task<bool>>? Handler
     {
         get => Argument.Handler;
         set => Argument.Handler = value;
@@ -120,16 +120,16 @@ public static class OptionExtensions
 {
     extension<T>(Option<T> option)
     {
-        public void SetHandler(Func<InvocationContext, Task<bool>> handler)
+        public void SetHandler(Func<InvocationContext, CancellationToken, Task<bool>> handler)
         {
-            option.Handler = async (ctx) => await handler(ctx);
+            option.Handler = async (ctx, ct) => await handler(ctx, ct);
         }
 
-        public void SetHandler(Func<InvocationContext, bool> handler)
+        public void SetHandler(Func<InvocationContext, CancellationToken, bool> handler)
         {
-            option.Handler = ctx =>
+            option.Handler = (ctx, ct) =>
             {
-                var result = handler(ctx);
+                var result = handler(ctx, ct);
                 return Task.FromResult(result);
             };
         }
